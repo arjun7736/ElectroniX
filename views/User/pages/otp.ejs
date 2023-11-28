@@ -1,0 +1,37 @@
+<%- include('../layout/header') %>
+
+<form id="otpForm">
+    <div class="h-screen dark:bg-gray-900 py-20 px-3">
+      <div class="container py-20 mx-auto">
+        <div class="max-w-sm mx-auto md:max-w-lg">
+          <div class="w-full">
+            <div class="dark:bg-gray-800 h-70 py-3 rounded text-white text-center">
+              <h1 class="text-2xl font-bold">OTP Verification</h1>
+              <div class="flex flex-col mt-4">
+                <span>Enter the OTP you received at</span>
+                <span class="font-bold">Mail id </span>
+              </div>
+              
+              <div id="otp" class="flex flex-row justify-center text-black text-center px-2 mt-5">
+                <input class="m-2 border h-10 w-10 text-center form-control rounded" type="text" id="first" maxlength="1" oninput="moveToNext(this, 'second')" /> 
+                <input class="m-2 border h-10 w-10 text-center form-control rounded" type="text" id="second" maxlength="1" oninput="moveToNext(this, 'third')" /> 
+                <input class="m-2 border h-10 w-10 text-center form-control rounded" type="text" id="third" maxlength="1" oninput="moveToNext(this, 'fourth')" /> 
+                <input class="m-2 border h-10 w-10 text-center form-control rounded" type="text" id="fourth" maxlength="1" oninput="moveToNext(this, 'btn')"/>
+              </div>
+  
+              <!-- Add an onclick event to call the verifyOTP function -->
+              <button type="button" class="text-white mt-3 bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" id="btn" onclick="verifyOTP()">Submit OTP</button>
+              
+              <div class="flex justify-center text-center mt-5 ">
+                <span id="countdown"></span>
+              </span>
+                <a class="flex items-center text-blue-700 hover:text-blue-900 cursor-pointer" id="hideButton" onclick="hideAndCountdown()"><span class="font-bold" >Resend OTP</span></a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+  
+<%- include('../layout/footer') %>
