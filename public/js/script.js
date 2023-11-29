@@ -42,20 +42,6 @@ function hideAndCountdown() {
 
 
 
-// change the state of user
-// function toggleStatus(userId) {
-//   const statusButton = document.getElementById(`statusButton_${userId}`);
-//   const currentStatus = statusButton.innerText.trim();
-//   const newStatus = currentStatus === 'Block' ? 'Unblock' : 'Block';
-
-// }
-
-
-
-
-
-
-
 // Product image change
 function changeMainImage(clickedImage) {
   const mainImage = document.getElementById('main').querySelector('img');

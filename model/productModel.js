@@ -2,24 +2,24 @@ const mongoose = require('mongoose');
 
 
 const productSchema = new mongoose.Schema({
-    images:[{
-        type:String,
-        required: true
+    images: [{
+        data: { type: Buffer, required: true },
+        contentType: { type: String, required: true },
     }],
     brandname:{
         type:String,
-        // ref:'Brand',
         required: true,
     },
     category:{
         type:String,
-        // ref:'Category',
         required: true,
     },
-
+    subcategory:{
+        type:String,
+        required: true,
+    },
     varientname:{
         type:String,
-        // ref:'Varient',
         required: true,
     },
     description:{

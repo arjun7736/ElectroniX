@@ -34,4 +34,9 @@ adminRoute.get('/addproducts',Auth.isAdminLoggedIn,adminController.loadAddproduc
 
 adminRoute.post('/addproducts',adminController.addProduct)
 
+adminRoute.get('/addsubcategory',(req,res)=>res.render('Admin/pages/addsubcategory'))
+
+adminRoute.post('/addsubcategory',adminController.addSubCategory)
+
+
 module.exports = adminRoute

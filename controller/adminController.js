@@ -6,10 +6,19 @@ const AdminDB = require('../model/adminModel')
 const ProductDB = require('../model/productModel')
 const BrandDB = require('../model/brandModel')
 const CategoryDB = require('../model/categoryModel')
-const VarientDB = require('../model/varientModel')
+const SubCategoryDB = require('../model/subcategoryModel')
 const nodemailer = require('nodemailer');
 const crypto = require('crypto');
 require('dotenv').config();
+const multer = require('multer');
+const upload = multer();
+
+
+
+
+
+
+
 
 
 // admin it is admin or not
@@ -84,9 +93,10 @@ const loadBanner = (req, res) => {
 const loadCategory = async (req, res) => {
     try {
         const categoryList = await CategoryDB.find()
-        const brandList =await BrandDB.find()
-        res.render('Admin/pages/category',{brandList,categoryList})
-    } catch(error) {
+        const brandList = await BrandDB.find()
+        const subcategoryList =await SubCategoryDB.find()
+        res.render('Admin/pages/category', { brandList, categoryList,subcategoryList })
+    } catch (error) {
         console.error("Error fetching user list:", error);
         res.status(500).send('Internal Server Error');
     }
@@ -94,8 +104,18 @@ const loadCategory = async (req, res) => {
 
 
 // add product
-const loadAddproducts = (req, res) => {
-    res.render("Admin/pages/addproducts")
+const loadAddproducts = async (req, res) => {
+    try {
+        const brand = await BrandDB.find()
+        const category =await CategoryDB.find()
+        const subcategory =await SubCategoryDB.find()
+        res.render('Admin/pages/addproducts',{brand,category,subcategory})
+    }
+    catch(error) {
+        console.error("Error fetching user list:", error);
+        res.status(500).send('Internal Server Error');
+    }
+
 }
 
 
@@ -203,19 +223,29 @@ function verifyOTP() {
 
 // save products
 const addProduct = async (req, res) => {
-    const { images, brandname, category, varientname, price, quantity, description } = req.body;
+    const { images, brandname, category ,subcategory, varientname, price, quantity, description } = req.body;
     try {
-        const product = new ProductDB({
-            images,
-            brandname,
-            category,
-            varientname,
-            price,
-            quantity,
-            description
-        });
 
-        const newproduct = await product.save();
+        // const varient = ProductDB.find({ varientname })
+        console.log(req.body)
+        // if (varient) {
+        //     return res.status(500).json({ message: "Varient already exists" });
+        // }
+        // else{
+            const product = new ProductDB({
+                images,
+                brandname,
+                category,
+                subcategory,
+                varientname,
+                price,
+                quantity,
+                description
+            });
+    
+            const newproduct = await product.save();
+    
+        // }
 
         // Handle successful save
         if (newproduct) {
@@ -277,6 +307,27 @@ const addCategory = async (req, res) => {
 }
 
 
+// add sub category
+const addSubCategory = async (req, res) => {
+    const { subcategoryname } = req.body
+    try {
+        const subcategory = await SubCategoryDB.findOne({ subcategoryname })
+        if (!subcategory) {
+            const SubCategory = new SubCategoryDB({
+                subcategoryname
+            })
+            const newCategory = await SubCategory.save()
+            if (newCategory) {
+                return res.redirect('/admin/category')
+            }
+        } else {
+            return res.send(`${subcategoryname} already exists`)
+        }
+    } catch {
+        console.log("Error Occured")
+    }
+}
+
 
 
 
@@ -320,5 +371,6 @@ module.exports = {
     loadCategory,
     loadAddproducts,
     addBrands,
-    addCategory
+    addCategory,
+    addSubCategory
 }

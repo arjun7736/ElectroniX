@@ -1,0 +1,25 @@
+<%- include('../componants/header') %>
+<div class="flex h-screen bg-gray-50 dark:bg-gray-900">
+  <%- include('../componants/sidebar') %>
+  <div class="flex flex-col flex-1 w-full">
+    <%- include('../componants/navbar') %> 
+    <main class="h-full overflow-y-auto">
+      <div class="container  px-6 mx-auto grid " id="dataContainer">        
+        <h1 class="text-2xl font-semibold mb-4 mt-10 text-white">Add SubCategory</h1>
+
+        <form action="/admin/addsubcategory" method="post">
+          <!-- Input Field -->
+          <div class="mb-6">
+            <label for="subcategoryname" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">SubCategory Name</label>
+            <input type="text" id="subcategoryname" name="subcategoryname" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-2/4  p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+          </div>
+
+          <!-- Submit Button -->
+          <button type="submit" class=" bg-blue-500 w-20 text-white p-2 rounded-md hover:bg-blue-700 cursor-pointer">Submit</button>
+        </form>
+      </div>
+    </main>
+  </div>
+</div>
+
+<%- include('../componants/footer') %>
