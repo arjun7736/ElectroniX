@@ -1,4 +1,4 @@
-
+// move into next box
 function moveToNext(currentInput, nextInputId) {
   const maxLength = parseInt(currentInput.getAttribute('maxlength'));
 
@@ -10,10 +10,6 @@ function moveToNext(currentInput, nextInputId) {
     }
   }
 }
-
-
-
-
 
 
 
@@ -38,12 +34,38 @@ function hideAndCountdown() {
 }
 
 
-
-
-
-
 // Product image change
 function changeMainImage(clickedImage) {
   const mainImage = document.getElementById('main').querySelector('img');
   mainImage.src = clickedImage.src;
 }
+
+
+// login form validation
+  function validateLoginForm() {
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+
+    // Reset error messages
+    document.getElementById('emailError').innerText = '';
+    document.getElementById('passwordError').innerText = '';
+    document.getElementById('loginError').innerText = '';
+
+    // Validate email
+    if (!isValidEmail(email)) {
+      document.getElementById('emailError').innerText = 'Please enter a valid email address';
+      return false;
+    }
+
+    // Validate password
+    if (password.trim() === '') {
+      document.getElementById('passwordError').innerText = 'Password is required';
+      return false;
+    }
+
+  }
+
+  function isValidEmail(email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  }

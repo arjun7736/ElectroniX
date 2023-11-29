@@ -16,9 +16,8 @@ const securepassword = async (password) => {
 
 
 // load Login
-
 const loadLogin = (req, res) => {
-    res.render("User/pages/login")
+    res.render("User/pages/login", { error: null })
 }
 // load Register
 const loadRegister = (req, res) => {
@@ -32,12 +31,12 @@ const forgotPassword = (req, res) => {
 
 // load landing
 const loadLanding = async (req, res) => {
-    try{
-        const user=await UserDB.findById(req.session.user)
+    try {
+        const user = await UserDB.findById(req.session.user)
         console.log(user)
-        res.render("User/pages/landing",{user});
+        res.render("User/pages/landing", { user });
     }
-    catch(error){
+    catch (error) {
         console.log(error.message)
     }
 }
@@ -76,35 +75,51 @@ const insertUser = async (req, res) => {
 }
 
 
-// valied user
+
+
+
+
+// user validation
 const userValid = async (req, res) => {
     const { email, password, isBlocked } = req.body;
-    let error = null;
+
     try {
+        const user = await UserDB.findOne({ email });
+        if (email.trim() === '') {
+            return res.render('User/pages/login', { error: 'EmailRequired' });
+        }
 
-        const user = await UserDB.findOne({ email })
+        if (password.trim() === '') {
+            return res.render('User/pages/login', { error: 'PasswordRequired' });
+        }
+
+        if (!isValidEmail(email)) {
+          return res.render('User/pages/login', { error: 'EnterValiedEmail' });
+        }
+
         if (!user) {
-            error = 'UserNotFound';
+            return res.render('User/pages/login', { error: 'UserNotFound' });
         }
-        const isMatch = await bcrypt.compare(password, user.password)
+
         if (isBlocked) {
-            error = `UserisBlocked`
-        }
-        if (!isMatch) {
-            error = 'InvalidCredentials';
+            return res.render('User/pages/login', { error: 'UserisBlocked' });
         }
 
-        if (error) {
-            res.render('User/pages/login', { error });
+        if (user.password && (await bcrypt.compare(password, user.password))) {
+            req.session.user = user._id;
+            return res.redirect('/landing');
+        } else {
+            return res.render('User/pages/login', { error: 'InvalidCredentials' });
         }
-
-        req.session.user = user._id;
-        return res.redirect('/landing')
-
     } catch (error) {
-        console.log("user invalid")
-        console.log(error.message);
+        console.log("Error validating user:", error.message);
+        res.status(500).send('Internal Server Error');
     }
+};
+
+function isValidEmail(email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
 }
 
 
@@ -116,10 +131,6 @@ const userValid = async (req, res) => {
 
 
 
-
-
-
-
 module.exports = {
-     loadLogin, loadRegister, insertUser, userValid, forgotPassword, loadLanding
+    loadLogin, loadRegister, insertUser, userValid, forgotPassword, loadLanding
 }
