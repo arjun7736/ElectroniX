@@ -90,11 +90,11 @@ const userValid = async (req, res) => {
         }
 
         if (password.trim() === '') {
-            return res.render('User/pages/login', { error: 'PasswordRequired' });
+            return res.render('User/pages/login', { error: 'PasswordRequired' ,email:email});
         }
 
         if (!isValidEmail(email)) {
-          return res.render('User/pages/login', { error: 'EnterValiedEmail' });
+          return res.render('User/pages/login', { error: 'EnterValiedEmail' ,email:email});
         }
 
         if (!user) {
