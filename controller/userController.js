@@ -17,7 +17,7 @@ const securepassword = async (password) => {
 
 // load Login
 const loadLogin = (req, res) => {
-    res.render("User/pages/login", { error: null })
+    res.render("User/pages/login", { error: null ,email:null})
 }
 // load Register
 const loadRegister = (req, res) => {
@@ -82,7 +82,6 @@ const insertUser = async (req, res) => {
 // user validation
 const userValid = async (req, res) => {
     const { email, password, isBlocked } = req.body;
-
     try {
         const user = await UserDB.findOne({ email });
         if (email.trim() === '') {
@@ -90,26 +89,26 @@ const userValid = async (req, res) => {
         }
 
         if (password.trim() === '') {
-            return res.render('User/pages/login', { error: 'PasswordRequired' ,email:email});
+            return res.render('User/pages/login', { error: 'PasswordRequired' ,email});
         }
 
         if (!isValidEmail(email)) {
-          return res.render('User/pages/login', { error: 'EnterValiedEmail' ,email:email});
+          return res.render('User/pages/login', { error: 'EnterValiedEmail' ,email});
         }
 
         if (!user) {
-            return res.render('User/pages/login', { error: 'UserNotFound' });
+            return res.render('User/pages/login', { error: 'UserNotFound' ,email:null});
         }
 
         if (isBlocked) {
-            return res.render('User/pages/login', { error: 'UserisBlocked' });
+            return res.render('User/pages/login', { error: 'UserisBlocked',email:null });
         }
 
         if (user.password && (await bcrypt.compare(password, user.password))) {
             req.session.user = user._id;
             return res.redirect('/landing');
         } else {
-            return res.render('User/pages/login', { error: 'InvalidCredentials' });
+            return res.render('User/pages/login', { error: 'InvalidCredentials',email:null });
         }
     } catch (error) {
         console.log("Error validating user:", error.message);
