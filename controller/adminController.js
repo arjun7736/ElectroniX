@@ -94,8 +94,8 @@ const loadCategory = async (req, res) => {
     try {
         const categoryList = await CategoryDB.find()
         const brandList = await BrandDB.find()
-        const subcategoryList =await SubCategoryDB.find()
-        res.render('Admin/pages/category', { brandList, categoryList,subcategoryList })
+        const subcategoryList = await SubCategoryDB.find()
+        res.render('Admin/pages/category', { brandList, categoryList, subcategoryList })
     } catch (error) {
         console.error("Error fetching user list:", error);
         res.status(500).send('Internal Server Error');
@@ -107,11 +107,11 @@ const loadCategory = async (req, res) => {
 const loadAddproducts = async (req, res) => {
     try {
         const brand = await BrandDB.find()
-        const category =await CategoryDB.find()
-        const subcategory =await SubCategoryDB.find()
-        res.render('Admin/pages/addproducts',{brand,category,subcategory})
+        const category = await CategoryDB.find()
+        const subcategory = await SubCategoryDB.find()
+        res.render('Admin/pages/addproducts', { brand, category, subcategory, })
     }
-    catch(error) {
+    catch (error) {
         console.error("Error fetching user list:", error);
         res.status(500).send('Internal Server Error');
     }
@@ -223,28 +223,33 @@ function verifyOTP() {
 
 // save products
 const addProduct = async (req, res) => {
-    const { images, brandname, category ,subcategory, varientname, price, quantity, description } = req.body;
+    const { images, brandname, category, subcategory, varientname, price, quantity, description } = req.body;
     try {
 
         // const varient = ProductDB.find({ varientname })
-        console.log(req.body)
         // if (varient) {
         //     return res.status(500).json({ message: "Varient already exists" });
         // }
         // else{
-            const product = new ProductDB({
-                images,
-                brandname,
-                category,
-                subcategory,
-                varientname,
-                price,
-                quantity,
-                description
-            });
-    
-            const newproduct = await product.save();
-    
+        const product = new ProductDB({
+            brandname,
+            category,
+            subcategory,
+            varientname,
+            price,
+            quantity,
+            description
+        });
+
+        req.files.forEach(file => {
+            product.images.push({
+                data:file.buffer,
+                contentType:file.mimetype,
+            })
+        })
+
+        const newproduct = await product.save();
+
         // }
 
         // Handle successful save

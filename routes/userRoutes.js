@@ -1,39 +1,38 @@
 const express = require('express');
 const userRoute = express.Router()
-const Auth =require('../middleware/Authentication')
+const Auth = require('../middleware/Authentication')
 const userController = require('../controller/userController')
+const ProductDB = require('../model/productModel')
+const SubCategoryDB = require('../model/subcategoryModel');
+const { loadAddproducts } = require('../controller/adminController');
 
 
 
 
 
+userRoute.get('/register', Auth.isUserLoggedIn, userController.loadRegister)
 
+userRoute.post('/register', userController.insertUser)
 
-userRoute.get('/register',Auth.isUserLoggedIn,userController.loadRegister)
+userRoute.get('/login', Auth.isUserLoggedIn, userController.loadLogin)
 
-userRoute.post('/register',userController.insertUser)
+userRoute.post('/login', userController.userValid)
 
-userRoute.get('/login',Auth.isUserLoggedIn,userController.loadLogin)
+userRoute.get('/logout', Auth.logout, (req, res) => res.redirect('/login'))
 
-userRoute.post('/login',userController.userValid)
+userRoute.get('/landing', userController.loadLanding)
 
-userRoute.get('/logout',Auth.logout,(req,res)=>res.redirect('/login'))
+userRoute.get('/forgotPassword', Auth.isUserLoggedIn, userController.forgotPassword)
 
-userRoute.get('/landing',Auth.isUserLoggedIn,userController.loadLanding)
+userRoute.get('/resetPassword', Auth.isUserLoggedIn, (req, res) => res.render('User/pages/resetPassword'))
 
-userRoute.get('/forgotPassword',Auth.isUserLoggedIn,userController.forgotPassword)
+userRoute.post('/otp', (req, res) => res.render('User/pages/otp'))
 
-userRoute.get('/resetPassword',Auth.isUserLoggedIn,(req,res)=>res.render('User/pages/resetPassword'))
+userRoute.get('/otp', (req, res) => res.render('User/pages/otp'))
 
-userRoute.post('/otp',(req,res)=>res.render('User/pages/otp'))
+userRoute.get('/products', userController.loadProducts)
 
-userRoute.get('/otp',(req,res)=>res.render('User/pages/otp'))
-
-userRoute.get('/products',(req,res)=>res.render('User/pages/products'))
-
-userRoute.get('/productDetails',(req,res)=>res.render('User/pages/productdetails'))
-
+userRoute.get('/productDetails/:productid',userController.loadProductDetails)
 
 
 module.exports = userRoute
- 

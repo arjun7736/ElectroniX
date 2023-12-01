@@ -3,15 +3,15 @@ const mongoose = require('mongoose');
 
 const productSchema = new mongoose.Schema({
     images: [{
-        data: { type: Buffer, required: true },
-        contentType: { type: String, required: true },
+        data: Buffer,
+        contentType: String
     }],
     brandname:{
         type:String,
         required: true,
     },
     category:{
-        type:String,
+        type:String,    
         required: true,
     },
     subcategory:{

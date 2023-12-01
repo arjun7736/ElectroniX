@@ -2,6 +2,16 @@ const express = require('express');
 const adminRoute =express.Router()
 const adminController = require("../controller/adminController")
 const Auth = require("../middleware/Authentication")
+const multer= require('multer')
+const storage =multer.memoryStorage()
+const upload =multer({storage:storage})
+
+
+
+
+
+
+
 
 adminRoute.get('/login',Auth.isAdminLoggedIn,adminController.loadDash)
 
@@ -32,7 +42,7 @@ adminRoute.get('/products',Auth.isAdminLoggedIn,adminController.loadProducts)
 
 adminRoute.get('/addproducts',Auth.isAdminLoggedIn,adminController.loadAddproducts)
 
-adminRoute.post('/addproducts',adminController.addProduct)
+adminRoute.post('/addproducts',upload.array('images',3),adminController.addProduct)
 
 adminRoute.get('/addsubcategory',(req,res)=>res.render('Admin/pages/addsubcategory'))
 
