@@ -2,10 +2,22 @@ const UserDB = require('../model/userModel');
 const bcrypt = require('bcrypt');
 const { render } = require('ejs');
 const session = require("express-session")
+const nodemailer = require('nodemailer');
 const ProductDB = require('../model/productModel')
 const CategoryDB = require('../model/categoryModel')
 const SubCategoryDB = require('../model/subcategoryModel')
 const BrandDB = require('../model/brandModel')
+const OTPDB = require('../model/otpModel')
+const axios = require('axios');
+const registrationData = require('../util/temp')
+
+
+
+
+
+
+
+
 // encrypting password
 
 const securepassword = async (password) => {
@@ -26,6 +38,12 @@ const loadLogin = (req, res) => {
 const loadRegister = (req, res) => {
     res.render("User/pages/register", { error: null, email: null, username: null, mobile: null });
 }
+// load otp
+const loadOtp = (req, res) => {
+    const { email, username, password, mobile } = req.query;
+    res.render('User/pages/otp', { email, username, password, mobile })
+}
+
 
 // load forgot password
 const forgotPassword = (req, res) => {
@@ -35,13 +53,16 @@ const forgotPassword = (req, res) => {
 // load landing
 const loadLanding = async (req, res) => {
     try {
-
-        res.render("User/pages/landing");
+        const Products = await ProductDB.find().limit(4)
+        const SubCategory =await SubCategoryDB.find()
+        res.render("User/pages/landing", { Products,SubCategory });
     }
     catch (error) {
         console.log(error.message)
     }
 }
+
+
 
 
 // load Products
@@ -78,23 +99,69 @@ const loadProducts = async (req, res) => {
 
 
 
-// load Product Details
-const  loadProductDetails = async (req, res) => {
-    // console.log(req.body)
-    const productId = req.params.productid;
-   console.log(productId)
-        try {
-            const produtDetail = await ProductDB.findOne({ _id: productId }, {})
-            // console.log(produtDetail)
-            res.render('User/pages/productdetails', { produtDetail })
 
-        }
-        catch (error) {
-            console.log(error.message)
-        }
+
+
+// load Product Details
+const loadProductDetails = async (req, res) => {
+    const productId = req.params.productid;
+    try {
+        const produtDetail = await ProductDB.findOne({ _id: productId }, {})
+        res.render('User/pages/productdetails', { produtDetail })
+    }
+    catch (error) {
+        console.log(error.message)
+    }
 }
 
 
+
+
+
+// sent otp
+const sendOTP = async (email) => {
+    const otp = Math.floor(1000 + Math.random() * 9000).toString();
+    console.log(otp)
+    // Create a nodemailer transporter
+    const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: process.env.MAIL,
+            pass: process.env.PASS
+        }
+    });
+
+    const mailOptions = {
+        from: process.env.MAIL, // Replace with your Gmail email address
+        to: "arjunvengassery123@gmail.com",
+        subject: 'OTP Verification',
+        text: `Your OTP is: ${otp}. Use this OTP to verify your account.`
+    };
+    try {
+
+        await transporter.sendMail(mailOptions);
+        console.log('OTP sent successfully.');
+
+        return otp; // Return the generated OTP for verification
+    } catch (error) {
+        console.error('Error sending OTP:', error);
+        throw error;
+    }
+};
+
+
+
+const setRegistrationDataMiddleware = (req, res, next) => {
+    const { username, email, password, mobile } = req.body;
+
+    // Set registration data globally
+    registrationData.setRegistrationData({ username, email, password, mobile });
+
+    // Log the data after it's set (useful for debugging)
+    console.log(registrationData.getRegistrationData());
+
+    next();
+};
 
 
 
@@ -116,22 +183,17 @@ const insertUser = async (req, res) => {
 
     if (password === confirmpassword) {
         try {
-            const spassword = await securepassword(password)
-            const user = new UserDB({
-                username,
-                email,
-                password: spassword,
-                mobile
+            const OTP = await sendOTP(email)
+
+            const otp = new OTPDB({
+                otp: OTP,
+                email: email
             })
-            const userData = await user.save()
-            if (userData) {
-                res.redirect('/landing')
 
-                req.session.user = user._id;
+            const newotp = await otp.save()
+            res.render('User/pages/otp', { email })
 
-            } else {
-                res.render('User/pages/register')
-            }
+
 
 
         } catch (error) {
@@ -141,6 +203,41 @@ const insertUser = async (req, res) => {
         return res.render('User/pages/register', { error: 'UnmatchingPassword', email, username, mobile })
     }
 }
+
+
+
+const verifyAndregister = async (req, res) => {
+    // console.log(req.body)
+    const { OTP, email } = req.body
+    const user = await OTPDB.find({ email: email })
+    const otp = user[0].otp
+    // console.log(OTP, otp)
+
+    if (OTP == otp) {
+        const data = registrationData.getRegistrationData();
+        // console.log(data)
+        const { username, email, password, mobile } = data;
+        registrationData.clearRegistrationData();
+        const spassword = await securepassword(password)
+        const user = new UserDB({
+            username,
+            email,
+            password: spassword,
+            mobile
+        })
+        const userData = await user.save()
+        if (userData) {
+            req.session.user = email;
+            res.redirect('/')
+        }
+
+    }
+    else {
+        console.log('Verify and register error')
+    }
+}
+
+
 
 
 
@@ -171,7 +268,7 @@ const userValid = async (req, res) => {
 
         if (user.password && (await bcrypt.compare(password, user.password))) {
             req.session.user = user._id;
-            return res.redirect('/landing');
+            return res.redirect('/');
         } else {
             return res.render('User/pages/login', { error: 'InvalidCredentials', email: null });
         }
@@ -209,5 +306,6 @@ module.exports = {
     loadLanding,
     loadProducts,
     loadProductDetails,
-    
+    verifyAndregister,
+    loadOtp, setRegistrationDataMiddleware
 }

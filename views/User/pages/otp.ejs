@@ -18,11 +18,18 @@
                 <input class="m-2 border h-10 w-10 text-center form-control rounded" type="text" id="third" maxlength="1" oninput="moveToNext(this, 'fourth')" /> 
                 <input class="m-2 border h-10 w-10 text-center form-control rounded" type="text" id="fourth" maxlength="1" oninput="moveToNext(this, 'btn')"/>
               </div>
-  
-              <!-- Add an onclick event to call the verifyOTP function -->
-              <button type="button" class="text-white mt-3 bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" id="btn" onclick="verifyOTP()">Submit OTP</button>
-              
-              <div class="flex justify-center text-center mt-5 ">
+              <a href="/">  <button type="button" class="text-white mt-3 bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" id="btn" onclick="verifyOTP()">Submit OTP</button></a>
+                
+                
+                
+                <input type="hidden" name="email" value="<%= email %>" id="demo1">
+            
+
+
+                
+                
+                
+                <div class="flex justify-center text-center mt-5 ">
                 <span id="countdown"></span>
               </span>
                 <a class="flex items-center text-blue-700 hover:text-blue-900 cursor-pointer" id="hideButton" onclick="hideAndCountdown()"><span class="font-bold" >Resend OTP</span></a>
@@ -35,3 +42,43 @@
   </form>
   
 <%- include('../layout/footer') %>
+
+
+<script>
+function verifyOTP() {
+    const first = document.getElementById('first').value 
+    const second =document.getElementById('second').value 
+    const third  =document.getElementById('third').value 
+   const fourth = document.getElementById('fourth').value;
+const OTP= first+second+third+fourth
+const email=document.getElementById("demo1").value
+// const username=document.getElementById("demo2").value
+// const password=document.getElementById("demo3").value
+// const mobile=document.getElementById("demo4").value
+    const verifyOTPEndpoint = '/otp';
+
+    fetch(verifyOTPEndpoint, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ OTP,email }),
+    })
+        .then(response => response.json())
+        .then(data => {
+            // Handle the response from the server
+            if (data.success) {
+                // OTP is correct. Handle success as needed.
+                alert('OTP is correct. Verification successful!');
+            } else {
+                // Incorrect OTP. Handle failure as needed.
+                alert('Incorrect OTP. Please try again.');
+            }
+        })
+        .catch(error => {
+            // Handle any errors that occur during the fetch
+            console.error('Error:', error);
+        });
+}
+
+</script>

@@ -1,43 +1,42 @@
-<%- include('../layout/header') %>
-    <!-- navbar -->
-    <nav class="bg-gray-800">
-         <div class="flex items-center  justify-between flex-grow md:pl-12 py-5">
-                
-                <div class="w-full max-w-xl relative flex ">
-                    <input type="text" name="search" id="search"
-                        class="w-full border border-primary border-r-0 pl-12 py-3 pr-3 rounded-l-md focus:outline-none hidden md:flex"
-                        placeholder="search">
-                    <button
-                        class="bg-red-500 border border-primary text-white px-10 py-2 rounded-r-md hover:bg-transparent hover:text-primary transition hidden md:flex">Search</button>
-                </div>
-                
-                
-                <div class="flex items-center space-x-6">
-                    <a href="#" class="text-gray-200 hover:text-white transition">Home</a>
-                    <a href="products" class="text-gray-200 hover:text-white transition">Shop</a>
-                </div>
 
-            <div class="flex items-center space-x-4 ">
-                <a href="#" class="text-center text-gray-700 hover:text-primary transition relative">
-                    <div class="text-gray-200 leading-3">Wishlist</div>
-                </a>
-                <a href="#" class="text-center text-gray-700 hover:text-primary transition relative">
-                    <div class="text-2xl">
-                        <i class="fa-solid fa-bag-shopping"></i>
-                    </div>
-                    <div class="text-gray-200 leading-3">Cart</div>
-                </a>
-                <a href="#" class="text-center text-gray-700 hover:text-primary transition relative">
-                    <div class="text-2xl">
-                        <i class="fa-regular fa-user"></i>
-                    </div>
-                    <div class="text-gray-200 leading-3">Account</div>
-                </a>
-            </div>
-            <a href="/logout" class="text-gray-200 hover:text-white transition">Logout</a>
-            <a href="login" class="text-gray-200 hover:text-white transition">Login</a>
-            </div>
-        </div>
-    </nav>
-    <!-- ./navbar -->
-    <%- include('../layout/footer') %>
+    <%- include('../layout/header') %>
+<!-- navbar -->
+<nav class="bg-gray-800">
+  <div class="flex items-center justify-between flex-grow md:pl-12 py-5">
+
+    <div class="w-full max-w-xl relative flex">
+      <input type="text" name="search" id="search"
+             class="w-full border border-primary border-r-0 pl-12 py-3 pr-3 rounded-l-md focus:outline-none hidden md:flex"
+             placeholder="search">
+      <button class="bg-red-500 border border-primary text-white px-10 py-2 rounded-r-md hover:bg-transparent hover:text-primary transition hidden md:flex">Search</button>
+    </div>
+
+    <div class="flex items-center space-x-4 mr-10">
+      <a href="/" class="text-center text-gray-700 hover:text-primary transition relative">
+        <div class="text-gray-200 leading-3">Home</div>
+      </a>
+      <a href="/products" class="text-center text-gray-700 hover:text-primary transition relative">
+        <div class="text-gray-200 leading-3">Shop</div>
+      </a>
+      <a href="#" class="text-center text-gray-700 hover:text-primary transition relative">
+        <div class="text-gray-200 leading-3">Wishlist</div>
+      </a>
+      <a href="#" class="text-center text-gray-700 hover:text-primary transition relative">
+        <div class="text-gray-200 leading-3">Cart</div>
+      </a>
+      <a href="#" class="text-center text-gray-700 hover:text-primary transition relative">
+        <div class="text-gray-200 leading-3">Account</div>
+      </a>
+
+        <a href="/logout" class="text-center text-gray-700 hover:text-primary transition relative">
+          <div class="text-gray-200 leading-3">Logout</div>
+        </a>
+        <a href="login" class="text-center text-gray-700 hover:text-primary transition relative">
+          <div class="text-gray-200 leading-3">Login</div>
+        </a>
+
+    </div>
+  </div>
+</nav>
+<!-- ./navbar -->
+<%- include('../layout/footer') %>

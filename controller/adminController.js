@@ -7,7 +7,6 @@ const ProductDB = require('../model/productModel')
 const BrandDB = require('../model/brandModel')
 const CategoryDB = require('../model/categoryModel')
 const SubCategoryDB = require('../model/subcategoryModel')
-const nodemailer = require('nodemailer');
 const crypto = require('crypto');
 require('dotenv').config();
 const multer = require('multer');
@@ -103,6 +102,60 @@ const loadCategory = async (req, res) => {
 }
 
 
+
+// load product details
+const loadProductDetails = async (req, res) => {
+    const productId = req.params.productid;
+    try {
+        const brand = await BrandDB.find()
+        const category = await CategoryDB.find()
+        const subcategory = await SubCategoryDB.find()
+        const produtDetail = await ProductDB.findOne({ _id: productId }, {})
+        // console.log(produtDetail);
+        res.render('Admin/pages/editproducts', { produtDetail, brand, category, subcategory })
+    }
+    catch (error) {
+        console.log(error.message)
+    }
+}
+
+// save edit product
+const saveEditProduct = async (req, res) => {
+    const { images, brandname, category, subcategory, varientname, price, quantity, description } = req.body;
+    
+    const { productid } = req.params
+    console.log( productid)
+    try {
+        const updatedProduct = await ProductDB.findOneAndUpdate(
+            { _id: productid },
+            {
+                brandname: brandname,
+                category:category,
+                subcategory: subcategory,
+                varientname: varientname,
+                price: price,
+                quantity: quantity,
+                description:description ,
+            },
+            { new: true } 
+        );
+        req.files.forEach(file => {
+            updatedProduct.images.push({
+                data: file.buffer,
+                contentType: file.mimetype,
+            })
+        })
+
+        
+    } catch (error) {
+        console.log(error.message)
+    }
+}
+
+
+
+
+
 // add product
 const loadAddproducts = async (req, res) => {
     try {
@@ -119,105 +172,6 @@ const loadAddproducts = async (req, res) => {
 }
 
 
-
-
-
-
-
-
-// sent otp
-const sendOTP = async (email) => {
-    const otp = Math.floor(1000 + Math.random() * 9000).toString();
-
-    // Create a nodemailer transporter
-    const transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-            user: process.env.MAIL,
-            pass: process.env.PASS
-        }
-    });
-
-    const mailOptions = {
-        from: process.env.MAIL, // Replace with your Gmail email address
-        to: email,
-        subject: 'OTP Verification',
-        text: `Your OTP is: ${otp}. Use this OTP to verify your account.`
-    };
-
-    try {
-
-        await transporter.sendMail(mailOptions);
-        console.log('OTP sent successfully.');
-        return otp; // Return the generated OTP for verification
-    } catch (error) {
-        console.error('Error sending OTP:', error);
-        throw error;
-    }
-};
-
-
-
-
-
-// Function to register the user and send OTP
-const registerAndSendOTP = async () => {
-    // Implement your user registration logic here
-
-    // For demonstration purposes, let's assume a successful registration
-    const registrationSuccessful = true;
-
-    if (registrationSuccessful) {
-        try {
-            // Get the user's email from the form
-            const email = document.getElementById('userEmail').value; // Replace with the actual ID of your email input field
-
-            // Make an API call to your server to send the OTP
-            const response = await fetch('/api/send-otp', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ email }),
-            });
-
-            if (response.ok) {
-                alert('Registration successful. OTP sent!');
-                // Redirect or perform further actions as needed
-            } else {
-                alert('Failed to send OTP. Please try again.');
-                // Handle the error appropriately
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            alert('An error occurred. Please try again.');
-            // Handle the error appropriately
-        }
-    } else {
-        alert('Registration failed. Please check your details and try again.');
-        // Handle the registration failure appropriately
-    }
-}
-
-
-
-
-
-
-// compare otp
-function verifyOTP() {
-    const enteredOTP = document.getElementById('first').value +
-        document.getElementById('second').value +
-        document.getElementById('third').value +
-        document.getElementById('fourth').value;
-    const receivedOTP = '1234'; // Replace with the actual received OTP
-
-    if (enteredOTP === receivedOTP) {
-        alert('OTP is correct. Verification successful!');
-    } else {
-        alert('Incorrect OTP. Please try again.');
-    }
-}
 
 
 
@@ -243,8 +197,8 @@ const addProduct = async (req, res) => {
 
         req.files.forEach(file => {
             product.images.push({
-                data:file.buffer,
-                contentType:file.mimetype,
+                data: file.buffer,
+                contentType: file.mimetype,
             })
         })
 
@@ -368,7 +322,6 @@ module.exports = {
     loadLogin,
     loadUser,
     loadDash,
-    sendOTP,
     addProduct,
     toggleBlockUser,
     loadProducts,
@@ -377,5 +330,8 @@ module.exports = {
     loadAddproducts,
     addBrands,
     addCategory,
-    addSubCategory
+    addSubCategory,
+    loadProductDetails,
+    saveEditProduct,
+
 }

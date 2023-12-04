@@ -15,7 +15,7 @@ const isAdminLoggedIn = async (req, res, next) => {
   if (req.session.admin) {
     next();
   } else if (req.session.user) {
-    res.redirect('/landing');
+    res.redirect('/');
   } else {
     res.render("Admin/pages/login")
   }

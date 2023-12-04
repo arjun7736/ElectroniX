@@ -44,6 +44,10 @@ adminRoute.get('/addproducts',Auth.isAdminLoggedIn,adminController.loadAddproduc
 
 adminRoute.post('/addproducts',upload.array('images',3),adminController.addProduct)
 
+adminRoute.get('/editproducts/:productid',adminController.loadProductDetails)
+
+adminRoute.post('/editproducts/:productid',upload.array('images',3),adminController.saveEditProduct)
+
 adminRoute.get('/addsubcategory',(req,res)=>res.render('Admin/pages/addsubcategory'))
 
 adminRoute.post('/addsubcategory',adminController.addSubCategory)
