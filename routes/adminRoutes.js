@@ -48,6 +48,8 @@ adminRoute.get('/editproducts/:productid',adminController.loadProductDetails)
 
 adminRoute.post('/editproducts/:productid',upload.array('images',3),adminController.saveEditProduct)
 
+adminRoute.post('/deleteproduct/:productid',adminController.softDeleteProduct)
+
 adminRoute.get('/addsubcategory',(req,res)=>res.render('Admin/pages/addsubcategory'))
 
 adminRoute.post('/addsubcategory',adminController.addSubCategory)

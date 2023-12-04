@@ -20,7 +20,7 @@ userRoute.get('/login', Auth.isUserLoggedIn, userController.loadLogin)
 
 userRoute.post('/login', userController.userValid)
 
-userRoute.get('/logout', Auth.logout, (req, res) => res.redirect('/login'))
+userRoute.get('/logout', Auth.logout)
 
 userRoute.get('/', userController.loadLanding)
 

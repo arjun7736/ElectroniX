@@ -233,7 +233,7 @@ const verifyAndregister = async (req, res) => {
 
     }
     else {
-        console.log('Verify and register error')
+        return res.render('User/pages/register', { error: "InvalidOTP", email, username, mobile })
     }
 }
 

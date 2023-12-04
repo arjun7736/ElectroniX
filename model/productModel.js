@@ -6,40 +6,43 @@ const productSchema = new mongoose.Schema({
         data: Buffer,
         contentType: String
     }],
-    brandname:{
-        type:String,
+    brandname: {
+        type: String,
         required: true,
     },
-    category:{
-        type:String,    
+    category: {
+        type: String,
         required: true,
     },
-    subcategory:{
-        type:String,
+    subcategory: {
+        type: String,
         required: true,
     },
-    varientname:{
-        type:String,
+    varientname: {
+        type: String,
         required: true,
     },
-    description:{
-        type:String,
+    description: {
+        type: String,
         required: true,
     },
-    quantity:{
-        type:Number,
+    quantity: {
+        type: Number,
         required: true,
-        min:0,
-        max:1000
+        min: 0,
+        max: 1000
     },
-    price:{
-        type:Number,
+    price: {
+        type: Number,
         required: true,
     },
-
+    isDelete: {
+        type: Boolean,
+        default: false
+    }
 })
 
 
-const Product=mongoose.model('Product',productSchema)
-module.exports=Product
+const Product = mongoose.model('Product', productSchema)
+module.exports = Product
 

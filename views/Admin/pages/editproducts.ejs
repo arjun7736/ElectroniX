@@ -113,35 +113,3 @@
 </div>
 
 <%- include('../componants/footer') %>
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-    // Function to handle file input change event
-    function handleFileInputChange(event) {
-      const previewContainer = document.getElementById("image-preview");
-      // Clear previous previews
-      previewContainer.innerHTML = '';
-
-      // Display selected images (up to 3)
-      const files = event.target.files;
-
-      for (let i = 0; i < Math.min(files.length, 3); i++) {
-        const file = files[i];
-        const reader = new FileReader();
-        const previewImage = document.createElement("img");
-
-        reader.onload = function (e) {
-          previewImage.src = e.target.result;
-          previewImage.classList.add("w-1/3", "h-32", "object-cover", "rounded-md");
-          previewContainer.appendChild(previewImage);
-        };
-
-        reader.readAsDataURL(file);
-      }
-    }
-
-    // Add event listener to file input
-    const fileInput = document.getElementById("image");
-    fileInput.addEventListener("change", handleFileInputChange);
-  });
-</script>
-

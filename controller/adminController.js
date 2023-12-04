@@ -122,22 +122,22 @@ const loadProductDetails = async (req, res) => {
 // save edit product
 const saveEditProduct = async (req, res) => {
     const { images, brandname, category, subcategory, varientname, price, quantity, description } = req.body;
-    
+
     const { productid } = req.params
-    console.log( productid)
+    console.log(productid)
     try {
         const updatedProduct = await ProductDB.findOneAndUpdate(
             { _id: productid },
             {
                 brandname: brandname,
-                category:category,
+                category: category,
                 subcategory: subcategory,
                 varientname: varientname,
                 price: price,
                 quantity: quantity,
-                description:description ,
+                description: description,
             },
-            { new: true } 
+            { new: true }
         );
         req.files.forEach(file => {
             updatedProduct.images.push({
@@ -146,11 +146,43 @@ const saveEditProduct = async (req, res) => {
             })
         })
 
-        
+
     } catch (error) {
         console.log(error.message)
     }
 }
+
+
+
+//soft delete product 
+
+const softDeleteProduct = async (req, res) => {
+    const { productid } = req.params;
+
+    try {
+        const filter = { _id: productid };
+        const existingProduct = await ProductDB.findOne(filter);
+        if (!existingProduct) throw "No such product exists";
+        const updatedIsDelete = !existingProduct.isDelete;
+
+        const update = {
+            $set: { isDelete: updatedIsDelete }
+        };
+
+        const options = { upsert: true };
+        await ProductDB.updateOne(filter, update, options);
+
+        const productList = await ProductDB.find();
+        return res.render('Admin/pages/products', { productList });
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ msg: 'Server error' });
+    }
+};
+
+
+
+
 
 
 
@@ -333,5 +365,5 @@ module.exports = {
     addSubCategory,
     loadProductDetails,
     saveEditProduct,
-
+    softDeleteProduct,
 }
