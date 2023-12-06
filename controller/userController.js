@@ -53,9 +53,9 @@ const forgotPassword = (req, res) => {
 // load landing
 const loadLanding = async (req, res) => {
      try {
-    //     const Products = await ProductDB.find({ isDelete: false }).limit(4)
-    //     const SubCategory = await SubCategoryDB.find()
-        res.render("User/pages/landing",);
+        const Products = await ProductDB.find({ isDelete: false }).limit(4)
+        const SubCategory = await SubCategoryDB.find()
+        res.render("User/pages/landing",{SubCategory,Products});
     }
     catch (error) {
         console.log(error.message)

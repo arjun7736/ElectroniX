@@ -47,12 +47,13 @@
     <div class="container  py-16 px-20 data-te-smooth-scroll-init">
         <h2 class="text-2xl font-medium text-gray-800 uppercase mb-6">shop by category</h2>
         <div class="grid grid-cols-3 gap-10">
-
+<% SubCategory.forEach((value)=>{ %>   
             <div class="relative rounded-sm overflow-hidden group">
                 <img src="https://media.wired.com/photos/5d39dc7c039d660008515e2e/master/w_320,c_limit/Gear-Logitech-G-PRO-X-Gaming-Headset.jpg" alt="category 1" class="w-full">
                 <a href="#"
-                    class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center text-xl text-white font-roboto font-medium group-hover:bg-opacity-60 transition"></a>
+                    class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center text-xl text-white font-roboto font-medium group-hover:bg-opacity-60 transition"><%=value.subcategoryname %></a>
             </div>
+            <%})%>
         </div>
     </div>
     <!-- ./categories -->
@@ -60,11 +61,11 @@
     <!-- new arrival -->
     <div class="container pb-16 px-20 data-te-smooth-scroll-init">
         <h2 class="text-2xl font-medium text-gray-800 uppercase mb-6 data-te-smooth-scroll-init">top new arrival</h2>
-        
         <div class="grid grid-cols-1 md:grid-cols-4 gap-7">
+            <% Products.forEach((value)=>{ %>   
                 <div class="bg-white hover:shadow-2xl rounded  overflow-hidden group">
                     <div class="relative hover:scale-110 ">
-                        <img src="" alt="product 1" class="w-full">
+                        <img src="data:image/jpg;base64, <%= value.images[0].data.toString('base64') %>" alt="product 1" class="w-full">
                         <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center 
                         justify-center gap-2 opacity-0 group-hover:opacity-100 transition">
                         <a href="#"
@@ -82,12 +83,12 @@
                         </div>
                     </div>
                     <div class="pt-4 pb-3 px-4">
-                        <a href="" class="singleProduct" data-productID="">
+                        <a href="/productDetails/<%= value._id %>" class="singleProduct" data-productID="<%= value._id %>">
                             <h2 class="uppercase font-medium text-xl mb-2 text-gray-800 hover:text-primary transition">
-                                 </h2>
+                                <%= value.brandname %>  <%= value.varientname %>  </h2>
                         </a>
                         <div class="flex items-baseline mb-1 space-x-2">
-                            <p class="text-xl text-primary font-semibold"></p>
+                            <p class="text-xl text-primary font-semibold">&#8377; <%= value.price %></p>
                         </div>
                         <div class="flex items-center">
                             <div class="flex gap-1 text-sm text-yellow-400">
@@ -115,7 +116,7 @@
                     class="block w-full py-1 text-center text-white bg-red-500 border border-primary rounded-b hover:bg-transparent hover:text-black transition">Add
                     to cart</a>
                 </div>
-
+                <%})%>
 
     <!-- ./new arrival -->
 

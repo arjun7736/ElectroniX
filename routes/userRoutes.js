@@ -22,7 +22,7 @@ userRoute.post('/login', userController.userValid)
 
 userRoute.get('/logout', Auth.logout)
 
-userRoute.get('/',Auth.isUserLoggedIn, userController.loadLanding)
+userRoute.get('/', userController.loadLanding)
 
 userRoute.get('/forgotPassword', userController.forgotPassword)
 
