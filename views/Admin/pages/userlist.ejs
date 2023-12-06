@@ -83,29 +83,43 @@
 
 <script>
   document.querySelectorAll(".toggleButton").forEach((button) => {
-    let isClicked = false;
     button.addEventListener("click", function () {
       const userId = button.id.split("_")[1];
-      isClicked = !isClicked;
+      const confirmationMessage = button.innerText === "Block"
+        ? "Are you sure you want to block this user?"
+        : "Are you sure you want to unblock this user?";
 
-      fetch(`/admin/userlist/block/${userId}`, {
-        method: "post",
-      })
-        .then((response) => response.json())
-        .then((updatedUser) => {
-          if (isClicked) {
-            button.innerText = "UnBlock";
-            button.style.backgroundColor = "green";
-          } else {
-            button.innerText = "Block";
-            button.style.backgroundColor = "Red";
-          }
+      Swal.fire({
+        title: 'Confirmation',
+        text: confirmationMessage,
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#4CAF50',
+        cancelButtonColor: '#D9534F', 
+        confirmButtonText: 'Yes',
+        cancelButtonText: 'Cancel',
+      }).then((result) => {
+        if (result.isConfirmed) {
+          fetch(`/admin/userlist/block/${userId}`, {
+            method: "post",
+          })
+            .then((response) => response.json())
+            .then((updatedUser) => {
+              if (button.innerText === "Block") {
+                button.innerText = "UnBlock";
+                button.style.backgroundColor = "green";
+              } else {
+                button.innerText = "Block";
+                button.style.backgroundColor = "red";
+              }
 
-          console.log("User updated:", updatedUser);
-        })
-        .catch((error) => {
-          console.error("Error toggling user block:", error);
-        });
+              console.log("User updated:", updatedUser);
+            })
+            .catch((error) => {
+              console.error("Error toggling user block:", error);
+            });
+        }
+      });
     });
   });
 </script>
