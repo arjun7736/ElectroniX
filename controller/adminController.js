@@ -214,7 +214,7 @@ const softDeleteProduct = async (req, res) => {
         await ProductDB.updateOne(filter, update, options);
 
         const productList = await ProductDB.find({ isDelete: false });
-        return res.render('Admin/pages/products', { productList });
+        return res.json("ok")
     } catch (err) {
         console.error(err);
         return res.status(500).json({ msg: 'Server error' });
@@ -403,6 +403,9 @@ const toggleBlockUser = async (req, res) => {
 
         user.isBlocked = !user.isBlocked;
         const updatedUser = await user.save();
+
+        res.json(updatedUser);
+
     } catch (error) {
         console.error('Error toggling user block:', error);
         res.status(500).json({ error: 'Error toggling user block' });
