@@ -4,7 +4,7 @@ const Auth = require('../middleware/Authentication')
 const userController = require('../controller/userController')
 const ProductDB = require('../model/productModel')
 const SubCategoryDB = require('../model/subcategoryModel');
-const { loadAddproducts } = require('../controller/adminController');
+const adminController = require('../controller/adminController');
 
 
 
@@ -22,11 +22,11 @@ userRoute.post('/login', userController.userValid)
 
 userRoute.get('/logout', Auth.logout)
 
-userRoute.get('/', userController.loadLanding)
+userRoute.get('/',Auth.isUserLoggedIn, userController.loadLanding)
 
-userRoute.get('/forgotPassword', Auth.isUserLoggedIn, userController.forgotPassword)
+userRoute.get('/forgotPassword', userController.forgotPassword)
 
-userRoute.get('/resetPassword', Auth.isUserLoggedIn, (req, res) => res.render('User/pages/resetPassword'))
+userRoute.get('/resetPassword', userController.loadResetPasswordPage)
 
 userRoute.get('/products', userController.loadProducts)
 

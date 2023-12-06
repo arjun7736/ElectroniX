@@ -9,9 +9,16 @@
               <h1 class="text-2xl font-bold">OTP Verification</h1>
               <div class="flex flex-col mt-4">
                 <span>Enter the OTP you received at</span>
-                <span class="font-bold">Mail id </span>
+                <span class="font-bold"><%= email %></span>
               </div>
               
+              <% if (messages.error) { %>
+                <div class="alert alert-danger text-red-500">
+                    <%= messages.error %>
+                </div>
+            <% } %>
+
+
               <div id="otp" class="flex flex-row justify-center text-black text-center px-2 mt-5">
                 <input class="m-2 border h-10 w-10 text-center form-control rounded" type="text" id="first" maxlength="1" oninput="moveToNext(this, 'second')" /> 
                 <input class="m-2 border h-10 w-10 text-center form-control rounded" type="text" id="second" maxlength="1" oninput="moveToNext(this, 'third')" /> 
@@ -45,11 +52,7 @@ function verifyOTP() {
    const fourth = document.getElementById('fourth').value;
 const OTP= first+second+third+fourth
 const email=document.getElementById("demo1").value
-// const username=document.getElementById("demo2").value
-// const password=document.getElementById("demo3").value
-// const mobile=document.getElementById("demo4").value
     const verifyOTPEndpoint = '/otp';
-
     fetch(verifyOTPEndpoint, {
         method: 'POST',
         headers: {
@@ -59,17 +62,13 @@ const email=document.getElementById("demo1").value
     })
         .then(response => response.json())
         .then(data => {
-            // Handle the response from the server
             if (data.success) {
-                // OTP is correct. Handle success as needed.
                 alert('OTP is correct. Verification successful!');
             } else {
-                // Incorrect OTP. Handle failure as needed.
                 alert('Incorrect OTP. Please try again.');
             }
         })
         .catch(error => {
-            // Handle any errors that occur during the fetch
             console.error('Error:', error);
         });
 }

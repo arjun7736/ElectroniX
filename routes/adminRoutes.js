@@ -13,7 +13,7 @@ const upload =multer({storage:storage})
 
 
 
-adminRoute.get('/login',Auth.isAdminLoggedIn,adminController.loadDash)
+adminRoute.get('/login',Auth.isAdminLoggedIn,adminController.loadLogin)
 
 adminRoute.post('/login',adminController.adminCheck)
 
@@ -21,10 +21,7 @@ adminRoute.get('/dashboard',Auth.isAdminLoggedIn,adminController.loadDash)
 
 adminRoute.get('/userlist',Auth.isAdminLoggedIn,adminController.loadUser);
 
-// adminRoute.post("/userlist/unblock/:id",adminController.toggleBlockUser)
-
 adminRoute.post("/userlist/block/:id",adminController.toggleBlockUser)
-
 
 adminRoute.get('/banner',Auth.isAdminLoggedIn,adminController.loadBanner)
 
@@ -34,9 +31,21 @@ adminRoute.get('/addcategory',(req,res)=>{res.render('Admin/pages/addcategory')}
 
 adminRoute.post('/addcategory',adminController.addCategory)
 
-adminRoute.get('/addbrands',(req,res)=>{res.render('Admin/pages/addbrands')})
+adminRoute.get('/editcategory/:productid',adminController.getEditCategory)
+
+adminRoute.post('/editcategory/:productid',adminController.saveUpdateCategory)
+
+
+adminRoute.get('/addbrands',Auth.isAdminLoggedIn,adminController.loadAddBrand)
 
 adminRoute.post('/addbrands',adminController.addBrands)
+
+
+adminRoute.get('/editbrand/:productid',adminController.getEditBrand)
+
+adminRoute.post('/editbrand/:productid',adminController.saveUpdateBrand)
+
+
 
 adminRoute.get('/products',Auth.isAdminLoggedIn,adminController.loadProducts)
 
@@ -50,9 +59,20 @@ adminRoute.post('/editproducts/:productid',upload.array('images',3),adminControl
 
 adminRoute.post('/deleteproduct/:productid',adminController.softDeleteProduct)
 
-adminRoute.get('/addsubcategory',(req,res)=>res.render('Admin/pages/addsubcategory'))
+adminRoute.post('/deleteimage/:productid',adminController.deleteImage)
+
+
+
+adminRoute.get('/addsubcategory',Auth.isAdminLoggedIn,adminController.loadAddSubCategory)
 
 adminRoute.post('/addsubcategory',adminController.addSubCategory)
+
+
+adminRoute.get('/editsubcategory/:productid',adminController.getEditSubCategory)
+
+adminRoute.post('/editsubcategory/:productid',adminController.saveUpdateSubCategory)
+
+
 
 
 module.exports = adminRoute

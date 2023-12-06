@@ -1,5 +1,6 @@
 const bcrypt = require('bcrypt');
 const { render } = require('ejs');
+const flash = require('express-flash');
 const session = require("express-session")
 const UserDB = require('../model/userModel')
 const AdminDB = require('../model/adminModel')
@@ -11,6 +12,7 @@ const crypto = require('crypto');
 require('dotenv').config();
 const multer = require('multer');
 const upload = multer();
+const mongoose = require('mongoose');
 
 
 
@@ -28,10 +30,26 @@ const adminCheck = async (req, res) => {
     try {
         const admin = await AdminDB.findOne({ email });
 
-        if (!admin) {
-            console.error("User not found");
-            return res.redirect("/admin/login");
+        if (email.trim() === '') {
+            req.flash('error', 'Email Required');
+            return res.render('Admin/pages/login');
         }
+
+        if (password.trim() === '') {
+            req.flash('error', 'Password Required');
+            return res.render('Admin/pages/login');
+        }
+
+        if (!isValidEmail(email)) {
+            req.flash('error', 'Enter Valied Email');
+            return res.render('Admin/pages/login');
+        }
+
+        if (!admin) {
+            req.flash('error', 'You Are Not Admin');
+            return res.render('Admin/pages/login');
+        }
+
 
         const isMatch = await bcrypt.compare(password, admin.password);
 
@@ -39,7 +57,9 @@ const adminCheck = async (req, res) => {
             req.session.admin = email;
             return res.redirect("/admin/dashboard");
         } else {
+            req.flash('error', 'Invalid Credentials');
             return res.redirect("/admin/login");
+
         }
     } catch (error) {
         console.error("Error:", error);
@@ -50,10 +70,13 @@ const adminCheck = async (req, res) => {
 
 // load login
 const loadLogin = (req, res) => {
-    res.render("Admin/pages/login")
+    res.render("Admin/pages/login", { error: null })
 }
 
-
+function isValidEmail(email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+}
 
 // load userlist
 const loadUser = async (req, res) => {
@@ -74,7 +97,7 @@ const loadDash = (req, res) => {
 // load products
 const loadProducts = async (req, res) => {
     try {
-        const productList = await ProductDB.find();
+        const productList = await ProductDB.find({});
         res.render('Admin/pages/products', { productList });
     } catch (error) {
         console.error("Error fetching user list:", error);
@@ -87,6 +110,14 @@ const loadProducts = async (req, res) => {
 const loadBanner = (req, res) => {
     res.render("Admin/pages/banner")
 }
+
+
+// load addbrand
+const loadAddBrand = (req, res) => {
+    res.render("Admin/pages/addbrand")
+}
+
+
 
 // load category
 const loadCategory = async (req, res) => {
@@ -126,26 +157,35 @@ const saveEditProduct = async (req, res) => {
     const { productid } = req.params
     console.log(productid)
     try {
-        const updatedProduct = await ProductDB.findOneAndUpdate(
-            { _id: productid },
-            {
-                brandname: brandname,
-                category: category,
-                subcategory: subcategory,
-                varientname: varientname,
-                price: price,
-                quantity: quantity,
-                description: description,
-            },
+        const updateFields =
+        {
+            brandname: brandname,
+            category: category,
+            subcategory: subcategory,
+            varientname: varientname,
+            price: price,
+            quantity: quantity,
+            description: description,
+        }
+
+        const updatedProduct = await ProductDB.findByIdAndUpdate(
+            productid,
+            { $set: updateFields },
             { new: true }
         );
-        req.files.forEach(file => {
-            updatedProduct.images.push({
-                data: file.buffer,
-                contentType: file.mimetype,
-            })
-        })
 
+        if (req.files) {
+            req.files.forEach((file) => {
+                updatedProduct.images.push({ data: file.buffer, contentType: file.mimetype });
+            });
+            await updatedProduct.save();
+        }
+
+
+        if (updatedProduct) {
+            console.log("Product edited successfully.");
+            return res.redirect("/admin/products")
+        }
 
     } catch (error) {
         console.log(error.message)
@@ -172,7 +212,7 @@ const softDeleteProduct = async (req, res) => {
         const options = { upsert: true };
         await ProductDB.updateOne(filter, update, options);
 
-        const productList = await ProductDB.find();
+        const productList = await ProductDB.find({ isDelete: false });
         return res.render('Admin/pages/products', { productList });
     } catch (err) {
         console.error(err);
@@ -182,6 +222,21 @@ const softDeleteProduct = async (req, res) => {
 
 
 
+// delete Image
+const deleteImage = async (req, res) => {
+    let imageId = req.params
+    try {
+        const deleteimg = await ProductDB.findByIdAndUpdate(
+            { _id: imageId },
+            { $pull: { "images": { _id: imageId } } },
+            { new: true }
+        );
+        return res.sendStatus(204);
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ msg: 'Server error' });
+    }
+}
 
 
 
@@ -276,6 +331,11 @@ const addBrands = async (req, res) => {
 
 
 
+// load add subcategory
+const loadAddSubCategory = (req, res) => {
+    res.render('Admin/pages/addsubcategory')
+}
+
 // add category
 const addCategory = async (req, res) => {
     const { categoryname } = req.body
@@ -321,9 +381,6 @@ const addSubCategory = async (req, res) => {
 
 
 
-
-
-
 // userBlock and unblock
 const toggleBlockUser = async (req, res) => {
     const userId = req.params.id;
@@ -342,7 +399,123 @@ const toggleBlockUser = async (req, res) => {
 };
 
 
+// load category edit details
+const getEditCategory = async (req, res) => {
+    let id = req.params.productid;
+    try {
+        const CategoryDetails = await CategoryDB.findById(id);
+        res.render('Admin/pages/editcategory', { CategoryDetails });
+    }
+    catch {
+        console.log('getEditCategory Error')
+    }
+}
 
+
+// save edit category
+const saveUpdateCategory = async (req, res) => {
+    let category = req.body.categoryname;
+    const productid = req.params.productid;
+    try {
+        const updateFields =
+        {
+            categoryname: category
+        }
+        const updatedProduct = await ProductDB.findByIdAndUpdate(
+            productid,
+            { $set: updateFields },
+            { new: true }
+        );
+        await updatedProduct.save();
+        if (updatedProduct) {
+            console.log("Category edited successfully.");
+            return res.redirect("/admin/category")
+        }
+    }
+    catch (error) {
+        console.log(error)
+    }
+}
+
+
+
+// get edit brand
+const getEditBrand = async (req, res) => {
+    let id = req.params.productid;
+    try {
+        const BrandDetails = await BrandDB.findById(id);
+        res.render('Admin/pages/editbrand', { BrandDetails })
+    }
+    catch {
+        console.log('Error in getting brand Details');
+    }
+}
+
+
+// save EditBrand
+const saveUpdateBrand = async (req, res) => {
+    let name = req.body.brandname;
+    const productid = req.params.productid;
+    try {
+        const updateFields =
+        {
+            brandname: name
+        }
+        const updatedProduct = await BrandDB.findByIdAndUpdate(
+            productid,
+            { $set: updateFields },
+            { new: true }
+        );
+        await updatedProduct.save();
+        if (updatedProduct) {
+            console.log("Brand edited successfully.");
+            return res.redirect("/admin/category")
+        }
+    }
+    catch (error) {
+        console.log(error)
+    }
+}
+
+
+
+// load subcategory edit details
+const getEditSubCategory = async (req, res) => {
+    let id = req.params.productid;
+    try {
+        const SubCategoryDetails = await SubCategoryDB.findById(id);
+        res.render('Admin/pages/editsubcategory', { SubCategoryDetails });
+    }
+    catch {
+        console.log('getEditCategory Error')
+    }
+}
+
+
+// save edit subcategory
+const saveUpdateSubCategory = async (req, res) => {
+    let subcategory = req.body.subcategoryname;
+    const productid = req.params.productid;
+    try {
+        const updateFields =
+        {
+            subcategoryname: subcategory
+        }
+        const updatedProduct = await SubCategoryDB.findByIdAndUpdate(
+            productid,
+            { $set: updateFields },
+            { new: true }
+        );
+        await updatedProduct.save();
+        if (updatedProduct) {
+            console.log("Sub Category edited successfully.");
+            return res.redirect("/admin/category")
+        }
+    }
+    catch (error) {
+        console.log(error)
+    }
+}
 
 
 
@@ -366,4 +539,17 @@ module.exports = {
     loadProductDetails,
     saveEditProduct,
     softDeleteProduct,
+    deleteImage,
+    loadAddBrand,
+    loadAddSubCategory,
+    getEditCategory,
+    saveUpdateCategory,
+    getEditBrand,
+    saveUpdateBrand,
+    getEditSubCategory,
+    saveUpdateSubCategory
+
+
+
+
 }

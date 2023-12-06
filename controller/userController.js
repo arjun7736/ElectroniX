@@ -52,10 +52,10 @@ const forgotPassword = (req, res) => {
 
 // load landing
 const loadLanding = async (req, res) => {
-    try {
-        const Products = await ProductDB.find().limit(4)
-        const SubCategory =await SubCategoryDB.find()
-        res.render("User/pages/landing", { Products,SubCategory });
+     try {
+    //     const Products = await ProductDB.find({ isDelete: false }).limit(4)
+    //     const SubCategory = await SubCategoryDB.find()
+        res.render("User/pages/landing",);
     }
     catch (error) {
         console.log(error.message)
@@ -68,7 +68,7 @@ const loadLanding = async (req, res) => {
 // load Products
 const loadProducts = async (req, res) => {
     try {
-        const products = await ProductDB.find();
+        const products = await ProductDB.find({ isDelete: false });
         const categoryCounts = await ProductDB.aggregate([
             {
                 $group: {
@@ -154,10 +154,8 @@ const sendOTP = async (email) => {
 const setRegistrationDataMiddleware = (req, res, next) => {
     const { username, email, password, mobile } = req.body;
 
-    // Set registration data globally
     registrationData.setRegistrationData({ username, email, password, mobile });
 
-    // Log the data after it's set (useful for debugging)
     console.log(registrationData.getRegistrationData());
 
     next();
@@ -233,7 +231,8 @@ const verifyAndregister = async (req, res) => {
 
     }
     else {
-        return res.render('User/pages/register', { error: "InvalidOTP", email, username, mobile })
+        req.flash('error', 'InValied OTP');
+        return res.render('User/pages/register')
     }
 }
 
@@ -242,7 +241,7 @@ const verifyAndregister = async (req, res) => {
 
 
 // user validation
-const userValid = async (req, res) => {
+const userValid = async (req, res, next) => {
     const { email, password, isBlocked } = req.body;
     try {
         const user = await UserDB.findOne({ email });
@@ -268,7 +267,12 @@ const userValid = async (req, res) => {
 
         if (user.password && (await bcrypt.compare(password, user.password))) {
             req.session.user = user._id;
-            return res.redirect('/');
+
+            await loadLanding(req, res);
+
+            // res.redirect('/');
+
+
         } else {
             return res.render('User/pages/login', { error: 'InvalidCredentials', email: null });
         }
@@ -277,6 +281,14 @@ const userValid = async (req, res) => {
         res.status(500).send('Internal Server Error');
     }
 };
+
+
+// user cache contrrol
+
+const deleteCache = async (req, res, next) => {
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
+    next();
+}
 
 // check email is valied
 function isValidEmail(email) {
@@ -290,14 +302,17 @@ function isValidPassword(password) {
     return passwordRegex.test(password);
 }
 
-
-
+// load resetpassword
+const loadResetPasswordPage = (req, res) => {
+    res.render('User/pages/forgotPassword')
+}
 
 
 
 
 
 module.exports = {
+    deleteCache,
     loadLogin,
     loadRegister,
     insertUser,
@@ -307,5 +322,17 @@ module.exports = {
     loadProducts,
     loadProductDetails,
     verifyAndregister,
-    loadOtp, setRegistrationDataMiddleware
+    loadOtp,
+    setRegistrationDataMiddleware,
+    loadResetPasswordPage,
+
+
+
+
+
+
+
+
+
+
 }
