@@ -114,7 +114,7 @@ const loadBanner = (req, res) => {
 
 // load addbrand
 const loadAddBrand = (req, res) => {
-    res.render("Admin/pages/addbrand")
+    res.render("Admin/pages/addbrands")
 }
 
 
@@ -125,7 +125,8 @@ const loadCategory = async (req, res) => {
         const categoryList = await CategoryDB.find()
         const brandList = await BrandDB.find()
         const subcategoryList = await SubCategoryDB.find()
-        res.render('Admin/pages/category', { brandList, categoryList, subcategoryList })
+        // const CategoryDetails =await SubCategoryDB.find()
+        res.render('Admin/pages/category', { brandList, categoryList, subcategoryList, })
     } catch (error) {
         console.error("Error fetching user list:", error);
         res.status(500).send('Internal Server Error');
@@ -312,7 +313,8 @@ const addProduct = async (req, res) => {
 const addBrands = async (req, res) => {
     const { brandname } = req.body
     try {
-        const brand = await BrandDB.findOne({ brandname })
+        const brand = await BrandDB.findOne({ brandname: { $regex: new RegExp(brandname, 'i') } })
+
         if (!brand) {
             const Brand = new BrandDB({
                 brandname
@@ -322,7 +324,8 @@ const addBrands = async (req, res) => {
                 return res.redirect('/admin/category')
             }
         } else {
-            return res.send(`${brandname} already exists`)
+            req.flash('error', `${brandname} is already exists`)
+            res.render('Admin/pages/addbrands')
         }
     } catch {
         console.log("Error Occured")
@@ -336,11 +339,18 @@ const loadAddSubCategory = (req, res) => {
     res.render('Admin/pages/addsubcategory')
 }
 
+
+// load add category
+const loadAddCategory = (req, res) => {
+    res.render('Admin/pages/addcategory')
+}
+
+
 // add category
 const addCategory = async (req, res) => {
     const { categoryname } = req.body
     try {
-        const category = await CategoryDB.findOne({ categoryname })
+        const category = await CategoryDB.findOne({ categoryname: { $regex: new RegExp(categoryname, 'i') } })
         if (!category) {
             const Category = new CategoryDB({
                 categoryname
@@ -350,7 +360,8 @@ const addCategory = async (req, res) => {
                 return res.redirect('/admin/category')
             }
         } else {
-            return res.send(`${categoryname} already exists`)
+            req.flash('error', `${categoryname} is already exists`)
+            return res.render('Admin/pages/addcategory');
         }
     } catch {
         console.log("Error Occured")
@@ -362,7 +373,7 @@ const addCategory = async (req, res) => {
 const addSubCategory = async (req, res) => {
     const { subcategoryname } = req.body
     try {
-        const subcategory = await SubCategoryDB.findOne({ subcategoryname })
+        const subcategory = await SubCategoryDB.findOne({ subcategoryname: { $regex: new RegExp(subcategoryname, 'i') } })
         if (!subcategory) {
             const SubCategory = new SubCategoryDB({
                 subcategoryname
@@ -372,7 +383,9 @@ const addSubCategory = async (req, res) => {
                 return res.redirect('/admin/category')
             }
         } else {
-            return res.send(`${subcategoryname} already exists`)
+            req.flash('error', `${subcategoryname} is already exists`)
+
+            return res.render('Admin/pages/addsubcategory');
         }
     } catch {
         console.log("Error Occured")
@@ -390,8 +403,6 @@ const toggleBlockUser = async (req, res) => {
 
         user.isBlocked = !user.isBlocked;
         const updatedUser = await user.save();
-
-        res.json(updatedUser);
     } catch (error) {
         console.error('Error toggling user block:', error);
         res.status(500).json({ error: 'Error toggling user block' });
@@ -410,32 +421,42 @@ const getEditCategory = async (req, res) => {
         console.log('getEditCategory Error')
     }
 }
-
-
-// save edit category
+// save updated category
 const saveUpdateCategory = async (req, res) => {
     let category = req.body.categoryname;
     const productid = req.params.productid;
     try {
-        const updateFields =
-        {
-            categoryname: category
+        const existingCategory = await CategoryDB.findOne({
+            categoryname: { $regex: new RegExp(category, 'i') }
+        });
+console.log(existingCategory)
+        if (!existingCategory || existingCategory._id.equals(productid)) {
+            const updateFields = {
+                categoryname: category
+            };
+
+            const updatedProduct = await CategoryDB.findByIdAndUpdate(
+                productid,
+                { $set: updateFields },
+                { new: true }
+            );
+
+            if (updatedProduct) {
+                await updatedProduct.save();
+                return res.redirect("/admin/category");
+            }
+        } else {
+            const CategoryDetails = await CategoryDB.findById(productid);
+            req.flash('error', `${category} is already exists`)
+            return res.render('Admin/pages/editcategory', { CategoryDetails });
         }
-        const updatedProduct = await ProductDB.findByIdAndUpdate(
-            productid,
-            { $set: updateFields },
-            { new: true }
-        );
-        await updatedProduct.save();
-        if (updatedProduct) {
-            console.log("Category edited successfully.");
-            return res.redirect("/admin/category")
-        }
+    } catch (error) {
+        console.log(error);
+        return res.status(500).send("Internal Server Error");
     }
-    catch (error) {
-        console.log(error)
-    }
-}
+};
+
+
 
 
 
@@ -457,19 +478,30 @@ const saveUpdateBrand = async (req, res) => {
     let name = req.body.brandname;
     const productid = req.params.productid;
     try {
-        const updateFields =
-        {
-            brandname: name
+        const brand = await BrandDB.findOne({ brandname: { $regex: new RegExp(name, 'i') } })
+        console.log(!brand)
+
+        if (!brand || brand._id.equals(productid)) {
+            const updateFields =
+            {
+                brandname: name
+            }
+            const updatedProduct = await BrandDB.findByIdAndUpdate(
+                productid,
+                { $set: updateFields },
+                { new: true }
+            );
+
+            if (updatedProduct) {
+                await updatedProduct.save();
+                console.log("Brand edited successfully.");
+                return res.redirect("/admin/category")
+            }
         }
-        const updatedProduct = await BrandDB.findByIdAndUpdate(
-            productid,
-            { $set: updateFields },
-            { new: true }
-        );
-        await updatedProduct.save();
-        if (updatedProduct) {
-            console.log("Brand edited successfully.");
-            return res.redirect("/admin/category")
+        else {
+            const BrandDetails = await BrandDB.findById(productid);
+            req.flash('error', `${name} is already exists`)
+            return res.render('Admin/pages/editbrand', { BrandDetails });
         }
     }
     catch (error) {
@@ -497,19 +529,31 @@ const saveUpdateSubCategory = async (req, res) => {
     let subcategory = req.body.subcategoryname;
     const productid = req.params.productid;
     try {
-        const updateFields =
-        {
-            subcategoryname: subcategory
+
+        const existingsubcategory = await SubCategoryDB.findOne({
+            subcategoryname: { $regex: new RegExp(subcategory, 'i') }
+        });
+        if (!existingsubcategory || existingsubcategory._id.equals(productid)) {
+
+            const updateFields =
+            {
+                subcategoryname: subcategory
+            }
+            const updatedProduct = await SubCategoryDB.findByIdAndUpdate(
+                productid,
+                { $set: updateFields },
+                { new: true }
+            );
+            await updatedProduct.save();
+            if (updatedProduct) {
+                console.log("Sub Category edited successfully.");
+                return res.redirect("/admin/category")
+            }
         }
-        const updatedProduct = await SubCategoryDB.findByIdAndUpdate(
-            productid,
-            { $set: updateFields },
-            { new: true }
-        );
-        await updatedProduct.save();
-        if (updatedProduct) {
-            console.log("Sub Category edited successfully.");
-            return res.redirect("/admin/category")
+        else {
+            const SubCategoryDetails = await SubCategoryDB.findById(productid);
+            req.flash('error', `${subcategory} is already exists`)
+            return res.render('Admin/pages/editsubcategory', { SubCategoryDetails });
         }
     }
     catch (error) {
@@ -547,7 +591,9 @@ module.exports = {
     getEditBrand,
     saveUpdateBrand,
     getEditSubCategory,
-    saveUpdateSubCategory
+    saveUpdateSubCategory,
+    loadAddCategory,
+
 
 
 

@@ -9,7 +9,14 @@
 
         <form action="/admin/editsubcategory/<%=SubCategoryDetails._id %>" method="post">
           <!-- Input Field -->
-          <div class="mb-6">
+          
+          <% if (messages.error) { %>
+            <div class="alert alert-danger text-red-500">
+                <%= messages.error %>
+            </div>
+        <% } %>
+
+          <div class="mb-6"> 
             <label for="subcategoryname" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">SubCategory Name</label>
             <input type="text" id="subcategoryname" value="<%=SubCategoryDetails.subcategoryname%>" name="subcategoryname" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-2/4  p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
           </div>

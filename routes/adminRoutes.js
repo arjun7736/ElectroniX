@@ -25,9 +25,9 @@ adminRoute.post("/userlist/block/:id",adminController.toggleBlockUser)
 
 adminRoute.get('/banner',Auth.isAdminLoggedIn,adminController.loadBanner)
 
-adminRoute.get('/category',Auth.isAdminLoggedIn,adminController.loadCategory)
+adminRoute.get('/category',adminController.loadCategory)
 
-adminRoute.get('/addcategory',(req,res)=>{res.render('Admin/pages/addcategory')})
+adminRoute.get('/addcategory',adminController.loadAddCategory)
 
 adminRoute.post('/addcategory',adminController.addCategory)
 
