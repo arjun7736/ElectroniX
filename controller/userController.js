@@ -166,6 +166,11 @@ const setRegistrationDataMiddleware = (req, res, next) => {
 //validate and create new user data
 const insertUser = async (req, res) => {
     const { username, email, password, confirmpassword, mobile } = req.body;
+
+    const existingMail = await UserDB.findOne({ email: { $regex: new RegExp(email, 'i') } })
+    if(existingMail){
+        return res.render('User/pages/register',{error:'ExistingEmail',email:null,username,mobile})
+    }
     if (email.trim() === '') {
         return res.render('User/pages/register', { error: 'EmailRequired', email: null, username, mobile });
     }
@@ -268,10 +273,7 @@ const userValid = async (req, res, next) => {
         if (user.password && (await bcrypt.compare(password, user.password))) {
             req.session.user = user._id;
 
-            await loadLanding(req, res);
-
-            // res.redirect('/');
-
+            res.redirect('/');
 
         } else {
             return res.render('User/pages/login', { error: 'InvalidCredentials', email: null });
