@@ -52,10 +52,13 @@ const forgotPassword = (req, res) => {
 
 // load landing
 const loadLanding = async (req, res) => {
-     try {
+    try {
         const Products = await ProductDB.find({ isDelete: false }).limit(4)
         const SubCategory = await SubCategoryDB.find()
-        res.render("User/pages/landing",{SubCategory,Products});
+        if(req.session.user){
+            
+        }
+        res.render("User/pages/landing", { SubCategory, Products });
     }
     catch (error) {
         console.log(error.message)
@@ -168,8 +171,8 @@ const insertUser = async (req, res) => {
     const { username, email, password, confirmpassword, mobile } = req.body;
 
     const existingMail = await UserDB.findOne({ email: { $regex: new RegExp(email, 'i') } })
-    if(existingMail){
-        return res.render('User/pages/register',{error:'ExistingEmail',email:null,username,mobile})
+    if (existingMail) {
+        return res.render('User/pages/register', { error: 'ExistingEmail', email: null, username, mobile })
     }
     if (email.trim() === '') {
         return res.render('User/pages/register', { error: 'EmailRequired', email: null, username, mobile });
@@ -218,7 +221,6 @@ const verifyAndregister = async (req, res) => {
 
     if (OTP == otp) {
         const data = registrationData.getRegistrationData();
-        // console.log(data)
         const { username, email, password, mobile } = data;
         registrationData.clearRegistrationData();
         const spassword = await securepassword(password)
@@ -230,14 +232,17 @@ const verifyAndregister = async (req, res) => {
         })
         const userData = await user.save()
         if (userData) {
-            req.session.user = email;
+            const user = await UserDB.findOne({ email: email })
+            console.log(user)
+            req.session.user = user._id;
+            console.log(req.session.user)
             res.redirect('/')
         }
-
     }
     else {
         req.flash('error', 'InValied OTP');
-        return res.render('User/pages/register')
+        console.log("Working error")
+        res.render('User/pages/register')
     }
 }
 
@@ -272,7 +277,6 @@ const userValid = async (req, res, next) => {
 
         if (user.password && (await bcrypt.compare(password, user.password))) {
             req.session.user = user._id;
-
             res.redirect('/');
 
         } else {

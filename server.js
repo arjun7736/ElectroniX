@@ -12,7 +12,7 @@ const userRoute = require('./routes/userRoutes')
 const adminRoute = require('./routes/adminRoutes')
 const cors = require('cors');
 const flash = require('express-flash');
-
+const {checkUserSession}=require('./middleware/Authentication')
 
 
 
@@ -31,11 +31,11 @@ app.use(session({
     resave: false,
     saveUninitialized: true,
 }))
-app.use(flash());
+app.use(checkUserSession)
 
+app.use(flash());
 app.use('/',userRoute)
 app.use('/admin',adminRoute)
-
 
 
 

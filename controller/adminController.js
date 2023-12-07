@@ -268,7 +268,6 @@ const addProduct = async (req, res) => {
     const { images, brandname, category, subcategory, varientname, price, quantity, description } = req.body;
     try {
 
-        // const varient = ProductDB.find({ varientname })
         const existingProduct = await ProductDB.findOne({ brandname, varientname });
 
         if (existingProduct) {

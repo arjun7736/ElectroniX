@@ -31,8 +31,17 @@ const logout = (req, res, next) => {
 
 
 
+// authMiddleware.js
+const  checkUserSession = (req, res, next) => {
+  res.locals.user = req.session.user || null;
+  next();
+};
+
+
+
+
 
 
 module.exports = {
-  isAdminLoggedIn, logout, isUserLoggedIn
+  isAdminLoggedIn, logout, isUserLoggedIn,checkUserSession
 }

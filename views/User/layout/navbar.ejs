@@ -28,15 +28,19 @@
         <div class="text-gray-200 leading-3">Account</div>
       </a>
 
+      <% if(locals.user){   %> 
         <a href="/logout" class="text-center text-gray-700 hover:text-primary transition relative">
           <div class="text-gray-200 leading-3">Logout</div>
         </a>
-        <a href="login" class="text-center text-gray-700 hover:text-primary transition relative">
+        <%} else{ %>
+        <a href="/login" class="text-center text-gray-700 hover:text-primary transition relative">
           <div class="text-gray-200 leading-3">Login</div>
         </a>
-
+        <a href="/register" class="text-center text-gray-700 hover:text-primary transition relative">
+          <div class="text-gray-200 leading-3">Register</div>
+        </a>
+        <%} %>
     </div>
   </div>
 </nav>
-<!-- ./navbar -->
 <%- include('../layout/footer') %>
