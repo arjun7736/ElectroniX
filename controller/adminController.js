@@ -269,38 +269,45 @@ const addProduct = async (req, res) => {
     try {
 
         // const varient = ProductDB.find({ varientname })
-        // if (varient) {
-        //     return res.status(500).json({ message: "Varient already exists" });
-        // }
-        // else{
-        const product = new ProductDB({
-            brandname,
-            category,
-            subcategory,
-            varientname,
-            price,
-            quantity,
-            description
-        });
+        const existingProduct = await ProductDB.findOne({ brandname, varientname });
 
-        req.files.forEach(file => {
-            product.images.push({
-                data: file.buffer,
-                contentType: file.mimetype,
-            })
-        })
+        if (existingProduct) {
 
-        const newproduct = await product.save();
+            req.flash('error', `A product with ${brandname}&${varientname} is already exists`)
 
-        // }
-
-        // Handle successful save
-        if (newproduct) {
-            return res.redirect('/admin/products');
-        } else {
-            console.log("Error: Product not saved");
-            return res.status(500).json({ error: "Internal Server Error" });
+            const brand = await BrandDB.find()
+            const category = await CategoryDB.find()
+            const subcategory = await SubCategoryDB.find()
+            res.render('Admin/pages/addproducts', { brand, category, subcategory })
         }
+        else {
+            const product = new ProductDB({
+                brandname,
+                category,
+                subcategory,
+                varientname,
+                price,
+                quantity,
+                description
+            });
+
+            req.files.forEach(file => {
+                product.images.push({
+                    data: file.buffer,
+                    contentType: file.mimetype,
+                })
+            })
+
+            const newproduct = await product.save();
+
+            if (newproduct) {
+                return res.redirect('/admin/products');
+            } else {
+                console.log("Error: Product not saved");
+                return res.status(500).json({ error: "Internal Server Error" });
+            }
+        }
+        
     } catch (error) {
         console.log("Error Occurred:", error.message);
         return res.status(500).json({ error: "catch Server Error" });
@@ -432,7 +439,7 @@ const saveUpdateCategory = async (req, res) => {
         const existingCategory = await CategoryDB.findOne({
             categoryname: { $regex: new RegExp(category, 'i') }
         });
-console.log(existingCategory)
+        console.log(existingCategory)
         if (!existingCategory || existingCategory._id.equals(productid)) {
             const updateFields = {
                 categoryname: category

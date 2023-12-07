@@ -75,6 +75,11 @@
               </div>    
         
         
+              <% if (messages.error) { %>
+                <div class="alert alert-danger text-red-500">
+                    <%= messages.error %>
+                </div>
+            <% } %>
               <!-- Number Input -->
               <div class="mb-4">
                 <label for="quantity" class="block text-sm font-medium text-white">Quantity</label>
