@@ -67,13 +67,15 @@
         <!-- products -->
         <div class="col-span-3">
             <div class="flex items-center mb-4">
+                <form action="/products" method="get">
                 <select name="sort" id="sort"
                     class="w-44 text-sm text-gray-600 py-3 px-4 border-gray-300 shadow-sm rounded focus:ring-primary focus:border-primary">
-                    <option value="">Default sorting</option>
-                    <option value="price-low-to-high">Price low to high</option>
-                    <option value="price-high-to-low">Price high to low</option>
-                    <option value="latest">Latest product</option>
+                    <option value="default" <% if (sortBy === 'default') { %>selected<% } %>>Default sorting</option>
+                    <option value="priceLowToHigh" <% if (sortBy === 'priceLowToHigh') { %>selected<% } %>>Price low to high</option>
+                    <option value="priceHighToLow" <% if (sortBy === 'priceHighToLow') { %>selected<% } %>>Price high to low</option>   
                 </select>
+                <button type="submit">Apply</button>
+            </form>
             </div>
 
             <div class="grid md:grid-cols-3 grid-cols-2 gap-6">
@@ -139,6 +141,36 @@
     </div>
 <%- include('../layout/footer') %>
 
-  
+<script>
+    document.getElementById('sortForm').addEventListener('submit', async function (event) {
+        event.preventDefault();
+        const sortBy = document.getElementById('sort').value;
 
+        try {
+            // Send a request to the server with the sorting parameter
+            const response = await fetch(`/products?sort=${sortBy}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                    // You can add other headers if needed
+                },
+            });
 
+            if (!response.ok) {
+                throw new Error(`Request failed with status ${response.status}`);
+            }
+
+            // Parse the JSON response
+            const data = await response.json();
+
+            // Update the page content based on the server response
+            // For example, you might replace the product grid or update a specific section
+            // You need to customize this part based on your specific HTML structure
+            document.getElementById('dataContainer').innerHTML = data;
+
+        } catch (error) {
+            console.error('Error:', error);
+            // Handle the error as needed
+        }
+    });
+</script>
