@@ -306,7 +306,7 @@ const addProduct = async (req, res) => {
                 return res.status(500).json({ error: "Internal Server Error" });
             }
         }
-        
+
     } catch (error) {
         console.log("Error Occurred:", error.message);
         return res.status(500).json({ error: "catch Server Error" });
@@ -406,6 +406,10 @@ const toggleBlockUser = async (req, res) => {
 
     try {
         const user = await UserDB.findById(userId);
+        // console.log(req.session,res.locals.user,req.session.user)
+        // if (req.session) {
+        //     req.session.destroy();
+        //   }
 
         user.isBlocked = !user.isBlocked;
         const updatedUser = await user.save();

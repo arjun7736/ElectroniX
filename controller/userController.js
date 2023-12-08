@@ -55,9 +55,6 @@ const loadLanding = async (req, res) => {
     try {
         const Products = await ProductDB.find({ isDelete: false }).limit(4)
         const SubCategory = await SubCategoryDB.find()
-        if(req.session.user){
-            
-        }
         res.render("User/pages/landing", { SubCategory, Products });
     }
     catch (error) {
@@ -251,8 +248,10 @@ const verifyAndregister = async (req, res) => {
 
 
 // user validation
-const userValid = async (req, res, next) => {
-    const { email, password, isBlocked } = req.body;
+const userValid = async (req, res, ) => {
+    const { email, password,} = req.body;
+    const Block=await UserDB.findOne({email:email})
+
     try {
         const user = await UserDB.findOne({ email });
         if (email.trim() === '') {
@@ -271,7 +270,7 @@ const userValid = async (req, res, next) => {
             return res.render('User/pages/login', { error: 'UserNotFound', email: null });
         }
 
-        if (isBlocked) {
+        if (Block.isBlocked) {
             return res.render('User/pages/login', { error: 'UserisBlocked', email: null });
         }
 
@@ -289,12 +288,6 @@ const userValid = async (req, res, next) => {
 };
 
 
-// user cache contrrol
-
-const deleteCache = async (req, res, next) => {
-    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
-    next();
-}
 
 // check email is valied
 function isValidEmail(email) {
@@ -318,7 +311,6 @@ const loadResetPasswordPage = (req, res) => {
 
 
 module.exports = {
-    deleteCache,
     loadLogin,
     loadRegister,
     insertUser,
@@ -331,8 +323,6 @@ module.exports = {
     loadOtp,
     setRegistrationDataMiddleware,
     loadResetPasswordPage,
-
-
 
 
 

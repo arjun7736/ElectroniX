@@ -29,7 +29,7 @@ app.use(express.urlencoded({ extended: true }))
 app.use(session({
     secret: uuid.v4(),
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: false,
 }))
 app.use(checkUserSession)
 
