@@ -1,0 +1,147 @@
+<%- include('../layout/header') %> <%- include('../layout/navbar') %>
+
+<!-- account wrapper -->
+<div class="container grid grid-cols-12 items-start gap-6 pt-4 pb-16">
+  <!-- sidebar -->
+  <div class="col-span-3 shadow-lg">
+    <div class="px-4 py-3 shadow flex items-center gap-4">
+      <div class="flex-shrink-0">
+        <img
+          src="  "
+          alt="profile"
+          class="rounded-full w-14 h-14 border border-gray-200 p-1 object-cover"
+        />
+      </div>
+      <div class="flex-grow">
+        <p class="text-gray-600">Hello,</p>
+        <h4 class="text-gray-800 font-medium">name</h4>
+      </div>
+    </div>
+
+    <div
+      class="mt-6 bg-white shadow rounded p-4 divide-y divide-gray-200 space-y-4 text-gray-600"
+    >
+      <div class="space-y-1 pl-8">
+        <a
+          href="#"
+          class="relative text-primary block font-medium capitalize transition"
+        >
+          <span class="absolute -left-8 top-0 text-base">
+            <i class="fa-regular fa-address-card"></i>
+          </span>
+          Manage account
+        </a>
+        <a
+          href="/account"
+          class="relative hover:text-primary block capitalize transition"
+        >
+          Profile information
+        </a>
+        <a
+          href="/address"
+          class="relative hover:text-primary block capitalize transition"
+        >
+          Manage addresses
+        </a>
+        <a
+          href="/changepassword"
+          class="relative hover:text-primary block capitalize transition"
+        >
+          Change password
+        </a>
+      </div>
+
+      <div class="space-y-1 pl-8 pt-4">
+        <a
+          href="#"
+          class="relative hover:text-primary block font-medium capitalize transition"
+        >
+          <span class="absolute -left-8 top-0 text-base">
+            <i class="fa-solid fa-box-archive"></i>
+          </span>
+          My order history
+        </a>
+        <a
+          href="#"
+          class="relative hover:text-primary block capitalize transition"
+        >
+          My returns
+        </a>
+        <a
+          href="#"
+          class="relative hover:text-primary block capitalize transition"
+        >
+          My Cancellations
+        </a>
+      </div>
+
+      <div class="space-y-1 pl-8 pt-4">
+        <a
+          href="#"
+          class="relative hover:text-primary block font-medium capitalize transition"
+        >
+          <span class="absolute -left-8 top-0 text-base">
+            <i class="fa-regular fa-credit-card"></i>
+          </span>
+          Payment methods
+        </a>
+        <a
+          href="#"
+          class="relative hover:text-primary block capitalize transition"
+        >
+          voucher
+        </a>
+      </div>
+
+      <div class="space-y-1 pl-8 pt-4">
+        <a
+          href="/logout"
+          class="relative hover:text-primary block font-medium capitalize transition"
+        >
+          <span class="absolute -left-8 top-0 text-base">
+            <i class="fa-regular fa-arrow-right-from-bracket"></i>
+          </span>
+          Logout
+        </a>
+      </div>
+    </div>
+  </div>
+  <!-- ./sidebar -->
+
+  <!-- info -->
+
+<div class="col-span-9 grid grid-cols-3 gap-4">
+    <div class="col-span-1">
+        <button class="rounded-lg bg-blue-500 px-4 py-2  text-white my-4">Add new Address</button>
+    </div>
+   
+
+    <div class="col-span-4 shadow-lg">
+        <div class="shadow rounded bg-white p-6">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="font-medium text-gray-800 text-lg"></h3>
+                <a href="#" class="text-primary">Edit</a>
+            </div>
+            <div class="space-y-2">
+                <div class="pb-4 mb-4 flex flex-col md:flex-row md:items-center">
+                    <p class="text-gray-700 font-medium mr-2">John Doe</p>
+                    <p class="text-gray-800">Place</p>
+                </div>
+                <div class="pb-4 mb-4 flex flex-col md:flex-row md:items-center">
+                    <p class="text-gray-800">pincode</p>
+                    <p class="text-gray-800 ml-2">mobile</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+
+
+</div>
+
+</div>
+
+
+<!-- ./info -->
+</div>
+<%- include('../layout/footer') %>

@@ -8,7 +8,7 @@ const loadCart = async (req, res) => {
         res.render('User/pages/cart')
     }else{
         console.log("poyi login cheyyeda")
-        res.json('Create account')
+        res.redirect('/login')
     }
 }
 

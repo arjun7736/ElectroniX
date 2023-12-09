@@ -1,123 +1,278 @@
-<%- include('../layout/header') %>
-<%- include('../layout/navbar') %>
+<%- include('../layout/header') %> <%- include('../layout/navbar') %>
 
-    <!-- account wrapper -->
-    <div class="container grid grid-cols-12 items-start gap-6 pt-4 pb-16">
+<!-- account wrapper -->
+<div class="container grid grid-cols-12 items-start gap-6 pt-4 pb-16">
+  <!-- sidebar -->
+  <div class="col-span-3">
+    <div class="px-4 py-3 shadow flex items-center gap-4">
+      <div class="flex-shrink-0">
+        <img
+          src=" image link "
+          alt="profile"
+          class="rounded-full w-14 h-14 border border-gray-200 p-1 object-cover"
+        />
+      </div>
+      <div class="flex-grow">
+        <p class="text-gray-600">Hello,</p>
+        <h4 class="text-gray-800 font-medium">name</h4>
+      </div>
+    </div>
 
-        <!-- sidebar -->
-        <div class="col-span-3">
-            <div class="px-4 py-3 shadow flex items-center gap-4">
-                <div class="flex-shrink-0">
-                    <img src="  " alt="profile"
-                        class="rounded-full w-14 h-14 border border-gray-200 p-1 object-cover">
-                </div>
-                <div class="flex-grow">
-                    <p class="text-gray-600">Hello,</p>
-                    <h4 class="text-gray-800 font-medium">John Doe</h4>
-                </div>
-            </div>
+    <div
+      class="mt-6 bg-white shadow rounded p-4 divide-y divide-gray-200 space-y-4 text-gray-600"
+    >
+      <div class="space-y-1 pl-8">
+        <a
+          href="#"
+          class="relative text-primary block font-medium capitalize transition"
+        >
+          <span class="absolute -left-8 top-0 text-base">
+            <i class="fa-regular fa-address-card"></i>
+          </span>
+          Manage account
+        </a>
+        <a
+          href="/account"
+          class="relative hover:text-primary block capitalize transition"
+        >
+          Profile information
+        </a>
+        <a
+          href="/address"
+          class="relative hover:text-primary block capitalize transition"
+        >
+          Manage addresses
+        </a>
+        <a
+          href="/changepassword"
+          class="relative hover:text-primary block capitalize transition"
+        >
+          Change password
+        </a>
+      </div>
 
-            <div class="mt-6 bg-white shadow rounded p-4 divide-y divide-gray-200 space-y-4 text-gray-600">
-                <div class="space-y-1 pl-8">
-                    <a href="#" class="relative text-primary block font-medium capitalize transition">
-                        <span class="absolute -left-8 top-0 text-base">
-                            <i class="fa-regular fa-address-card"></i>
-                        </span>
-                        Manage account
-                    </a>
-                    <a href="#" class="relative hover:text-primary block capitalize transition">
-                        Profile information
-                    </a>
-                    <a href="#" class="relative hover:text-primary block capitalize transition">
-                        Manage addresses
-                    </a>
-                    <a href="#" class="relative hover:text-primary block capitalize transition">
-                        Change password
-                    </a>
-                </div>
+      <div class="space-y-1 pl-8 pt-4">
+        <a
+          href=""
+          class="relative hover:text-primary block font-medium capitalize transition"
+        >
+          <span class="absolute -left-8 top-0 text-base">
+            <i class="fa-solid fa-box-archive"></i>
+          </span>
+          My order history
+        </a>
+        <a
+          href="#"
+          class="relative hover:text-primary block capitalize transition"
+        >
+          My Orders
+        </a>
+        <a
+          href=""
+          class="relative hover:text-primary block capitalize transition"
+        >
+          My returns
+        </a>
+        <a
+          href="#"
+          class="relative hover:text-primary block capitalize transition"
+        >
+          My Cancellations
+        </a>
+      </div>
 
-                <div class="space-y-1 pl-8 pt-4">
-                    <a href="#" class="relative hover:text-primary block font-medium capitalize transition">
-                        <span class="absolute -left-8 top-0 text-base">
-                            <i class="fa-solid fa-box-archive"></i>
-                        </span>
-                        My order history
-                    </a>
-                    <a href="#" class="relative hover:text-primary block capitalize transition">
-                        My returns
-                    </a>
-                    <a href="#" class="relative hover:text-primary block capitalize transition">
-                        My Cancellations
-                    </a>
-                </div>
+      <div class="space-y-1 pl-8 pt-4">
+        <a
+          href=""
+          class="relative hover:text-primary block font-medium capitalize transition"
+        >
+          <span class="absolute -left-8 top-0 text-base">
+            <i class="fa-regular fa-credit-card"></i>
+          </span>
+          Payment methods
+        </a>
+        <a
+          href="/coupens"
+          class="relative hover:text-primary block capitalize transition"
+        >
+          Coupens
+        </a>
+      </div>
 
-                <div class="space-y-1 pl-8 pt-4">
-                    <a href="#" class="relative hover:text-primary block font-medium capitalize transition">
-                        <span class="absolute -left-8 top-0 text-base">
-                            <i class="fa-regular fa-credit-card"></i>
-                        </span>
-                        Payment methods
-                    </a>
-                    <a href="#" class="relative hover:text-primary block capitalize transition">
-                        voucher
-                    </a>
-                </div>
+      <div class="space-y-1 pl-8 pt-4">
+        <a
+          href="/logout"
+          class="relative hover:text-primary block font-medium capitalize transition"
+        >
+          <span class="absolute -left-8 top-0 text-base">
+            <i class="fa-regular fa-arrow-right-from-bracket"></i>
+          </span>
+          Logout
+        </a>
+      </div>
+    </div>
+  </div>
+  <!-- ./sidebar -->
+  <!-- info -->
+  <div class="col-span-9 shadow rounded px-6 pt-5 pb-7">
+    <h4 class="text-lg font-medium capitalize mb-4">Profile information</h4>
 
-                
-
-                <div class="space-y-1 pl-8 pt-4">
-                    <a href="/logout" class="relative hover:text-primary block font-medium capitalize transition">
-                        <span class="absolute -left-8 top-0 text-base">
-                            <i class="fa-regular fa-arrow-right-from-bracket"></i>
-                        </span>
-                        Logout
-                    </a>
-                </div>
-
-            </div>
+    <div class="flex ml-10 mb-6">
+      <div class="relative">
+        <img
+          src="path/to/profile/photo.jpg"
+          alt="profile"
+          class="rounded-full w-20 h-20 border border-gray-200 p-1 object-cover"
+        />
+        <!-- Add an overlay for changing profile photo -->
+        <div
+          class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 hover:opacity-100 transition duration-300"
+        >
+          <button class="text-white">Change Photo</button>
         </div>
-        <!-- ./sidebar -->
+      </div>
+    </div>
 
-        <!-- info -->
-        <div class="col-span-9 grid grid-cols-3 gap-4">
-
-            <div class="shadow rounded bg-white px-4 pt-6 pb-8">
-                <div class="flex items-center justify-between mb-4">
-                    <h3 class="font-medium text-gray-800 text-lg">Personal Profile</h3>
-                    <a href="#" class="text-primary">Edit</a>
-                </div>
-                <div class="space-y-1">
-                    <h4 class="text-gray-700 font-medium">John Doe</h4>
-                    <p class="text-gray-800">example@mail.com</p>
-                    <p class="text-gray-800">0811 8877 988</p>
-                </div>
-            </div>
-
-            <div class="shadow rounded bg-white px-4 pt-6 pb-8">
-                <div class="flex items-center justify-between mb-4">
-                    <h3 class="font-medium text-gray-800 text-lg">Shipping address</h3>
-                    <a href="#" class="text-primary">Edit</a>
-                </div>
-                <div class="space-y-1">
-                    <h4 class="text-gray-700 font-medium">John Doe</h4>
-                    <p class="text-gray-800">Medan, North Sumatera</p>
-                    <p class="text-gray-800">20371</p>
-                    <p class="text-gray-800">0811 8877 988</p>
-                </div>
-            </div>
-
-            <div class="shadow rounded bg-white px-4 pt-6 pb-8">
-                <div class="flex items-center justify-between mb-4">
-                    <h3 class="font-medium text-gray-800 text-lg">Billing address</h3>
-                    <a href="#" class="text-primary">Edit</a>
-                </div>
-                <div class="space-y-1">
-                    <h4 class="text-gray-700 font-medium">John Doe</h4>
-                    <p class="text-gray-800">Medan, North Sumatera</p>
-                    <p class="text-gray-800">20317</p>
-                    <p class="text-gray-800">0811 8877 988</p>
-                </div>
-            </div>
-
+    <div class="space-y-4">
+      <div class="grid grid-cols-2 my-6">
+        <div>
+          <label for="username">Username</label>
+          <input
+            type="text"
+            name="username"
+            id="username"
+            value="<%=user.username%>"
+            class="input-box ml-8"
+            readonly
+          />
         </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4 my-10">
+        <div>
+          <label for="email">Email Address</label>
+          <input
+            type="email"
+            name="email"
+            id="email"
+            value="<%=user.email%>"
+            class="input-box ml-2"
+            readonly
+          />
+        </div>
+      </div>
+      <div class="my-10">
+        <label for="mobile">Phone Number</label>
+        <input
+          type="text"
+          name="mobile"
+          value="<%=user.mobile %>"
+          id="mobile"
+          class="input-box ml-1"
+          readonly
+        />
+      </div>
+    </div>
+
+    <div class="mt-4">
+      <button
+        id="editButton"
+        class="rounded-lg bg-blue-500 px-4 py-2 text-white my-4"
+      >
+        Edit Information
+      </button>
+      <button
+        id="saveButton"
+        class="rounded-lg bg-blue-500 px-4 py-2 text-white my-4 hidden"
+      >
+        Save Information
+      </button>
+    </div>
+  </div>
+  <!-- ./info -->
+</div>
+
 <%- include('../layout/footer') %>
+
+
+
+<script>
+  const editButton = document.getElementById("editButton");
+  const saveButton = document.getElementById("saveButton");
+  const usernameInput = document.getElementById("username");
+  const emailInput = document.getElementById("email");
+  const mobileInput = document.getElementById("mobile");
+
+  let originalUsername = usernameInput.value;
+  let originalEmail = emailInput.value;
+  let originalMobile = mobileInput.value;
+
+  editButton.addEventListener("click", async () => {
+    const editConfirm = await Swal.fire({
+      title: "Are you sure you want to edit your profile information?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: "Yes, edit it!",
+      cancelButtonText: "Cancel",
+    });
+    if (editConfirm.isConfirmed) {
+      usernameInput.removeAttribute("readonly");
+      emailInput.removeAttribute("readonly");
+      mobileInput.removeAttribute("readonly");
+      saveButton.classList.remove("hidden");
+      editButton.classList.add("hidden");
+    }
+  });
+
+  saveButton.addEventListener("click", async () => {
+    const updatedUsername = usernameInput.value;
+    const updatedEmail = emailInput.value;
+    const updatedMobile = mobileInput.value;
+
+    if (
+      updatedUsername !== originalUsername ||
+      updatedEmail !== originalEmail ||
+      updatedMobile !== originalMobile
+    ) {
+      const confirmed = await Swal.fire({
+        title: "Are you sure you want to update your profile information?",
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonText: "Yes, update it!",
+        cancelButtonText: "Cancel",
+      });
+
+      if (confirmed.isConfirmed) {
+        const response = await fetch("/account", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            username: updatedUsername,
+            email: updatedEmail,
+            mobile: updatedMobile,
+          }),
+        });
+
+        if (response.ok) {
+          originalUsername = updatedUsername;
+          originalEmail = updatedEmail;
+          originalMobile = updatedMobile;
+
+          await Swal.fire({
+            title: "Success!",
+            text: "Profile information updated successfully!",
+            icon: "success",
+          });
+        } else {
+          await Swal.fire({
+            title: "Error!",
+            text: "Failed to update profile information. Please try again.",
+            icon: "error",
+          });
+        }
+      }
+    }
+  });
+</script>

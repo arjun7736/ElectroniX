@@ -35,8 +35,13 @@ userRoute.get('/productDetails/:productid',userController.loadProductDetails)
 
 userRoute.get('/cart',cartController.loadCart)
 
-userRoute.get('/account',accountController.loadProfile)
+userRoute.get('/account',accountController.loadprofile)
 
+userRoute.post('/account',accountController.saveEditProfile)
+
+userRoute.get('/address',accountController.loadAddress)
+
+userRoute.get('/changepassword',accountController.loadChangePassword)
 
 
 
