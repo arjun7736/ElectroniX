@@ -2,25 +2,22 @@ const mongoose = require('mongoose');
 
 const addressSchema = new mongoose.Schema({
     userId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'
+        type:String,
+        required: true
     },
-    userName: {
+    username: {
         type: String, required: true
     },
     email: {
-        type: String, required: true, unique: true
+        type: String, required: true,
     },
     mobile: {
         type: String, required: true
     },
-    line1: {
+    address: {
         type: String, required: true
     },
-    place: {
-        type: String, required: true
-    },
-    post: {
+    city: {
         type: String, required: true
     },
     postcode: {
