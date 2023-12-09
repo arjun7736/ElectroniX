@@ -5,7 +5,8 @@ const userController = require('../controller/userController')
 const ProductDB = require('../model/productModel')
 const SubCategoryDB = require('../model/subcategoryModel');
 const adminController = require('../controller/adminController');
-
+const cartController = require('../controller/cartController');
+const accountController =require('../controller/profileController')
 
 
 
@@ -31,6 +32,11 @@ userRoute.get('/resetPassword', userController.loadResetPasswordPage)
 userRoute.get('/products', userController.loadProducts)
 
 userRoute.get('/productDetails/:productid',userController.loadProductDetails)
+
+userRoute.get('/cart',cartController.loadCart)
+
+userRoute.get('/account',accountController.loadProfile)
+
 
 
 

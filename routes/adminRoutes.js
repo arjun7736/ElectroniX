@@ -59,7 +59,7 @@ adminRoute.post('/editproducts/:productid',upload.array('images',3),adminControl
 
 adminRoute.post('/deleteproduct/:productid',adminController.softDeleteProduct)
 
-adminRoute.post('/deleteimage/:productid',adminController.deleteImage)
+adminRoute.post('/deleteimage/:imageid/:productid',adminController.deleteImage)
 
 
 

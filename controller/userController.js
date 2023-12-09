@@ -65,59 +65,22 @@ const loadLanding = async (req, res) => {
 
 
 
+
 // load Products
-// const loadProducts = async (req, res) => {
-//     try {
-//         const products = await ProductDB.find({ isDelete: false });
-//         const categoryCounts = await ProductDB.aggregate([
-//             {
-//                 $group: {
-//                     _id: "$category",
-//                     count: { $sum: 1 }
-//                 }
-//             }
-//         ]);
-//         const subcategoryCounts = await ProductDB.aggregate([
-//             {
-//                 $group: {
-//                     _id: "$subcategory",
-//                     count: { $sum: 1 }
-//                 }
-//             }])
-//         const brandCounts = await ProductDB.aggregate([
-//             {
-//                 $group: {
-//                     _id: "$brandname",
-//                     count: { $sum: 1 }
-//                 }
-//             }])
-//         res.render('User/pages/products', { products, subcategoryCounts, categoryCounts, brandCounts })
-//     } catch (err) {
-//         console.log(err.message)
-//     }
-// }
-
-
 const loadProducts = async (req, res) => {
     try {
-        // Get the sorting parameter from the query string
         const sortBy = req.query.sort || 'default';
 
-        // Define the sort options based on the sorting parameter
         let sortOptions;
         if (sortBy === 'priceLowToHigh') {
             sortOptions = { price: 1 };
         } else if (sortBy === 'priceHighToLow') {
             sortOptions = { price: -1 };
         } else {
-            // Default sorting or other cases
-            sortOptions = {}; // No specific sorting
+            sortOptions = {}; 
         }
 
-        // Fetch products from the database with sorting
         const products = await ProductDB.find({ isDelete: false }).sort(sortOptions);
-
-        // Fetch category counts, subcategory counts, and brand counts
         const categoryCounts = await ProductDB.aggregate([
             {
                 $group: {
@@ -143,13 +106,12 @@ const loadProducts = async (req, res) => {
             }
         ]);
 
-        // Render the page with the sorted products and counts
         res.render('User/pages/products', {
             products,
             subcategoryCounts,
             categoryCounts,
             brandCounts,
-            sortBy // Pass sortBy to the view for highlighting the selected sorting option
+            sortBy 
         });
     } catch (err) {
         console.log(err.message);
@@ -363,6 +325,12 @@ function isValidPassword(password) {
 const loadResetPasswordPage = (req, res) => {
     res.render('User/pages/forgotPassword')
 }
+
+
+
+
+
+
 
 
 

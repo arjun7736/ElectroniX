@@ -174,14 +174,13 @@ const saveEditProduct = async (req, res) => {
             { $set: updateFields },
             { new: true }
         );
-
         if (req.files) {
-            req.files.forEach((file) => {
+
+            req.files.forEach(async (file) => {
                 updatedProduct.images.push({ data: file.buffer, contentType: file.mimetype });
             });
             await updatedProduct.save();
         }
-
 
         if (updatedProduct) {
             console.log("Product edited successfully.");
@@ -225,14 +224,16 @@ const softDeleteProduct = async (req, res) => {
 
 // delete Image
 const deleteImage = async (req, res) => {
-    let imageId = req.params
+    let imageId = req.params.imageid
+    const productId = req.params.productid
+    console.log(req.params.productid);
     try {
         const deleteimg = await ProductDB.findByIdAndUpdate(
-            { _id: imageId },
+            { _id: productId },
             { $pull: { "images": { _id: imageId } } },
             { new: true }
         );
-        return res.sendStatus(204);
+        res.status(200).json({ msg: 'Server ok' })
     } catch (err) {
         console.error(err);
         return res.status(500).json({ msg: 'Server error' });
