@@ -1,6 +1,20 @@
 const UserDB = require("../model/userModel");
 const ProductDB = require("../model/productModel")
 const AddressDB = require('../model/addressModel')
+const bcrypt = require('bcrypt');
+
+
+
+const securepassword = async (password) => {
+    try {
+        const passwordHash = await bcrypt.hash(password, 10)
+        return passwordHash;
+    } catch (error) {
+        console.log(error.message)
+    }
+}
+
+
 
 // load profile
 const loadprofile = async (req, res) => {
@@ -17,12 +31,12 @@ const loadprofile = async (req, res) => {
 // load address
 const loadAddress = async (req, res) => {
     try {
-        const id=req.session.user;
+        const id = req.session.user;
         console.log(id)
-        const Address = await AddressDB.find({userId:id})
+        const Address = await AddressDB.find({ userId: id })
         console.log(Address)
         if (req.session.user) {
-            res.render('User/pages/address',{Address})
+            res.render('User/pages/address', { Address })
         } else {
             console.log("poyi login cheyyeda")
             res.redirect('/login')
@@ -86,7 +100,7 @@ const saveAddress = async (req, res) => {
     try {
         const user = await UserDB.findById(req.session.user);
         const newaddress = new AddressDB({
-            userId:req.session.user,
+            userId: req.session.user,
             username,
             email,
             mobile,
@@ -106,12 +120,44 @@ const saveAddress = async (req, res) => {
 
 
 
+
+
+
+// save edited password
+const saveChangePassword = async (req, res) => {
+    const { oldpassword, password, confirmpassword } = req.body
+
+    try {
+        const id=req.session.user;
+        const user = await UserDB.findOne({_id:id});
+        console.log(user)
+        if (await bcrypt.compare(oldpassword,user.password )) {
+            if (password === confirmpassword) {
+                user.password =await bcrypt.hash(password,10)
+                await user.save()
+                req.flash('error', 'Password Updated Successfully');
+                res.render('User/pages/changepassword')
+            }else{
+                console.log("password and cnfirm pasword isint matching")
+            }
+        }else{
+            console.log("Old pass is wrong")
+        }
+    } catch (err) {
+        console.log(err)
+    }
+}
+
+
+
+
 module.exports = {
     loadprofile,
     loadAddress,
     loadChangePassword,
     saveEditProfile,
     loadAddAddress,
-    saveAddress
+    saveAddress,
+    saveChangePassword
 
 }

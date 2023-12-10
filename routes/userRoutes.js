@@ -47,4 +47,6 @@ userRoute.post('/addaddress',accountController.saveAddress)
 
 userRoute.get('/changepassword',accountController.loadChangePassword)
 
+userRoute.post('/changepassword',accountController.saveChangePassword)
+
 module.exports = userRoute
