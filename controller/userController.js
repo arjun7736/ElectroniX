@@ -77,7 +77,7 @@ const loadProducts = async (req, res) => {
         } else if (sortBy === 'priceHighToLow') {
             sortOptions = { price: -1 };
         } else {
-            sortOptions = {}; 
+            sortOptions = {};
         }
 
         const products = await ProductDB.find({ isDelete: false }).sort(sortOptions);
@@ -111,7 +111,7 @@ const loadProducts = async (req, res) => {
             subcategoryCounts,
             categoryCounts,
             brandCounts,
-            sortBy 
+            sortBy
         });
     } catch (err) {
         console.log(err.message);
@@ -204,6 +204,8 @@ const insertUser = async (req, res) => {
         return res.render('User/pages/register', { error: 'InvalidPassword', email, username, mobile })
     }
 
+
+
     if (password === confirmpassword) {
         try {
             const OTP = await sendOTP(email)
@@ -215,9 +217,6 @@ const insertUser = async (req, res) => {
 
             const newotp = await otp.save()
             res.render('User/pages/otp', { email })
-
-
-
 
         } catch (error) {
             console.log(error.message);
@@ -234,7 +233,7 @@ const verifyAndregister = async (req, res) => {
     const { OTP, email } = req.body
     const user = await OTPDB.find({ email: email })
     const otp = user[0].otp
-    // console.log(OTP, otp)
+    console.log(OTP, otp)
 
     if (OTP == otp) {
         const data = registrationData.getRegistrationData();
@@ -250,16 +249,16 @@ const verifyAndregister = async (req, res) => {
         const userData = await user.save()
         if (userData) {
             const user = await UserDB.findOne({ email: email })
-            console.log(user)
+            // console.log(user)
             req.session.user = user._id;
-            console.log(req.session.user)
+            // console.log(req.session.user)
             res.redirect('/')
         }
     }
     else {
         req.flash('error', 'InValied OTP');
         console.log("Working error")
-        res.render('User/pages/register')
+        return res.render('User/pages/register')
     }
 }
 
@@ -268,9 +267,9 @@ const verifyAndregister = async (req, res) => {
 
 
 // user validation
-const userValid = async (req, res, ) => {
-    const { email, password,} = req.body;
-    const Block=await UserDB.findOne({email:email})
+const userValid = async (req, res,) => {
+    const { email, password, } = req.body;
+    const Block = await UserDB.findOne({ email: email })
 
     try {
         const user = await UserDB.findOne({ email });
@@ -323,13 +322,81 @@ function isValidPassword(password) {
 
 // load resetpassword
 const loadResetPasswordPage = (req, res) => {
-    res.render('User/pages/forgotPassword')
+    res.render('User/pages/resetPassword')
+}
+
+
+// forgotpassword
+const verifyMailAndSentOTP = async (req, res) => {
+    try {
+        const { email } = req.body;
+        const user = await UserDB.findOne({ email });
+        if (!user) {
+            return res.render('User/pages/login')
+        }
+        const otp = await sendOTP(email);
+        req.session.otp = otp
+        console.log(req.session.otp, "this is otp")
+        console.log("rendering into otp page")
+        res.render('User/pages/passwordresetotp', { email })
+    } catch (err) {
+        console.log(err);
+    }
+}
+
+
+// save and reset password
+const saveAndResetPassword = async (req, res) => {
+    console.log("hi");
+    // try {
+    //     const { email, password, confirmPassword } = req.body;
+    //     console.log("hello")
+    //     const user = await UserDB.findOne({ email });
+    //     if (!user) {
+    //         console.log('user error')
+    //         return res.render('User/pages/forgotPassword')
+    //     }
+    //     if (password !== confirmPassword) {
+    //         return res.render('User/pages/resetpassword')
+    //     }
+    //     if (!isValidEmail(email)) {
+    //         return res.render('User/pages/forgotPassword')
+    //     }
+    //     if (!isValidPassword(password)) {
+    //         return res.render('User/pages/resetpassword')
+    //     }
+    //     const hashedPassword = await bcrypt.hash(password, 10
+    //     );
+    //     const updatedUser = await UserDB.findByIdAndUpdate(user._id,
+    //         { password: hashedPassword }, { new: true });
+    //     req.session.destroy();
+    //     res.redirect('/login')
+    // } catch (err) {
+    //     console.log("saveAndResetPassword error")
+    //     console.log(err);
+    // }
 }
 
 
 
-
-
+// verify otp and reset password
+const verifyOTPAndResetPassword = async (req, res) => {
+    try {
+        const { OTP } = req.body;
+        // console.log();
+        console.log(req.body, "verifyOTPAndResetPassword", req.session.otp);
+        if (OTP === req.session.otp) {
+            console.log("otp success")
+             res.render('User/pages/resetPassword')
+            // console.log('evdem working')
+        } else {
+            console.log("otp error")
+            // return res.redirect('/login')
+        }
+    } catch (err) {
+        console.log(err);
+    }
+}
 
 
 
@@ -349,6 +416,9 @@ module.exports = {
     loadOtp,
     setRegistrationDataMiddleware,
     loadResetPasswordPage,
+    verifyMailAndSentOTP,
+    saveAndResetPassword,
+    verifyOTPAndResetPassword,
 
 
 

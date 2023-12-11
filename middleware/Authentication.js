@@ -1,7 +1,7 @@
 // check user login
 const isUserLoggedIn = async (req, res, next) => {
   if (req.session.user) {
-    res.render('User/pages/landing')
+    res.redirect('/')
   } else if (req.session.admin) {
     res.redirect('/admin/dashboard');
   } else {

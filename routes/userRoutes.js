@@ -17,7 +17,7 @@ userRoute.post('/register',userController.setRegistrationDataMiddleware, userCon
 
 userRoute.post('/otp', userController.verifyAndregister)
 
-userRoute.get('/login', Auth.isUserLoggedIn, userController.loadLogin)
+userRoute.get('/login',Auth.checkUserSession, Auth.isUserLoggedIn, userController.loadLogin)
 
 userRoute.post('/login', userController.userValid)
 
@@ -25,9 +25,16 @@ userRoute.get('/logout', Auth.logout)
 
 userRoute.get('/', userController.loadLanding)
 
-userRoute.get('/forgotPassword', userController.forgotPassword)
+userRoute.get('/forgotPassword', userController.forgotPassword)    //reset password from login page
 
-userRoute.get('/resetPassword', userController.loadResetPasswordPage)
+userRoute.post('/forgotPassword', userController.verifyMailAndSentOTP) //senting otp and goto reset password page
+
+userRoute.post('/passwordresetotp', userController.verifyOTPAndResetPassword) //otp confirm and redirect into password entering  page
+
+// userRoute.get('/resetPassword', userController.loadResetPasswordPage) 
+
+userRoute.post('/resetPassword', userController.saveAndResetPassword) //saving the edited password and redirecting into login page
+
 
 userRoute.get('/products', userController.loadProducts)
 
