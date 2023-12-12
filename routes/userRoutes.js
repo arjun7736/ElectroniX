@@ -29,12 +29,11 @@ userRoute.get('/forgotPassword', userController.forgotPassword)    //reset passw
 
 userRoute.post('/forgotPassword', userController.verifyMailAndSentOTP) //senting otp and goto reset password page
 
-userRoute.post('/passwordresetotp', userController.verifyOTPAndResetPassword) //otp confirm and redirect into password entering  page
+userRoute.post('/passwordresetotp',userController.setEmailMiddleware,userController.verifyOTPAndResetPassword) //otp confirm and redirect into password entering  page
 
-// userRoute.get('/resetPassword', userController.loadResetPasswordPage) 
+userRoute.get('/resetPassword', userController.loadResetPasswordPage) 
 
 userRoute.post('/resetPassword', userController.saveAndResetPassword) //saving the edited password and redirecting into login page
-
 
 userRoute.get('/products', userController.loadProducts)
 

@@ -1,4 +1,5 @@
 let registrationData = null;
+let emailData = null;
 
 module.exports = {
     getRegistrationData: () => registrationData,
@@ -7,5 +8,12 @@ module.exports = {
     },
     clearRegistrationData: () => {
         registrationData = null;
+    },
+    getemailData: () => emailData,
+    setemailData: (data) => {
+        emailData = data;
+    },
+    clearemailData: () => {
+        emailData = null;
     },
 };
