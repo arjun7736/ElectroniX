@@ -57,11 +57,13 @@
         </div>
     </div>
     <!-- ./categories -->
-
+    
+  
     <!-- new arrival -->
     <div class="container pb-16 px-20 data-te-smooth-scroll-init">
         <h2 class="text-2xl font-medium text-gray-800 uppercase mb-6 data-te-smooth-scroll-init">top new arrival</h2>
         <div class="grid grid-cols-1 md:grid-cols-4 gap-7">
+
             <% Products.forEach((value)=>{ %>   
                 <div class="bg-white hover:shadow-2xl rounded  overflow-hidden group">
                     <div class="relative hover:scale-110 ">
@@ -112,8 +114,8 @@
                             <div class="text-xs text-gray-500 ml-3">(150)</div>
                         </div>
                     </div>
-                    <a href="#"
-                    class="block w-full py-1 text-center text-white bg-red-500 border border-primary rounded-b hover:bg-transparent hover:text-black transition">Add
+                    <a  id="addToCartBtn_<%= value._id %>" onclick="addToCart('<%= value._id %>')"
+                    class="block cursor-pointer w-full py-1 text-center text-white bg-red-500 border border-primary rounded-b hover:bg-transparent hover:text-black transition">Add
                     to cart</a>
                 </div>
                 <%})%>
@@ -121,3 +123,6 @@
     <!-- ./new arrival -->
 
 <%- include('../layout/footer') %>
+
+
+

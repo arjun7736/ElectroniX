@@ -31,7 +31,7 @@ userRoute.post('/forgotPassword', userController.verifyMailAndSentOTP) //senting
 
 userRoute.post('/passwordresetotp',userController.setEmailMiddleware,userController.verifyOTPAndResetPassword) //otp confirm and redirect into password entering  page
 
-userRoute.get('/resetPassword', userController.loadResetPasswordPage) 
+userRoute.get('/resetPassword', userController.loadResetPasswordPage) //loading reset password page
 
 userRoute.post('/resetPassword', userController.saveAndResetPassword) //saving the edited password and redirecting into login page
 
@@ -40,6 +40,8 @@ userRoute.get('/products', userController.loadProducts)
 userRoute.get('/productDetails/:productid',userController.loadProductDetails)
 
 userRoute.get('/cart',cartController.loadCart)
+
+userRoute.post('/addtocart',cartController.addToCart)
 
 userRoute.get('/account',accountController.loadprofile)
 
