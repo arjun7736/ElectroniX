@@ -6,15 +6,25 @@ const ProductDB = require("../model/productModel")
 const loadCart = async (req, res) => {
     try {
         if (req.session.user) {
-            // const Product = await UserDB.populate(cart.product)
-            res.render('User/pages/cart')
+            const userId = req.session.user;
+            const user = await UserDB.findById(userId).populate('cart.product');
+            const cart = user.cart;
+            const total = cart.reduce((acc, value) => {
+                return acc + value.totalAmount;
+            }, 0);
+                
+            res.render('User/pages/cart', { cart, total });
         } else {
-            res.redirect('/login')
+            res.redirect('/login');
         }
     } catch (error) {
-        console.log(error)
+        console.log(error);
+        res.status(500).send('Internal Server Error');
     }
-}
+};
+
+
+
 
 
 // add product to cart
