@@ -43,6 +43,10 @@ userRoute.get('/cart',cartController.loadCart)
 
 userRoute.post('/addtocart',cartController.addToCart)
 
+userRoute.post('/removeFromCart',cartController.deleteFromCart)
+
+userRoute.post('/updateQuantity',cartController.updateQuantityInCart)
+
 userRoute.get('/account',accountController.loadprofile)
 
 userRoute.post('/account',accountController.saveEditProfile)

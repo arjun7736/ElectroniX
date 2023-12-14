@@ -347,33 +347,6 @@ const verifyMailAndSentOTP = async (req, res) => {
 
 
 // save and reset password
-// const saveAndResetPassword = async (req, res) => {
-//     try {
-//     const {mail}= registrationData.getemailData()
-//         const { password, confirmPassword } = req.body;
-//         registrationData.clearemailData();
-
-//         console.log(req.body,mail)
-//         const user = await UserDB.findOne({email: mail });
-//         console.log(user)
-//         if (password !== confirmPassword) {
-//             req.flash('error', 'Password and Confirm Password isint Matching')
-//             res.render('User/pages/resetpassword')
-//         }
-//         if (!isValidPassword(password)) {
-//             req.flash('error', 'Password should be 8 characters long and should contain at least one uppercase letter, one lowercase letter, one number and one special character.')
-//             res.render('User/pages/resetpassword')
-//         }
-//         const hashedPassword = await bcrypt.hash(password, 10);
-//         const updatedUser = await UserDB.findByIdAndUpdate(user._id, { password: hashedPassword }, { new: true });
-//         req.session.destroy();
-//         res.redirect('/login')
-//     } catch (err) {
-//         console.log("saveAndResetPassword error")
-//         console.log(err);
-//     }
-// }
-
 const saveAndResetPassword = async (req, res) => {
     try {
         const { mail } = registrationData.getemailData();
