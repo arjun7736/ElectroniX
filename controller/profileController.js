@@ -34,7 +34,6 @@ const loadAddress = async (req, res) => {
         const id = req.session.user;
         console.log(id)
         const Address = await AddressDB.find({ userId: id })
-        console.log(Address)
         if (req.session.user) {
             res.render('User/pages/address', { Address })
         } else {

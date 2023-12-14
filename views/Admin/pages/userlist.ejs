@@ -249,6 +249,9 @@
                 button.innerText = "Block";
                 button.style.backgroundColor = "red";
               }
+if (user.isBlocked) {
+    window.location.href = '/login'; 
+}
 
               console.log("User updated:", updatedUser);
             })

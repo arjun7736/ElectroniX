@@ -32,7 +32,6 @@ app.use(session({
     saveUninitialized: false,
 }))
 app.use(checkUserSession)
-
 app.use(flash());
 app.use('/',userRoute)
 app.use('/admin',adminRoute)

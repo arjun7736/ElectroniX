@@ -183,7 +183,6 @@ const saveEditProduct = async (req, res) => {
         }
 
         if (updatedProduct) {
-            console.log("Product edited successfully.");
             return res.redirect("/admin/products")
         }
 
@@ -407,10 +406,6 @@ const toggleBlockUser = async (req, res) => {
 
     try {
         const user = await UserDB.findById(userId);
-        // console.log(req.session,res.locals.user,req.session.user)
-        // if (req.session) {
-        //     req.session.destroy();
-        //   }
 
         user.isBlocked = !user.isBlocked;
         const updatedUser = await user.save();
