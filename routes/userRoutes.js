@@ -64,6 +64,10 @@ userRoute.get('/addaddress',accountController.loadAddAddress)
 
 userRoute.post('/addaddress',accountController.saveAddress)
 
+userRoute.get('/editaddress/:id',accountController.getEditAddress)
+
+userRoute.post('/editaddress/:id',accountController.updateAddress)
+
 userRoute.get('/changepassword',accountController.loadChangePassword)
 
 userRoute.post('/changepassword',accountController.saveChangePassword)

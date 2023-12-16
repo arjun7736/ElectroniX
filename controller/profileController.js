@@ -127,19 +127,19 @@ const saveChangePassword = async (req, res) => {
     const { oldpassword, password, confirmpassword } = req.body
 
     try {
-        const id=req.session.user;
-        const user = await UserDB.findOne({_id:id});
+        const id = req.session.user;
+        const user = await UserDB.findOne({ _id: id });
         console.log(user)
-        if (await bcrypt.compare(oldpassword,user.password )) {
+        if (await bcrypt.compare(oldpassword, user.password)) {
             if (password === confirmpassword) {
-                user.password =await bcrypt.hash(password,10)
+                user.password = await bcrypt.hash(password, 10)
                 await user.save()
                 req.flash('error', 'Password Updated Successfully');
                 res.render('User/pages/changepassword')
-            }else{
+            } else {
                 console.log("password and cnfirm pasword isint matching")
             }
-        }else{
+        } else {
             console.log("Old pass is wrong")
         }
     } catch (err) {
@@ -147,6 +147,30 @@ const saveChangePassword = async (req, res) => {
     }
 }
 
+// edit address
+const getEditAddress = async (req, res) => {
+    const id = req.params.id;
+    const address = await AddressDB.findById(id);
+    res.render('User/pages/editaddress', { address })
+}
+
+// save edited address
+const updateAddress = async (req, res) => {
+    let id = req.params.id;
+    let data = req.body;
+    const userId = req.session.user;
+    const addOwner = await AddressDB.findOne({ userId, _id: id }).populate('userId', 'name email phoneNumber');
+    const owner = await AddressDB.findOne({ userId, _id: id }).populate('userId', 'name email').select('userId');
+    // console.log(addOwner,owner)
+    if (!addOwner) {
+        return res.redirect('/address')
+    }
+    await AddressDB.findByIdAndUpdate(id, data).then(() => {
+        res.redirect("/address");
+    }).catch((err) => {
+        console.log(err);
+    })
+}
 
 
 
@@ -157,6 +181,9 @@ module.exports = {
     saveEditProfile,
     loadAddAddress,
     saveAddress,
-    saveChangePassword
+    saveChangePassword,
+    getEditAddress,
+    updateAddress,
+
 
 }
