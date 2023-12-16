@@ -11,7 +11,7 @@ const ckeckoutController= require('../controller/checkOutController');
 
 
 
-userRoute.get('/blocked',(req,res)=>res.render('User/pages/blocked'))
+// userRoute.get('/blocked',(req,res)=>res.render('User/pages/blocked'))
 userRoute.get('/register', Auth.isUserLoggedIn, userController.loadRegister)
 
 userRoute.post('/register',userController.setRegistrationDataMiddleware, userController.insertUser)
@@ -48,6 +48,12 @@ userRoute.post('/removeFromCart',cartController.deleteFromCart)
 
 userRoute.post('/updateQuantity',cartController.updateQuantityInCart)
 
+userRoute.get('/checkout',ckeckoutController.loadCheckout)
+
+userRoute.post('/placeOrder', ckeckoutController.saveOrder)
+
+userRoute.get('/orderSuccess',ckeckoutController.loadSuccess)
+
 userRoute.get('/account',accountController.loadprofile)
 
 userRoute.post('/account',accountController.saveEditProfile)
@@ -61,7 +67,5 @@ userRoute.post('/addaddress',accountController.saveAddress)
 userRoute.get('/changepassword',accountController.loadChangePassword)
 
 userRoute.post('/changepassword',accountController.saveChangePassword)
-
-userRoute.get('/checkout',ckeckoutController.loadCheckout)
 
 module.exports = userRoute

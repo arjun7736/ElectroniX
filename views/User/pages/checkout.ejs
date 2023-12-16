@@ -1,193 +1,327 @@
-<%- include('../layout/header') %>
+<%- include('../layout/header') %> 
 <%- include('../layout/navbar') %>
-        <div class="container p-12 mx-auto">
-            <div class="flex flex-col w-full px-0 mx-auto md:flex-row">
-
-<%if(!address){%>
-                <div class="flex flex-col md:w-full">
-                    <h2 class="mb-4 font-bold md:text-xl text-heading ">Shipping Address
-                    </h2>
-                    <form class="justify-center w-full mx-auto" method="post" action>
-                        <div class="">
-                                <div class="space-x-0 lg:flex lg:space-x-4">
-                                <div class="w-full lg:w-full">
-                                    <label for="username" class="block mb-3 text-sm font-semibold text-gray-500">Username</label>
-                                    <input name="username" type="text" placeholder="Username"
-                                        class="w-full px-4 py-3 text-sm border border-gray-300 rounded lg:text-sm focus:outline-none focus:ring-1 focus:ring-blue-600">
-                                </div>
-                            </div>
-
-                            <div class="mt-4">
-                                <div class="w-full">
-                                    <label for="mobile"
-                                        class="block mb-3 text-sm font-semibold text-gray-500">Phone Number</label>
-                                    <input name="mobile" type="number" placeholder="Phone NUmber"
-                                        class="w-full px-4 py-3 text-sm border border-gray-300 rounded lg:text-sm focus:outline-none focus:ring-1 focus:ring-blue-600">
-                                </div>
-                            </div>
-
-                            <div class="mt-4">
-                                <div class="w-full">
-                                    <label for="Email"
-                                        class="block mb-3 text-sm font-semibold text-gray-500">Email</label>
-                                    <input name="Last Name" type="text" placeholder="Email"
-                                        class="w-full px-4 py-3 text-sm border border-gray-300 rounded lg:text-sm focus:outline-none focus:ring-1 focus:ring-blue-600">
-                                </div>
-                            </div>
-                            <div class="mt-4">
-                                <div class="w-full">
-                                    <label for="Address"
-                                        class="block mb-3 text-sm font-semibold text-gray-500">Address</label>
-                                    <textarea
-                                        class="w-full px-4 py-3 text-xs border border-gray-300 rounded lg:text-sm focus:outline-none focus:ring-1 focus:ring-blue-600"
-                                        name="Address" cols="20" rows="4" placeholder="Address"></textarea>
-                                </div>
-                            </div>
-                            <div class="space-x-0 lg:flex lg:space-x-4">
-                                <div class="w-full lg:w-1/2">
-                                    <label for="city"
-                                        class="block mb-3 text-sm font-semibold text-gray-500">City</label>
-                                    <input name="city" type="text" placeholder="City"
-                                        class="w-full px-4 py-3 text-sm border border-gray-300 rounded lg:text-sm focus:outline-none focus:ring-1 focus:ring-blue-600">
-                                </div>
-                                <div class="w-full lg:w-1/2 ">
-                                    <label for="postcode" class="block mb-3 text-sm font-semibold text-gray-500">
-                                        Postcode</label>
-                                    <input name="postcode" type="text" placeholder="Post Code"
-                                        class="w-full px-4 py-3 text-sm border border-gray-300 rounded lg:text-sm focus:outline-none focus:ring-1 focus:ring-blue-600">
-                                </div>
-                            </div>
-
-
-                            <div class="space-x-0 lg:flex lg:space-x-4">
-                                <div class="w-full lg:w-1/2">
-                                    <label for="district"
-                                        class="block mb-3 text-sm font-semibold text-gray-500">District</label>
-                                    <input name="district" type="text" placeholder="district"
-                                        class="w-full px-4 py-3 text-sm border border-gray-300 rounded lg:text-sm focus:outline-none focus:ring-1 focus:ring-blue-600">
-                                </div>
-                                <div class="w-full lg:w-1/2 ">
-                                    <label for="state" class="block mb-3 text-sm font-semibold text-gray-500">
-                                        State</label>
-                                    <input name="state" type="text" placeholder="State"
-                                        class="w-full px-4 py-3 text-sm border border-gray-300 rounded lg:text-sm focus:outline-none focus:ring-1 focus:ring-blue-600">
-                                </div>
-                            </div>
-
-
-                            <div class="mt-4">
-                                <button
-                                    class="w-full px-6 py-2 text-white bg-blue-500 shadow-lg hover:bg-blue-600 rounded-lg">Buy</button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-
-                <%}%>
-
-                <% address.forEach((value, index) => { %>
-                    <div class="shadow-lg mt-4">
-                      <div class="shadow rounded bg-white p-6">
-                        <div class="flex items-center justify-between mb-4">
-                          <h3 class="font-medium text-gray-800 text-lg"></h3>
-                          <a href="#" class="text-primary">Edit</a>
-                        </div>
-                        <div class="space-y-2">
-                          <div class="pb-4 mb-4 flex flex-col md:flex-row md:items-center">
-                            <p class="text-gray-700 font-medium mr-2"><%= value.username %></p>
-                            <p class="text-gray-800"><%= value.mobile %></p>
-                          </div>
-                          <div class="pb-4 mb-4 flex flex-col md:flex-row md:items-center">
-                            <p class="text-gray-800"><%= value.address %></p>
-                            <p class="text-gray-800 ml-2"><%= value.city %></p>
-                            <p class="text-gray-800 ml-2"><%= value.district %></p>
-                            <p class="text-gray-800 ml-2 font-medium"><%= value.postcode %></p>
-                          </div>
-                        </div>
-                        <!-- Add a radio button for each address -->
-                        <div class="mt-4">
-                          <input type="radio" id="address<%= index %>" name="selectedAddress" value="<%= index %>">
-                          <label for="address<%= index %>" class="ml-2">Select this address</label>
-                        </div>
-                      </div>
-                    </div>
-                  <% }) %>
-
-
-
-
-
-
-
-            
-                <div class="flex flex-col w-full ml-0 lg:ml-12 lg:w-2/5">
-                    <div class="pt-12 md:pt-0 2xl:ps-4">
-                        <h2 class="text-xl font-bold">Order Summary
-                        </h2>
-                        <div class="mt-8">
-                            <div class="flex flex-col space-y-4">
-                                <div class="flex space-x-4">
-                                    <div>
-                                        <img src="https://source.unsplash.com/user/erondu/1600x900" alt="image"
-                                            class="w-60">
-                                    </div>
-                                    <div>
-                                        <h2 class="text-xl font-bold">Title</h2>
-                                        <p class="text-sm">Lorem ipsum dolor sit amet, tet</p>
-                                        <span class="text-red-600">Price</span> $20
-                                    </div>
-                                    <div>
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none"
-                                            viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M6 18L18 6M6 6l12 12" />
-                                        </svg>
-                                    </div>
-                                </div>
-                                <div class="flex space-x-4">
-                                    <div>
-                                        <img src="https://source.unsplash.com/collection/190727/1600x900" alt="image"
-                                            class="w-60">
-                                    </div>
-                                    <div>
-                                        <h2 class="text-xl font-bold">Title</h2>
-                                        <p class="text-sm">Lorem ipsum dolor sit amet, tet</p>
-                                        <span class="text-red-600">Price</span> $20
-                                    </div>
-                                    <div>
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none"
-                                            viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M6 18L18 6M6 6l12 12" />
-                                        </svg>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="flex p-4 mt-4">
-                            <h2 class="text-xl font-bold">ITEMS 2</h2>
-                        </div>
-                        <div
-                            class="flex items-center w-full py-4 text-sm font-semibold border-b border-gray-300 lg:py-5 lg:px-3 text-heading last:border-b-0 last:text-base last:pb-0">
-                            Subtotal<span class="ml-2">$40.00</span></div>
-                        <div
-                            class="flex items-center w-full py-4 text-sm font-semibold border-b border-gray-300 lg:py-5 lg:px-3 text-heading last:border-b-0 last:text-base last:pb-0">
-                            Shipping Tax<span class="ml-2">$10</span></div>
-                        <div
-                            class="flex items-center w-full py-4 text-sm font-semibold border-b border-gray-300 lg:py-5 lg:px-3 text-heading last:border-b-0 last:text-base last:pb-0">
-                            Total<span class="ml-2">$50.00</span></div>
-                        <%if(address){%>  
-                            <div class="mt-4">
-                                <button
-                                    class="w-full px-6 py-2 text-white bg-blue-500 shadow-lg hover:bg-blue-600 rounded-lg">Buy</button>
-                            </div>
-                            <%}%>
-                    </div>
-                </div>
+<div class="container p-12 mx-auto">
+  <div class="flex h-96 flex-col w-full px-0 mx-auto md:flex-row">
+    <%if(!address){%>
+    <div class="flex flex-col md:w-full">
+      <h2 class="mb-4 font-bold md:text-xl text-heading">Shipping Address</h2>
+      <form class="justify-center w-full mx-auto" method="post" >
+        <div class="">
+          <div class="space-x-0 lg:flex lg:space-x-4">
+            <div class="w-full lg:w-full">
+              <label
+                for="username"
+                class="block mb-3 text-sm font-semibold text-gray-500"
+                >Username</label
+              >
+              <input
+                name="username"
+                type="text"
+                placeholder="Username"
+                class="w-full px-4 py-3 text-sm border border-gray-300 rounded lg:text-sm focus:outline-none focus:ring-1 focus:ring-blue-600"
+              />
             </div>
+          </div>
+
+          <div class="mt-4">
+            <div class="w-full">
+              <label
+                for="mobile"
+                class="block mb-3 text-sm font-semibold text-gray-500"
+                >Phone Number</label
+              >
+              <input
+                name="mobile"
+                type="number"
+                placeholder="Phone NUmber"
+                class="w-full px-4 py-3 text-sm border border-gray-300 rounded lg:text-sm focus:outline-none focus:ring-1 focus:ring-blue-600"
+              />
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <div class="w-full">
+              <label
+                for="Email"
+                class="block mb-3 text-sm font-semibold text-gray-500"
+                >Email</label
+              >
+              <input
+                name="Last Name"
+                type="text"
+                placeholder="Email"
+                class="w-full px-4 py-3 text-sm border border-gray-300 rounded lg:text-sm focus:outline-none focus:ring-1 focus:ring-blue-600"
+              />
+            </div>
+          </div>
+          <div class="mt-4">
+            <div class="w-full">
+              <label
+                for="Address"
+                class="block mb-3 text-sm font-semibold text-gray-500"
+                >Address</label
+              >
+              <textarea
+                class="w-full px-4 py-3 text-xs border border-gray-300 rounded lg:text-sm focus:outline-none focus:ring-1 focus:ring-blue-600"
+                name="Address"
+                cols="20"
+                rows="4"
+                placeholder="Address"
+              ></textarea>
+            </div>
+          </div>
+          <div class="space-x-0 lg:flex lg:space-x-4">
+            <div class="w-full lg:w-1/2">
+              <label
+                for="city"
+                class="block mb-3 text-sm font-semibold text-gray-500"
+                >City</label
+              >
+              <input
+                name="city"
+                type="text"
+                placeholder="City"
+                class="w-full px-4 py-3 text-sm border border-gray-300 rounded lg:text-sm focus:outline-none focus:ring-1 focus:ring-blue-600"
+              />
+            </div>
+            <div class="w-full lg:w-1/2">
+              <label
+                for="postcode"
+                class="block mb-3 text-sm font-semibold text-gray-500"
+              >
+                Postcode</label
+              >
+              <input
+                name="postcode"
+                type="text"
+                placeholder="Post Code"
+                class="w-full px-4 py-3 text-sm border border-gray-300 rounded lg:text-sm focus:outline-none focus:ring-1 focus:ring-blue-600"
+              />
+            </div>
+          </div>
+
+          <div class="space-x-0 lg:flex lg:space-x-4">
+            <div class="w-full lg:w-1/2">
+              <label
+                for="district"
+                class="block mb-3 text-sm font-semibold text-gray-500"
+                >District</label
+              >
+              <input
+                name="district"
+                type="text"
+                placeholder="district"
+                class="w-full px-4 py-3 text-sm border border-gray-300 rounded lg:text-sm focus:outline-none focus:ring-1 focus:ring-blue-600"
+              />
+            </div>
+            <div class="w-full lg:w-1/2">
+              <label
+                for="state"
+                class="block mb-3 text-sm font-semibold text-gray-500"
+              >
+                State</label
+              >
+              <input
+                name="state"
+                type="text"
+                placeholder="State"
+                class="w-full px-4 py-3 text-sm border border-gray-300 rounded lg:text-sm focus:outline-none focus:ring-1 focus:ring-blue-600"
+              />
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <button
+              class="w-full px-6 py-2 text-white bg-blue-500 shadow-lg hover:bg-blue-600 rounded-lg"
+            >
+              Place Order
+            </button>
+          </div>
         </div>
+    </div>
+    <%}%> 
+  </form>
+
+    <div class=" w-full shadow-lg address overflow-y-auto max-h-80">
+
+      <div >
+        <h2 class="text-xl font-bold">Select Address</h2>
+      </div>
+           <form id="addressOption"> 
+    <% address.forEach((value, index) => { %>
+    <div class="shadow-lg  mt-4">
+      <div class="shadow rounded bg-white p-6">
+        <div class="mt-4">
+          <input
+            type="radio"
+            id="address_<%= value._id %>"
+            name="selectedAddress"
+            value="<%= index %>" checked
+          />
+          <label for="address<%= index %>" class="ml-2"
+            >Select this address</label
+          >
+        </div>
+
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="font-medium text-gray-800 text-lg"></h3>
+          <a href="#" class="text-primary">Edit</a>
+        </div>
+        <div class="space-y-2">
+          <div class="pb-4 mb-4 flex flex-col md:flex-row md:items-center">
+            <p class="text-gray-700 font-medium mr-2"><%= value.username %></p>
+            <p class="text-gray-800"><%= value.mobile %></p>
+          </div>
+          <div class="pb-4 mb-4 flex flex-col md:flex-row md:items-center">
+            <p class="text-gray-800"><%= value.address %></p>
+            <p class="text-gray-800 ml-2"><%= value.city %></p>
+            <p class="text-gray-800 ml-2"><%= value.district %></p>
+            <p class="text-gray-800 ml-2 font-medium"><%= value.postcode %></p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <% }) %>
+</div>
+</form>
+    <div class="flex border-l  flex-col w-full ml-0 lg:ml-12 lg:w-2/5 mr-0">      
+      <div class="pt-12 md:pt-0 2xl:ps-4 ml-20">
+        <!-- <h2 class="text-xl font-bold">Order Summary</h2>
+        <div class="mt-8">
+          <div class="flex flex-col space-y-4">
+
+<%cartData.forEach((value)=>{  %> 
+            <div class="flex space-x-4">
+              <div>
+                <h2 class="text-xl font-bold"><%=value.product.brandname%> <%=value.product.varientname%> </h2>
+                <p class="text-sm"><%=value.product.category%> <%=value.product.subcategory%></p>
+                <span class="text-red-600">Price  </span>&#8377; <%=value.totalAmount%>
+              </div>
+             
+            </div>
+            <% }) %>
+
+          </div>
+        </div> -->
+
+        <div class="py-10">
+          <label
+            for="promo"
+            class="font-semibold inline-block mb-3 text-sm uppercase"
+            >Promo Code</label
+          >
+          <input
+            type="text"
+            id="promo"
+            placeholder="Enter your code"
+            class="p-2 text-sm w-full"
+          />
+        </div>
+        <button
+          class="bg-red-500 hover:bg-red-600 px-5 py-2 text-sm text-white uppercase"
+        >
+          Apply
+        </button>
+
+        <div class="flex p-4 mt-4">
+          <h2 class="text-xl font-bold">ITEMS <%=cartData.length%></h2>
+        </div>
+        <div
+          class="flex items-center w-full py-4 text-sm font-semibold border-b border-gray-300 lg:py-5 lg:px-3 text-heading last:border-b-0 last:text-base last:pb-0"
+        >
+          TOTAL COST<span class="ml-2">&#8377; <%=user.grandTotal%></span>
+        </div>
+        <div
+          class="flex items-center w-full py-4 text-sm font-semibold border-b border-gray-300 lg:py-5 lg:px-3 text-heading last:border-b-0 last:text-base last:pb-0"
+        >DISCOUNT<span class="ml-2">&#8377; 0</span>
+        </div>
+        <div
+          class="flex items-center w-full py-4 text-sm font-semibold border-b border-gray-300 lg:py-5 lg:px-3 text-heading last:border-b-0 last:text-base last:pb-0"
+        >
+          TOTAL<span class="ml-2">&#8377; <%=user.grandTotal%></span>
+        </div>
+        <%if(address){%>
+        <div class="mt-4">
+         <a onclick="checkOut()"><button
+            class="w-full px-6 py-2 text-white bg-blue-500 shadow-lg hover:bg-blue-600 rounded-lg">Place Order</button></a> 
+        </div>
+        <%}%>
+      </div>
+    </div>
+    
+  </div>
+
+  <div >
+    <h2 class="text-xl font-bold mb-4">Select Payment Option</h2>
+  </div>
+<form id="paymentOption">
+<div>
+  <div class="mt-8">
+    <div class=" space-y-4 payment">
+      <div class="w-full md:w-1/2 px-4 py-4 shadow-lg rounded-md">
+        <input type="radio" id="payment-razorpay" name="payment" value="razorpay" >
+        <label for="payment-razorpay" class="ml-2 text-sm text-gray-700">Razorpay</label>
+      </div>
+  
+      <div class="w-full md:w-1/2 px-4 py-4 shadow-lg rounded-md">
+        <input type="radio" id="payment-cod" name="payment" value="cod" checked>
+        <label for="payment-cod" class="ml-2 text-sm text-gray-700">Cash on Delivery</label>
+        
+      </div>
+  
+      <div class="w-full md:w-1/2 px-4 py-4 shadow-lg rounded-md">
+        <input type="radio" id="payment-wallet" name="payment" value="wallet">
+        <label for="payment-wallet" class="ml-2 text-sm text-gray-700">Wallet</label>
    
+      </div>
+    </div>
+  </div>
+  
+</div>
+</form>
 
 
 
+  <div>
+
+  </div>
+
+</div>
 <%- include('../layout/footer') %>
+
+
+<script>
+ async function checkOut(){
+  const address=document.getElementById(`addressOption`)
+  const payment =document.getElementById('paymentOption')
+
+  const selectedPaymentOption = payment.querySelector('input[name="payment"]:checked').value
+
+  const selectedAddrerssOption = address.querySelector('input[name="selectedAddress"]:checked').value
+
+  const data ={address:selectedAddrerssOption,payment:selectedPaymentOption}
+  fetch(`/placeOrder/?address=${selectedAddrerssOption}&&payment=${selectedPaymentOption}`, {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({data}),
+})
+  .then(response => response.json())
+  .then(data => {
+    Swal.fire({
+  title: "Good job!",
+  text: "Order Placed!",
+  icon: "success"
+}).then(() => {
+        window.location.href = '/orderSuccess';
+      })
+
+ 
+})
+  .catch(error => {
+    console.error('Error:', error);
+  });
+ }
+
+</script>

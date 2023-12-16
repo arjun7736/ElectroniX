@@ -1,0 +1,46 @@
+<%- include('../layout/header') %>
+
+<div class="flex flex-col items-center justify-center min-h-screen p-4 bg-white">
+  <div class="text-center">
+    <h1 class="text-3xl font-bold text-green-500">Hurray! Your order is confirmed! </h1>
+    <p class="mt-4 text-gray-600">We're packing your order and it will be shipped soon.</p>
+  </div>
+
+  <div class="mt-8 w-full rounded-md shadow-md p-4">
+    <h2 class="text-gray-700 font-semibold">Order details</h2>
+    <ul class="mt-4 text-gray-600 list-none">
+      <li>Order ID: <span class="font-semibold">  <%=order[0].orderId%></span></li>
+      <li>Date Ordered: <span class="font-semibold">  <%=order[0].orderDate%></span></li>
+      <li>Payment method: <span class="font-semibold">  <%=order[0].paymentMethod%></span></li>
+      <li>Total amount: <span class="font-semibold text-green-500">&#8377; <%=order[0].grandTotal%></span></li>
+    </ul>
+  </div>
+
+ 
+  <div class="mt-8 ml-5 w-full rounded-md shadow-md p-4 flex flex-row overflow-auto">
+    <h2 class="text-gray-700 font-semibold mb-4">Items ordered</h2>
+    <%order[0].products.forEach((value)=>{%>  
+      <div class="flex ml-5 flex-col items-center p-4 bg-gray-100 rounded-md shadow-sm mb-4">
+        <img src="data:image/jpg;base64, <%= value.product.images[0].data.toString('base64') %> %>" alt="Product image" class="w-20 h-20 mx-auto mb-4">
+        <p class="text-gray-600 font-semibold"><%=value.product.brandname%></p>
+        <p class="text-gray-500">Qty: <%=value.quantity%></p>
+        <p class="text-green-500 font-semibold">&#8377; <%=value.totalAmount%></p>
+      </div>
+      <% })%>
+  </div>
+  
+
+  
+  <div class="mt-8 flex flex-col items-start w-full">
+    <a href="#" class="inline-block px-4 py-2 rounded-md bg-green-500 text-white hover:bg-green-700">Track your order</a>
+    <div class="mt-4 rounded-md p-4 bg-gray-100 shadow-sm">
+      <h2 class="text-gray-700 font-semibold">Delivery address</h2>
+      <p class="text-gray-600"><%= order[0].deliveryAddress[0].username%></p>
+      <p class="text-gray-600"><%= order[0].deliveryAddress[0].address %></p>
+      <p class="text-gray-600"><%= order[0].deliveryAddress[0].mobile%></p>
+    </div>
+  </div>
+
+  <a href="/products" class="mt-8 inline-block px-4 py-2 rounded-md bg-gray-200 hover:bg-blue-500 hover:text-white">Shop More</a>
+</div>
+<%- include('../layout/footer') %>

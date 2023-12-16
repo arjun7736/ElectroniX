@@ -49,12 +49,10 @@ const userSchema = new mongoose.Schema({
 
 userSchema.pre('save', function(next) {
      const user = this;
-    // Recalculate totalAmount for all items in the cart
     user.cart.forEach(cartItem => {
         cartItem.totalAmount = cartItem.quantity * cartItem.product.price;
     });
 
-    // Calculate the grand total by summing up the totalAmount of all items in the cart
     user.grandTotal = user.cart.reduce((total, cartItem) => total + cartItem.totalAmount, 0);
 
     next();
