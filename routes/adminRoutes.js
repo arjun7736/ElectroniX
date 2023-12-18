@@ -73,6 +73,6 @@ adminRoute.get('/editsubcategory/:productid',adminController.getEditSubCategory)
 adminRoute.post('/editsubcategory/:productid',adminController.saveUpdateSubCategory)
 
 
-
+adminRoute.get('/orderlist',adminController.loadOrderList)
 
 module.exports = adminRoute

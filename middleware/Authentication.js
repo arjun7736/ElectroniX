@@ -1,3 +1,5 @@
+const UserDB = require('../model/userModel')
+
 // check user login
 const isUserLoggedIn = async (req, res, next) => {
   if (req.session.user) {
@@ -32,16 +34,23 @@ const logout = (req, res, next) => {
 
 
 // authMiddleware.js
-const  checkUserSession = (req, res, next) => {
+const checkUserSession = (req, res, next) => {
   res.locals.user = req.session.user || null;
   next();
 };
 
-
+const isUserBlocked = async (req, res, next) => {
+  const isBlocked = await UserDB.findById(req.session.user)
+  if (isBlocked) {
+    req.session.destroy()
+  }else{
+    next()
+  }
+}
 
 
 
 
 module.exports = {
-  isAdminLoggedIn, logout, isUserLoggedIn,checkUserSession
+  isAdminLoggedIn, logout, isUserLoggedIn, checkUserSession, isUserBlocked
 }

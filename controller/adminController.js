@@ -6,6 +6,7 @@ const UserDB = require('../model/userModel')
 const AdminDB = require('../model/adminModel')
 const ProductDB = require('../model/productModel')
 const BrandDB = require('../model/brandModel')
+const OrderDB = require('../model/orderModel')
 const CategoryDB = require('../model/categoryModel')
 const SubCategoryDB = require('../model/subcategoryModel')
 const crypto = require('crypto');
@@ -572,7 +573,25 @@ const saveUpdateSubCategory = async (req, res) => {
 
 
 
-
+// load orderlist
+const loadOrderList = async (req, res) => {
+    try {
+        if (!req.session.admin) {
+            res.redirect('/login')
+        } else {
+        const OrderData = await OrderDB.find().sort([['orderDate', 'descending']])
+            .populate('user')
+            .populate({
+                path: 'products.product',
+                model: 'Product',
+            })
+            .populate('deliveryAddress');
+        res.render('Admin/pages/orderlist', {OrderData });
+         }
+    } catch (error) {
+        console.log(error)
+    }
+}
 
 
 module.exports = {
@@ -602,6 +621,7 @@ module.exports = {
     getEditSubCategory,
     saveUpdateSubCategory,
     loadAddCategory,
+    loadOrderList,
 
 
 

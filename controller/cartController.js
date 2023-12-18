@@ -4,6 +4,7 @@ const ProductDB = require("../model/productModel")
 
 // load cart
 const loadCart = async (req, res) => {
+   const id=req.session.user;
     try {
         if (req.session.user) {
             const userId = req.session.user;
@@ -140,6 +141,9 @@ const updateQuantityInCart = async (req, res) => {
         res.status(500).json({ message: 'Failed to update quantity' });
     }
 };
+
+
+
 
 
 module.exports = {

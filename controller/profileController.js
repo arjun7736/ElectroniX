@@ -2,7 +2,7 @@ const UserDB = require("../model/userModel");
 const ProductDB = require("../model/productModel")
 const AddressDB = require('../model/addressModel')
 const bcrypt = require('bcrypt');
-
+const OrderDB = require('../model/orderModel')
 
 
 const securepassword = async (password) => {
@@ -172,6 +172,21 @@ const updateAddress = async (req, res) => {
     })
 }
 
+// show order list
+const loadOrderList = async (req, res) => {
+    if(!req.session.user){
+        return res.redirect('/login')
+    }
+    const order = await OrderDB.find({ user: req.session.user })
+    res.render('User/pages/orderlist',{order})
+}
+
+const test= async (req,res)=>{
+    const order = await OrderDB.find({ userId: req.session.user })
+    // console.log(order)
+    res.render('User/pages/test',{order})
+}
+
 
 
 module.exports = {
@@ -184,6 +199,8 @@ module.exports = {
     saveChangePassword,
     getEditAddress,
     updateAddress,
+    loadOrderList,
+    test
 
 
 }

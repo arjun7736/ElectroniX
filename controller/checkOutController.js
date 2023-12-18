@@ -50,11 +50,32 @@ const saveOrder = async (req, res) => {
 
 // load order success page
 const loadSuccess = async (req, res) => {
-    const order = await OrderDB.find({ userId: req.session.user }).sort({ orderDate: -1 }).limit(1).populate('products.product')
-    res.render('User/pages/orderSuccess', {order})
+    if(!req.session.user){
+        return res.redirect("/login");
+    }
+    const order = await OrderDB.find({ user: req.session.user }).sort({ orderDate: -1 }).limit(1).populate('products.product')
+    res.render('User/pages/orderSuccess', { order })
 }
 
 
+
+// cancelorder
+const cancelOrder = async (req, res) => {
+    let { id } = req.params
+    const { reason } = req.body
+    try {
+        const result = await OrderDB.findOneAndUpdate(
+            { orderId: id },
+            { $set: { status: "Cancelled", cancelReason: reason } },
+            { new: true }
+        );
+        return res.json(result);
+
+    } catch (err) {
+        req.flash('danger', err.message)
+        return res.redirect('/orderlist')
+    }
+}
 
 
 
@@ -62,5 +83,7 @@ const loadSuccess = async (req, res) => {
 module.exports = {
     loadCheckout,
     saveOrder,
-    loadSuccess
+    loadSuccess,
+    cancelOrder,
+
 }

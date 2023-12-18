@@ -32,7 +32,7 @@
                 <div class="flex justify-center text-center mt-5 ">
                 <span id="countdown"></span>
               </span>
-                <a class="flex items-center text-blue-700 hover:text-blue-900 cursor-pointer" id="hideButton" onclick="hideAndCountdown()"><span class="font-bold" >Resend OTP</span></a>
+                <a class="flex items-center text-blue-700 hover:text-blue-900 cursor-pointer" id="hideButton" onclick="hideAndCountdown();resendOtp()"><span class="font-bold" >Resend OTP</span></a>
               </div>
             </div>
           </div>
@@ -73,4 +73,30 @@ const email=document.getElementById("demo1").value
         });
 }
 
+</script>
+
+<script>
+  function resendOtp(){
+    const email=document.getElementById("demo1").value
+    console.log(email)
+    fetch('/resentotp', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ email }),
+  })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        alert('New OTP sent successfully!');
+      } else {
+        alert('Error sending new OTP. Please try again.');
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      alert('Internal server error. Please try again later.');
+    });
+  }
 </script>

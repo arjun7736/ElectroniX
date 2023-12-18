@@ -6,6 +6,7 @@ const express = require('express')
 const app = express();
 const morgan = require('morgan');
 const uuid = require('uuid');
+const sharp =require('sharp')
 const { v4: uuidv4 } = require("uuid");
 const path = require('path');
 const userRoute = require('./routes/userRoutes')

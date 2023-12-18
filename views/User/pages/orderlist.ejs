@@ -1,0 +1,232 @@
+<%- include('../layout/header') %>
+ <%- include('../layout/navbar') %>
+
+<div class="container grid grid-cols-12 items-start gap-6 pt-4 pb-16">
+
+  <div class="col-span-3 shadow-lg">
+    <div class="px-4 py-3 shadow flex h-48 items-center gap-4">
+      <div class="flex-shrink-0">
+        <img
+          src="    "
+          alt="profile"
+          class="rounded-full w-24 h-24 border border-gray-200 p-1 object-cover"
+        />
+      </div>
+      <div class="flex-grow">
+        <p class="text-gray-600">Hello,</p>
+        <h4 class="text-gray-800 font-medium">name</h4>
+      </div>
+    </div>
+
+    <div
+      class="mt-6 bg-white shadow rounded p-4 divide-y divide-gray-200 space-y-4 text-gray-600"
+    >
+      <div class="space-y-1 pl-8">
+        <a
+          href="#"
+          class="relative text-primary block font-medium capitalize transition"
+        >
+          <span class="absolute -left-8 top-0 text-base">
+            <i class="fa-regular fa-address-card"></i>
+          </span>
+          Manage account
+        </a>
+        <a
+          href="/account"
+          class="relative hover:text-primary block capitalize transition"
+        >
+          Profile information
+        </a>
+        <a
+          href="/address"
+          class="relative hover:text-primary block capitalize transition"
+        >
+          Manage addresses
+        </a>
+        <a
+          href="/changepassword"
+          class="relative hover:text-primary block capitalize transition"
+        >
+          Change password
+        </a>
+      </div>
+
+      <div class="space-y-1 pl-8 pt-4">
+        <a
+          href="/orderlist"
+          class="relative hover:text-primary block font-medium capitalize transition"
+        >
+          <span class="absolute -left-8 top-0 text-base">
+            <i class="fa-solid fa-box-archive"></i>
+          </span>
+          My order history
+        </a>
+      </div>
+
+      <div class="space-y-1 pl-8 pt-4">
+        <a
+          href="#"
+          class="relative hover:text-primary block font-medium capitalize transition"
+        >
+          <span class="absolute -left-8 top-0 text-base">
+            <i class="fa-regular fa-credit-card"></i>
+          </span>
+          Payment methods
+        </a>
+        <a
+          href="#"
+          class="relative hover:text-primary block capitalize transition"
+        >
+          voucher
+        </a>
+      </div>
+
+      <div class="space-y-1 pl-8 pt-4">
+        <a
+          href="/logout"
+          class="relative hover:text-primary block font-medium capitalize transition"
+        >
+          <span class="absolute -left-8 top-0 text-base">
+            <i class="fa-regular fa-arrow-right-from-bracket"></i>
+          </span>
+          Logout
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-span-9 grid grid-cols-1 p-4">
+    <div class="mb-8">
+      <h1 class="text-2xl font-bold text-gray-900">My Orders</h1>
+    </div>
+    <ul class="list-none p-4 rounded-md shadow-md">
+      <%order.forEach((value)=>{ %>
+      <li
+        class="flex col-span-4 mt-5 items-center shadow-lg justify-between p-4 border-b border-gray-200"
+      >
+        <div class="flex flex-col">
+          <p class="font-semibold text-gray-800">
+            Order ID: <%=value.orderId %>
+          </p>
+          <p class="text-gray-500">
+            Order Date: <%=value.orderDate.toLocaleDateString() %>
+          </p>
+        </div>
+
+        <div class="flex items-center">
+          <p class="mr-4 font-semibold text-green-500">
+            &#8377; <%=value.grandTotal %>
+          </p>
+          <%if(value.status=='Cancelled'){  %>  
+          <p id="orderStatus_<%=value.orderId%>" class="uppercase text-red-500 font-semibold mr-3">
+            <%=value.status %>
+          </p>
+          <% } else{ %>  
+            <p id="orderStatus_<%=value.orderId%>" class="uppercase text-orange-300 font-semibold mr-3">
+                <%=value.status %>
+              </p>
+            <% } %>
+          <a
+            href=""
+            class="inline-block px-4 py-2 rounded-md bg-gray-200 hover:bg-gray-300 text-gray-500"
+            >Get Invoice</a
+          >
+          <%if(value.status=='Cancelled'){  %>  
+          <a
+            id="<%= value.orderId %>"
+            onclick="cancelOrder('<%=value.orderId%>')"
+            class=" hidden cursor-pointer ml-3 px-4 py-2 rounded-md bg-red-500 text-white"
+            >Cancel Order</a
+          >
+          <% } else{ %>   
+            <a
+            id="<%= value.orderId %>"
+            onclick="cancelOrder('<%=value.orderId%>')"
+            class="inline-block  cursor-pointer ml-3 px-4 py-2 rounded-md bg-red-500 text-white"
+            >Cancel Order</a
+          >
+            <% }%>
+        </div>
+      </li>
+      <% })%>
+    </ul>
+  </div>
+</div>
+<%- include('../layout/footer') %>
+
+   <script>
+    function cancelOrder(orderid) {
+      Swal.fire({
+        title: 'Are you sure?',
+        text: 'You will not be able to recover this order!',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, cancel it!',
+        cancelButtonText: 'No, keep it'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          Swal.fire({
+            title: 'Select a reason for cancellation',
+            input: 'select',
+            inputOptions: {
+                
+              'Not needed anymore': 'Not needed anymore',
+              'Found a better deal': 'Found a better deal',
+              'Changed my mind': 'Changed my mind',
+              'Placed By Mistake':'Placed By Mistake',
+              'i dont have Money':'i dont have Money',
+              'Other': 'Other',
+            },
+            inputPlaceholder: 'Select a reason',
+            showCancelButton: true,
+            confirmButtonText: 'Confirm',
+            cancelButtonText: 'Cancel'
+          }).then((reasonResult) => {
+            if (reasonResult.isConfirmed) {
+              const cancellationReason = reasonResult.value;
+                fetch(`/cancelOrder/${orderid}`, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ orderID: orderid, reason: cancellationReason }),
+              })
+                .then((response) => response.json())
+                .then((data) => {
+                  if (data.status === 'Cancelled') {
+                    Swal.fire({
+                      title: 'Cancelled!',
+                      text: 'The order has been cancelled.',
+                      icon: 'success',
+                    });
+                    const statusElement = document.getElementById(`orderStatus_${orderid}`);
+                    const button = document.getElementById(`${orderid}`);
+                    statusElement.textContent = 'Cancelled';
+                    statusElement.classList.remove('text-orange-300');
+                    statusElement.classList.add('text-red-500');
+                    button.classList.add('hidden');
+                  } else {
+                    Swal.fire({
+                      title: 'Error',
+                      text: 'Failed to cancel the order. Please try again.',
+                      icon: 'error',
+                    });
+                  }
+                })
+                .catch((error) => {
+                  console.error('Error:', error);
+                  Swal.fire({
+                    title: 'Error',
+                    text: 'An unexpected error occurred. Please try again.',
+                    icon: 'error',
+                  });
+                });
+            }
+          });
+        } else if (result.dismiss === Swal.DismissReason.cancel) {
+          Swal.fire('Cancelled', 'Your order is safe :)', 'info');
+        }
+      });
+    }
+  </script>
+  

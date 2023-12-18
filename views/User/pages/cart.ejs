@@ -203,7 +203,6 @@ function increaseQuantity(productId) {
   const currentQuantity = parseInt(quantityElement.value);
 
   if (currentQuantity < 10) {
-    // Assuming the maximum quantity is 10
     const newQuantity = currentQuantity + 1;
     updateQuantity(productId, newQuantity);
   }
@@ -214,7 +213,6 @@ function decreaseQuantity(productId) {
   const currentQuantity = parseInt(quantityElement.value);
 
   if (currentQuantity > 1) {
-    // Assuming the minimum quantity is 1
     const newQuantity = currentQuantity - 1;
     updateQuantity(productId, newQuantity);
   }

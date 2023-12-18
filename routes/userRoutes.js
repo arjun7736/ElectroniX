@@ -18,6 +18,8 @@ userRoute.post('/register',userController.setRegistrationDataMiddleware, userCon
 
 userRoute.post('/otp', userController.verifyAndregister)
 
+userRoute.post('/resentotp',userController.resendOtp)
+
 userRoute.get('/login',Auth.checkUserSession, Auth.isUserLoggedIn, userController.loadLogin)
 
 userRoute.post('/login', userController.userValid)
@@ -71,5 +73,11 @@ userRoute.post('/editaddress/:id',accountController.updateAddress)
 userRoute.get('/changepassword',accountController.loadChangePassword)
 
 userRoute.post('/changepassword',accountController.saveChangePassword)
+
+userRoute.get('/orderlist',accountController.loadOrderList)
+
+userRoute.post('/cancelOrder/:id',ckeckoutController.cancelOrder)
+
+
 
 module.exports = userRoute

@@ -64,14 +64,21 @@ const loadLanding = async (req, res) => {
 }
 
 
-
-
-
 // load Products
 const loadProducts = async (req, res) => {
     try {
-        const sortBy = req.query.sort || 'default';
+        const search = req.query.search;
+        const baseQuery = { isDelete: false };
+        if (search) {
+            baseQuery.$or = [
+                { brandname: { $regex: new RegExp(search, 'i') } },
+                { category: { $regex: new RegExp(search, 'i') } },
+                { subcategory: { $regex: new RegExp(search, 'i') } },
+                { varientname: { $regex: new RegExp(search, 'i') } }
+            ];
+        }
 
+        const sortBy = req.query.sort || 'default';
         let sortOptions;
         if (sortBy === 'priceLowToHigh') {
             sortOptions = { price: 1 };
@@ -81,8 +88,9 @@ const loadProducts = async (req, res) => {
             sortOptions = {};
         }
 
-        const products = await ProductDB.find({ isDelete: false }).sort(sortOptions);
+        const products = await ProductDB.find(baseQuery).sort(sortOptions);
         const categoryCounts = await ProductDB.aggregate([
+            { $match: baseQuery },
             {
                 $group: {
                     _id: "$category",
@@ -91,6 +99,7 @@ const loadProducts = async (req, res) => {
             }
         ]);
         const subcategoryCounts = await ProductDB.aggregate([
+            { $match: baseQuery },
             {
                 $group: {
                     _id: "$subcategory",
@@ -99,6 +108,7 @@ const loadProducts = async (req, res) => {
             }
         ]);
         const brandCounts = await ProductDB.aggregate([
+            { $match: baseQuery },
             {
                 $group: {
                     _id: "$brandname",
@@ -112,10 +122,11 @@ const loadProducts = async (req, res) => {
             subcategoryCounts,
             categoryCounts,
             brandCounts,
-            sortBy
+            sortBy,
+            searchResults: [],
         });
     } catch (err) {
-        console.log(err.message);
+        console.error(err.message);
         res.status(500).send('Internal Server Error');
     }
 };
@@ -154,7 +165,7 @@ const sendOTP = async (email) => {
 
     const mailOptions = {
         from: process.env.MAIL, // Replace with your Gmail email address
-        to: "arjunvengassery123@gmail.com",
+        to: email,
         subject: 'OTP Verification',
         text: `Your OTP is: ${otp}. Use this OTP to verify your account.`
     };
@@ -237,7 +248,7 @@ const verifyAndregister = async (req, res) => {
     console.log(OTP, otp)
 
     if (OTP == otp) {
-            const data = registrationData.getRegistrationData();
+        const data = registrationData.getRegistrationData();
         const { username, email, password, mobile } = data;
         registrationData.clearRegistrationData();
         const spassword = await securepassword(password)
@@ -263,8 +274,22 @@ const verifyAndregister = async (req, res) => {
     }
 }
 
-
-
+// resent otp
+const resendOtp = async (req, res) => {
+    try {
+        const { email } = req.body
+        const otp = await sendOTP(email);
+        const user = await OTPDB.findOneAndUpdate(
+            { email: email },
+            { $set: { otp: otp } },
+            { new: true }
+        );
+        return res.json({ success: true, message: 'OTP has been resent successfully.' });
+    } catch (error) {
+        console.log(error)
+        return res.json({ success: false, message: 'Error resending OTP.' });
+    }
+}
 
 
 // user validation
@@ -398,11 +423,11 @@ const verifyOTPAndResetPassword = async (req, res) => {
     }
 };
 
-const  setEmailMiddleware = (req,res,next)=>{
-const mail =req.body.email
-registrationData.setemailData({mail})
-console.log(registrationData.getemailData());
-next()
+const setEmailMiddleware = (req, res, next) => {
+    const mail = req.body.email
+    registrationData.setemailData({ mail })
+    console.log(registrationData.getemailData());
+    next()
 
 }
 
@@ -421,6 +446,7 @@ module.exports = {
     loadProductDetails,
     verifyAndregister,
     loadOtp,
+    resendOtp,
     setRegistrationDataMiddleware,
     loadResetPasswordPage,
     verifyMailAndSentOTP,

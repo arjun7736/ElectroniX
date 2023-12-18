@@ -4,7 +4,7 @@
     <div class="px-20  py-5 container grid grid-cols-2 gap-6">
 
         <div id="main">
-            <img src="data:image/jpg;base64, <%= produtDetail.images[0].data.toString('base64') %>" alt="product" class="w-full">
+            <img src="data:image/jpg;base64, <%= produtDetail.images[0].data.toString('base64') %>" alt="product" class="w-full  ">
            
             <div class="grid grid-cols-5 gap-4 mt-4" id="thumbnailContainer">
               <img src="data:image/jpg;base64, <%= produtDetail.images[1].data.toString('base64') %>" alt="product2" class="w-full cursor-pointer border" onclick="changeMainImage(this)">
@@ -64,20 +64,21 @@
                 <div class="flex flex-row h-10 w-28 rounded-lg relative bg-transparent mt-1">
                     
                     <form class="max-w-xs mx-auto">
-                        <label for="counter-input" class="block mb-1 text-sm font-medium text-gray-900 dark:text-black">Choose quantity:</label>
+                        <label for="counter-input" class="block mb-1 text-sm font-medium text-gray-900 dark:text-black ">Choose quantity:</label>
                         <div class="relative flex items-center">
-                            <button type="button" id="decrement-button" data-input-counter-decrement="counter-input" class="flex-shrink-0 bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 inline-flex items-center justify-center border border-gray-300 rounded-md h-5 w-5 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none">
+                            <button type="button"  onclick="decreaseQuantity('<%=produtDetail._id%>')" id="decrement-button" data-input-counter-decrement="counter-input" class="flex-shrink-0 bg-gray-100 dark:bg-gray-700 dark:border-gray-600 border border-gray-300 rounded-md h-5 w-5 focus:outline-none">
                                 <svg class="w-2.5 h-2.5 text-gray-900 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 2">
-                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h16"/>
+                                    <path stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h16"/>
                                 </svg>
                             </button>
-                            <input type="text" id="counter-input" data-input-counter class="flex-shrink-0 text-gray-900 dark:text-black border-0 bg-transparent text-sm font-normal focus:outline-none focus:ring-0 max-w-[2.5rem] text-center" placeholder="" value="1" required>
-                            <button type="button" id="increment-button" data-input-counter-increment="counter-input" class="flex-shrink-0 bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 inline-flex items-center justify-center border border-gray-300 rounded-md h-5 w-5 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none">
+                            <input type="text"  id="quantity_<%=value.product._id%>" data-input-counter class="flex-shrink-0 text-gray-900 dark:text-black border-0 bg-transparent text-sm font-normal focus:outline-none focus:ring-0 max-w-[2.5rem] text-center" placeholder="" value="1" required>
+                            <button  onclick="increaseQuantity('<%=produtDetail._id%>')" type="button" id="increment-button" data-input-counter-increment="counter-input" class="flex-shrink-0 bg-gray-100 bg-gray-700 dark:bg-gray-700 dark:border-gray-600 border border-gray-300 rounded-md h-5 w-5 focus:outline-none opacity-50">
                                 <svg class="w-2.5 h-2.5 text-gray-900 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
-                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16"/>
+                                    <path stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16"/>
                                 </svg>
                             </button>
                         </div>
+                        
                     </form>
                     
 
@@ -87,10 +88,10 @@
             
 
             <div class="mt-6 flex gap-3 border-b border-gray-200 pb-5 pt-5">
-                <a href="#" class="bg-primary border border-primary text-black px-8 py-2 font-medium rounded uppercase flex items-center gap-2 hover:bg-transparent hover:text-primary transition">
+                <a onclick="addToCart('<%=produtDetail._id%>')" class="border border-gray-300 text-black px-8 py-2 hover:bg-blue-500 hover:text-white shadow-lg font-medium rounded uppercase flex items-center gap-2 hover:text-primary transition">
                     <i class="fa-solid fa-bag-shopping"></i> Add to cart
                 </a>
-                <a href="#" class="border border-gray-300 text-gray-600 px-8 py-2 font-medium rounded uppercase flex items-center gap-2 hover:text-primary transition">
+                <a href="#" class="border border-gray-300 text-black px-8 py-2 hover:bg-blue-500 hover:text-white shadow-lg font-medium rounded uppercase flex items-center gap-2 hover:text-primary transition">
                     <i class="fa-solid fa-heart"></i> Wishlist
                 </a>
             </div>
@@ -263,5 +264,57 @@
 
 
 
-
-      
+    <script>
+        async function updateQuantity(productId, newQuantity) {
+          try {
+            const data = { product: productId, quantity: newQuantity };
+        
+            const response = await fetch("/updateQuantity", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(data),
+            });
+        
+            const result = await response.json();
+        
+            console.log("Success:", result);
+        
+            const quantityElement = document.getElementById(`quantity_${productId}`);
+            const totalAmountElement = document.getElementById(`totalAmount_${productId}`);
+            const grandTotalElement = document.getElementById('grandTotal');
+        
+            if (quantityElement && totalAmountElement && grandTotalElement) {
+              quantityElement.value = result.quantity;
+              totalAmountElement.textContent = result.totalAmount;
+              grandTotalElement.textContent = result.grandtotal;
+            }
+        
+            showToast("Quantity updated!");
+          } catch (error) {
+            console.error("Error:", error);
+            showToast("Failed to update quantity.", "error");
+          }
+        }
+        
+        function increaseQuantity(productId) {
+          const quantityElement = document.getElementById(`quantity_${productId}`);
+          const currentQuantity = parseInt(quantityElement.value);
+        
+          if (currentQuantity < 10) {
+            const newQuantity = currentQuantity + 1;
+            updateQuantity(productId, newQuantity);
+          }
+        }
+        
+        function decreaseQuantity(productId) {
+          const quantityElement = document.getElementById(`quantity_${productId}`);
+          const currentQuantity = parseInt(quantityElement.value);
+        
+          if (currentQuantity > 1) {
+            const newQuantity = currentQuantity - 1;
+            updateQuantity(productId, newQuantity);
+          }
+        }
+        </script>
