@@ -81,14 +81,23 @@ function isValidEmail(email) {
 
 // load userlist
 const loadUser = async (req, res) => {
+    const ITEMS_PER_PAGE = 7;
     try {
-        const userList = await UserDB.find();
-        res.render('Admin/pages/userlist', { userList });
+        const page = req.query.page || 1;
+        const totalUsers = await UserDB.countDocuments();
+        const totalPages = Math.ceil(totalUsers / ITEMS_PER_PAGE);
+
+        const userList = await UserDB.find()
+        .skip((page - 1) * ITEMS_PER_PAGE)
+        .limit(ITEMS_PER_PAGE);
+
+        res.render('Admin/pages/userlist', { userList, totalPages, currentPage: page });
     } catch (error) {
         console.error("Error fetching user list:", error);
         res.status(500).send('Internal Server Error');
     }
 }
+
 
 // load Dashboard
 const loadDash = (req, res) => {
