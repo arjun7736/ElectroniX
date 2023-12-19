@@ -14,7 +14,7 @@ require('dotenv').config();
 const multer = require('multer');
 const upload = multer();
 const mongoose = require('mongoose');
-
+const sharp = require('sharp');
 
 
 
@@ -106,7 +106,7 @@ const loadDash = (req, res) => {
 
 // load products
 const loadProducts = async (req, res) => {
-    const ITEMS_PER_PAGE = 7; // Adjust the number of items per page as needed
+    const ITEMS_PER_PAGE = 7; 
 
     try {
         const page = req.query.page || 1;
@@ -194,9 +194,16 @@ const saveEditProduct = async (req, res) => {
         );
         if (req.files) {
 
-            req.files.forEach(async (file) => {
-                updatedProduct.images.push({ data: file.buffer, contentType: file.mimetype });
-            });
+            for (const file of req.files) {
+                const croppedBuffer = await sharp(file.buffer)
+                    .resize({ width: 1000, height: 1000 })
+                    .toBuffer();
+
+                updatedProduct.images.push({
+                    data: croppedBuffer,
+                    contentType: file.mimetype,
+                });
+            }
             await updatedProduct.save();
         }
 
@@ -308,12 +315,16 @@ const addProduct = async (req, res) => {
                 description
             });
 
-            req.files.forEach(file => {
+            for (const file of req.files) {
+                const croppedBuffer = await sharp(file.buffer)
+                    .resize({ width: 1000, height: 1000 })  
+                    .toBuffer();
+
                 product.images.push({
-                    data: file.buffer,
+                    data: croppedBuffer,
                     contentType: file.mimetype,
-                })
-            })
+                });
+            }
 
             const newproduct = await product.save();
 
@@ -327,9 +338,12 @@ const addProduct = async (req, res) => {
 
     } catch (error) {
         console.log("Error Occurred:", error.message);
-        return res.status(500).json({ error: "catch Server Error" });
+        return res.status(500).json({ error: "Catch Server Error" });
     }
 };
+
+
+
 
 
 
