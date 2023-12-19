@@ -15,17 +15,17 @@
                     <div class="space-y-2">
                        <% categoryCounts.forEach((value)=>{ %>
                             <div class="flex items-center">
-                                <input type="checkbox" name="cat-1" id="cat-1"
+                                <input type="checkbox" name="cat-1" id="cat-<%= value._id %>"
                                     class="text-primary focus:ring-0 rounded-sm cursor-pointer">
-                                <label for="cat-1" class="text-gray-600 ml-3 cusror-pointer"><%= value._id %></label>
+                                <label for="cat-1" id="cat-<%= value._id %>" class="text-gray-600 ml-3 cusror-pointer"><%= value._id %></label>
                                 <div class="ml-auto text-gray-600 text-sm"><%= value.count %></div>
                             </div>
                        <% })%>
                        <% subcategoryCounts.forEach((value)=>{ %>
                         <div class="flex items-center">
-                            <input type="checkbox" name="cat-1" id="cat-1"
+                            <input type="checkbox" name="cat-1" id="subcat-<%= value._id %>"
                                 class="text-primary focus:ring-0 rounded-sm cursor-pointer">
-                            <label for="cat-1" class="text-gray-600 ml-3 cusror-pointer"><%= value._id %></label>
+                            <label for="cat-1" id="subcat-<%= value._id %>" class="text-gray-600 ml-3 cusror-pointer"><%= value._id %></label>
                             <div class="ml-auto text-gray-600 text-sm"><%= value.count %></div>
                         </div>
                    <% })%>
@@ -39,7 +39,7 @@
 
                         <% brandCounts.forEach((value)=>{ %>  
                         <div class="flex items-center">
-                            <input type="checkbox" name="brand-1" id="brand-1"
+                            <input type="checkbox" name="brand-1" id="brand-<%= value._id %>"
                                 class="text-primary focus:ring-0 rounded-sm cursor-pointer">
                             <label for="brand-1" class="text-gray-600 ml-3 cusror-pointer"><%= value._id %></label>
                             <div class="ml-auto text-gray-600 text-sm"><%= value.count %></div>

@@ -267,6 +267,12 @@
           </table>
         </div>
       </div>
+    <% for (let i = 1; i <= totalPages; i++) { %>
+      <a href="/admin/products?page=<%= i %>" class="inline-flex rounded-md px-4 py-2 text-sm font-semibold <%= currentPage == i ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700' %> hover:bg-gray-100 hover:text-blue-500">
+        <%= i %>
+      </a>
+    <% } %>
+        
     </main>
   </div>
 </div>

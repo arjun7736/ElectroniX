@@ -4,15 +4,13 @@ const ProductDB = require("../model/productModel")
 
 // load cart
 const loadCart = async (req, res) => {
-   const id=req.session.user;
     try {
-        if (req.session.user) {
-            const userId = req.session.user;
-            const user = await UserDB.findById(userId).populate('cart.product');
+        if (!req.session.user) {
+            res.redirect('/login');
+        } else {
+            const user = await UserDB.findById(req.session.user).populate('cart.product');
             const cart = user.cart;
             res.render('User/pages/cart', { cart, user });
-        } else {
-            res.redirect('/login');
         }
     } catch (error) {
         console.log(error);

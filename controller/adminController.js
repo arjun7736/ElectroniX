@@ -97,9 +97,17 @@ const loadDash = (req, res) => {
 
 // load products
 const loadProducts = async (req, res) => {
+    const ITEMS_PER_PAGE = 7; // Adjust the number of items per page as needed
+
     try {
-        const productList = await ProductDB.find({});
-        res.render('Admin/pages/products', { productList });
+        const page = req.query.page || 1;
+        const totalProducts = await ProductDB.countDocuments();
+        const totalPages = Math.ceil(totalProducts / ITEMS_PER_PAGE);
+        const productList = await ProductDB.find({})
+        .skip((page - 1) * ITEMS_PER_PAGE)
+        .limit(ITEMS_PER_PAGE)
+        .exec();
+        res.render('Admin/pages/products', { productList,totalPages,currentPage: page});
     } catch (error) {
         console.error("Error fetching user list:", error);
         res.status(500).send('Internal Server Error');
@@ -575,23 +583,51 @@ const saveUpdateSubCategory = async (req, res) => {
 
 // load orderlist
 const loadOrderList = async (req, res) => {
+    const ITEMS_PER_PAGE = 5;
     try {
         if (!req.session.admin) {
             res.redirect('/login')
         } else {
-        const OrderData = await OrderDB.find().sort([['orderDate', 'descending']])
-            .populate('user')
-            .populate({
-                path: 'products.product',
-                model: 'Product',
-            })
-            .populate('deliveryAddress');
-        res.render('Admin/pages/orderlist', {OrderData });
-         }
+            const page = req.query.page || 1;
+
+            const totalOrders = await OrderDB.countDocuments();
+            const totalPages = Math.ceil(totalOrders / ITEMS_PER_PAGE);
+            const OrderData = await OrderDB.find()
+                .sort([['orderDate', 'descending']])
+                .populate('user')
+                .populate('products.product')
+                .populate('deliveryAddress')
+                .skip((page - 1) * ITEMS_PER_PAGE) 
+                .limit(ITEMS_PER_PAGE)              
+                .exec();
+            res.render('Admin/pages/orderlist', { OrderData, totalPages, currentPage: page });
+        }
     } catch (error) {
         console.log(error)
     }
 }
+
+
+// change status
+const changeDeliveryStatus = async (req, res) => {
+    const userId = req.params.userId;
+    const newStatus = req.body.newStatus;
+    console.log(req.body)
+    try {
+        const updatedUser = await OrderDB.findByIdAndUpdate(userId, { status: newStatus }, { new: true });
+
+        if (updatedUser) {
+            res.status(200).json({ message: 'Success' });
+        } else {
+            res.status(404).json({ error: 'User not found' });
+        }
+    } catch (error) {
+        console.error('Error updating user status:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+};
+
+
 
 
 module.exports = {
@@ -622,7 +658,7 @@ module.exports = {
     saveUpdateSubCategory,
     loadAddCategory,
     loadOrderList,
-
+    changeDeliveryStatus
 
 
 

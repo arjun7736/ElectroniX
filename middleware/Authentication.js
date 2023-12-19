@@ -40,11 +40,17 @@ const checkUserSession = (req, res, next) => {
 };
 
 const isUserBlocked = async (req, res, next) => {
-  const isBlocked = await UserDB.findById(req.session.user)
-  if (isBlocked) {
-    req.session.destroy()
-  }else{
-    next()
+  try {
+    if (!req.session.user) { res.redirect('/login') }
+    const user = await UserDB.findById(req.session.user)
+    if (user.isBlocked) {
+      req.session.destroy()
+      res.redirect('/blocked')
+    } else {
+      next()
+    }
+  } catch (error) {
+    console.log(error)
   }
 }
 

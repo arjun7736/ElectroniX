@@ -11,7 +11,7 @@ const ckeckoutController= require('../controller/checkOutController');
 
 
 
-// userRoute.get('/blocked',(req,res)=>res.render('User/pages/blocked'))
+userRoute.get('/blocked',(req,res)=>res.render('User/pages/blocked'))
 userRoute.get('/register', Auth.isUserLoggedIn, userController.loadRegister)
 
 userRoute.post('/register',userController.setRegistrationDataMiddleware, userController.insertUser)
@@ -42,39 +42,39 @@ userRoute.get('/products', userController.loadProducts)
 
 userRoute.get('/productDetails/:productid',userController.loadProductDetails)
 
-userRoute.get('/cart',cartController.loadCart)
+userRoute.get('/cart',Auth.isUserBlocked,cartController.loadCart)
 
-userRoute.post('/addtocart',cartController.addToCart)
+userRoute.post('/addtocart',Auth.isUserBlocked,cartController.addToCart)
 
 userRoute.post('/removeFromCart',cartController.deleteFromCart)
 
 userRoute.post('/updateQuantity',cartController.updateQuantityInCart)
 
-userRoute.get('/checkout',ckeckoutController.loadCheckout)
+userRoute.get('/checkout',Auth.isUserBlocked,ckeckoutController.loadCheckout)
 
-userRoute.post('/placeOrder', ckeckoutController.saveOrder)
+userRoute.post('/placeOrder',Auth.isUserBlocked, ckeckoutController.saveOrder)
 
-userRoute.get('/orderSuccess',ckeckoutController.loadSuccess)
+userRoute.get('/orderSuccess',Auth.isUserBlocked,ckeckoutController.loadSuccess)
 
-userRoute.get('/account',accountController.loadprofile)
+userRoute.get('/account',Auth.isUserBlocked,accountController.loadprofile)
 
-userRoute.post('/account',accountController.saveEditProfile)
+userRoute.post('/account',Auth.isUserBlocked,accountController.saveEditProfile)
 
-userRoute.get('/address',accountController.loadAddress)
+userRoute.get('/address',Auth.isUserBlocked,accountController.loadAddress)
 
-userRoute.get('/addaddress',accountController.loadAddAddress)
+userRoute.get('/addaddress',Auth.isUserBlocked,accountController.loadAddAddress)
 
 userRoute.post('/addaddress',accountController.saveAddress)
 
-userRoute.get('/editaddress/:id',accountController.getEditAddress)
+userRoute.get('/editaddress/:id',Auth.isUserBlocked,accountController.getEditAddress)
 
 userRoute.post('/editaddress/:id',accountController.updateAddress)
 
-userRoute.get('/changepassword',accountController.loadChangePassword)
+userRoute.get('/changepassword',Auth.isUserBlocked,accountController.loadChangePassword)
 
 userRoute.post('/changepassword',accountController.saveChangePassword)
 
-userRoute.get('/orderlist',accountController.loadOrderList)
+userRoute.get('/orderlist',Auth.isUserBlocked,accountController.loadOrderList)
 
 userRoute.post('/cancelOrder/:id',ckeckoutController.cancelOrder)
 

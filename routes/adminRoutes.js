@@ -67,12 +67,12 @@ adminRoute.get('/addsubcategory',Auth.isAdminLoggedIn,adminController.loadAddSub
 
 adminRoute.post('/addsubcategory',adminController.addSubCategory)
 
-
 adminRoute.get('/editsubcategory/:productid',adminController.getEditSubCategory)
 
 adminRoute.post('/editsubcategory/:productid',adminController.saveUpdateSubCategory)
 
-
 adminRoute.get('/orderlist',adminController.loadOrderList)
+
+adminRoute.post('/userlist/updateStatus/:userId', adminController.changeDeliveryStatus);
 
 module.exports = adminRoute

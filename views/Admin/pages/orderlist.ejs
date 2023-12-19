@@ -12,12 +12,8 @@
       </a>
       <ul class="mt-6">
         <li class="relative px-6 py-3">
-          <span
-            class="absolute inset-y-0 left-0 w-1 bg-purple-600 rounded-tr-lg rounded-br-lg"
-            aria-hidden="true"
-          ></span>
           <a
-            class="inline-flex items-center w-full text-sm font-semibold text-gray-800 transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200 dark:text-gray-100"
+          class="inline-flex items-center w-full text-sm font-semibold transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200"
             href="/admin/dashboard"
           >
             <svg
@@ -131,8 +127,12 @@
           </a>
         </li>
         <li class="relative px-6 py-3">
+          <span
+            class="absolute inset-y-0 left-0 w-1 bg-purple-600 rounded-tr-lg rounded-br-lg"
+            aria-hidden="true"
+          ></span>
           <a
-            class="inline-flex items-center w-full text-sm font-semibold transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200"
+          class="inline-flex items-center w-full text-sm font-semibold text-gray-800 transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200 dark:text-gray-100"
             href="/admin/orderlist"
           >
             <svg
@@ -191,28 +191,142 @@
                     <div
                       class="relative hidden w-8 h-8 mr-3 rounded-full md:block"
                     >
-                     
                     </div>
                     <div>
-                      <p class="font-semibold"><%= value.username %></p>
+                      <p class="font-semibold"><%= value.user.username %></p>
                       <p class="text-xs text-gray-600 dark:text-gray-400">
-                        <%= value.mobile %>
+                        <%= value.user.mobile %>
                       </p>
                     </div>
                   </div>
                 </td>
 
                 <td class="px-4 py-3 text-xs">
-                
+                  <div
+                  class="relative hidden w-8 h-8 mr-3 rounded-full md:block"
+                >
+                 
+                </div>
+                <%value.products.forEach((value)=>{ %> 
+                <div>
+                  <p class="font-semibold"><%= value.product.brandname %></p>
+                </div>
+                <% })%>
+              </div>
                 </td>
+
+                <td class="px-4 py-3 text-xs">
+                  <div
+                  class="relative hidden w-8 h-8 mr-3 rounded-full md:block"
+                >
+                 
+                </div>
+                <%value.products.forEach((value)=>{ %> 
+                <div>
+                  <p id="<%= value.quantity %>" class="font-semibold"><%= value.quantity %></p>  
+                </div>
+                <% })%>
+              </div>
+                </td>
+
+                <td class="px-4 py-3">
+                  <div class="flex items-center text-sm">
+                    <div
+                      class="relative hidden w-8 h-8 mr-3 rounded-full md:block">
+                    </div>
+                    <div>
+                      <p class="font-semibold"><%= value.grandTotal %></p>
+                    </div>
+                  </div>
+                </td>
+                
+                <td class="px-4 py-3">
+                  <div class="flex items-center text-sm">
+                    <div
+                      class="relative hidden w-8 h-8 mr-3 rounded-full md:block">
+                    </div>
+                    <div>
+                      <p class="font-semibold"><%= value.paymentStatus %></p>
+                    </div>
+                  </div>
+                </td>
+
+                <td class="px-4 py-3">
+                  <div class="flex items-center text-sm">
+                    <div
+                      class="relative hidden w-8 h-8 mr-3 rounded-full md:block">
+                    </div>
+                    <div>
+                      <p class="font-semibold"><%= value.paymentMethod %></p>
+                    </div>
+                  </div>
+                </td>
+
+                <td class="px-4 py-3">
+                  <div class="flex items-center text-sm">
+                     <div class="relative hidden w-8 h-8 mr-3 rounded-full md:block"></div>
+                     <div>
+                        <% if (value.status === 'Cancelled') { %>
+                           <p class="font-semibold text-red-500">Cancelled</p>
+                        <% } else { %>
+                           <select class="status-dropdown text-black" data-user-id="<%= value._id %>">
+                              <option value="Pending" <%= value.status === 'Pending' ? 'selected' : '' %>>Pending</option>
+                              <option value="Processing" <%= value.status === 'Processing' ? 'selected' : '' %>>Processing</option>
+                              <option value="Shipped" <%= value.status === 'Shipped' ? 'selected' : '' %>>Shipped</option>
+                              <option value="Delivered" <%= value.status === 'Delivered' ? 'selected' : '' %>>Delivered</option>
+                           </select>
+                        <% } %>
+                     </div>
+                  </div>
+               </td>
+               
               </tr>
               <% }); %>
             </tbody>
           </table>
         </div>
       </div>
+
+      <div class="pagination mt-4">
+        <% for (let i = 1; i <= totalPages; i++) { %>
+            <a href="/admin/orderlist?page=<%= i %>" class="px-3 py-1 mx-1 rounded-md <%= currentPage == i ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700' %>">
+                <%= i %>
+            </a>
+        <% } %>
+      </div>
+
+
     </main>
+    
   </div>
+  
 </div>
 
 <%- include('../componants/footer') %>
+
+
+<script>
+const statusDropdowns = document.querySelectorAll('.status-dropdown');
+const updateUserStatus = async (userId, newStatus) => {
+   try {
+      const response = await fetch(`/admin/userlist/updateStatus/${userId}`, {
+         method: 'POST',
+         headers: {
+            'Content-Type': 'application/json',
+         },
+         body: JSON.stringify({newStatus }),
+      });
+      const updatedUser = await response.json();
+      console.log('User status updated:', updatedUser);
+   } catch (error) {
+      console.error('Error updating user status:', error);
+   }
+};
+statusDropdowns.forEach((dropdown) => {
+   dropdown.addEventListener('change', (event) => {
+      const userId = event.target.dataset.userId;
+      const newStatus = event.target.value;
+      updateUserStatus(userId, newStatus);
+   });
+});
+</script>
