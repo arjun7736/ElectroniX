@@ -4,7 +4,7 @@
     <div class="px-20  py-5 container grid grid-cols-2 gap-6">
 
         <div id="main">
-            <img src="data:image/jpg;base64, <%= produtDetail.images[0].data.toString('base64') %>" alt="product" class="w-full  ">
+            <img src="data:image/jpg;base64, <%= produtDetail.images[0].data.toString('base64') %>" alt="product" class="w-full  hover:scale-150">
            
             <div class="grid grid-cols-5 gap-4 mt-4" id="thumbnailContainer">
 <%produtDetail.images.forEach((value)=>{%>   
@@ -71,7 +71,7 @@
                                     <path stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h16"/>
                                 </svg>
                             </button>
-                            <input type="text"   data-input-counter class="flex-shrink-0 text-gray-900 dark:text-black border-0 bg-transparent text-sm font-normal focus:outline-none focus:ring-0 max-w-[2.5rem] text-center" placeholder="" value="1" required>
+                            <input type="text" id="quantity_<%=produtDetail._id%>"  data-input-counter class="flex-shrink-0 text-gray-900 dark:text-black border-0 bg-transparent text-sm font-normal focus:outline-none focus:ring-0 max-w-[2.5rem] text-center" placeholder="" value="1" required>
                             <button  onclick="increaseQuantity('<%=produtDetail._id%>')" type="button" id="increment-button" data-input-counter-increment="counter-input" class="flex-shrink-0  bg-gray-700 dark:bg-gray-700 dark:border-gray-600 border border-gray-300 rounded-md h-5 w-5 focus:outline-none opacity-50">
                                 <svg class="w-2.5 h-2.5 text-gray-900 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
                                     <path stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16"/>
@@ -79,9 +79,7 @@
                             </button>
                         </div>
                         
-                    </form>
-                    
-
+            
                     
                 </div>
               </div>
@@ -95,6 +93,8 @@
                     <i class="fa-solid fa-heart"></i> Wishlist
                 </a>
             </div>
+        </form>
+
         </div>
     </div>
     <!-- ./product-detail -->
@@ -264,7 +264,7 @@
 
 
 
-    <script>
+    <!-- <script>
         async function updateQuantity(productId, newQuantity) {
           try {
             const data = { product: productId, quantity: newQuantity };
@@ -317,4 +317,78 @@
             updateQuantity(productId, newQuantity);
           }
         }
+        </script> -->
+
+<!-- 
+        <script>
+            async function updateQuantity(productId, newQuantity) {
+                try {
+                    const data = { product: productId, quantity: newQuantity };
+        
+                    const response = await fetch("/updateQuantity", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify(data),
+                    });
+        
+                    const result = await response.json();
+        
+                    console.log("Success:", result);
+        
+                    const quantityElement = document.getElementById(`quantity_${productId}`);
+                    const totalAmountElement = document.getElementById(`totalAmount_${productId}`);
+                    const grandTotalElement = document.getElementById('grandTotal');
+        
+                    if (quantityElement && totalAmountElement && grandTotalElement) {
+                        quantityElement.value = result.quantity;
+                        // Update other elements as needed
+                    }
+        
+                    showToast("Quantity updated!");
+                } catch (error) {
+                    console.error("Error:", error);
+                    showToast("Failed to update quantity.", "error");
+                }
+            }
+        
+            function increaseQuantity(productId) {
+                const quantityElement = document.getElementById(`quantity_${productId}`);
+                const currentQuantity = parseInt(quantityElement.value);
+        
+                if (currentQuantity < 10) {
+                    const newQuantity = currentQuantity + 1;
+                    updateQuantity(productId, newQuantity);
+                }
+            }
+        
+            function decreaseQuantity(productId) {
+                const quantityElement = document.getElementById(`quantity_${productId}`);
+                const currentQuantity = parseInt(quantityElement.value);
+        
+                if (currentQuantity > 1) {
+                    const newQuantity = currentQuantity - 1;
+                    updateQuantity(productId, newQuantity);
+                }
+            }
+        </script> -->
+
+<script>
+        function decreaseQuantity(productId) {
+            const inputElement = document.getElementById(`quantity_${productId}`);
+            const currentValue = Number(inputElement.value);
+            if (currentValue > 1) {
+              inputElement.value = currentValue - 1;
+              document.getElementById(`decrement-button`).disabled = false;
+            }
+            // Update your data based on the decreased quantity
+          }
+
+          function increaseQuantity(productId) {
+  const inputElement = document.getElementById(`quantity_${productId}`);
+  inputElement.value = Number(inputElement.value) + 1;
+  // Update your data based on the increased quantity
+}
+
         </script>

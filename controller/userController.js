@@ -65,10 +65,81 @@ const loadLanding = async (req, res) => {
 
 
 // load Products
+// const loadProducts = async (req, res) => {
+//     try {
+//         const search = req.query.search;
+//         const baseQuery = { isDelete: false };
+//         if (search) {
+//             baseQuery.$or = [
+//                 { brandname: { $regex: new RegExp(search, 'i') } },
+//                 { category: { $regex: new RegExp(search, 'i') } },
+//                 { subcategory: { $regex: new RegExp(search, 'i') } },
+//                 { varientname: { $regex: new RegExp(search, 'i') } }
+//             ];
+//         }
+
+//         const sortBy = req.query.sort || 'default';
+//         let sortOptions;
+//         if (sortBy === 'priceLowToHigh') {
+//             sortOptions = { price: 1 };
+//         } else if (sortBy === 'priceHighToLow') {
+//             sortOptions = { price: -1 };
+//         } else {
+//             sortOptions = {};
+//         }
+
+//         const products = await ProductDB.find(baseQuery).sort(sortOptions);
+//         const categoryCounts = await ProductDB.aggregate([
+//             { $match: baseQuery },
+//             {
+//                 $group: {
+//                     _id: "$category",
+//                     count: { $sum: 1 }
+//                 }
+//             }
+//         ]);
+//         const subcategoryCounts = await ProductDB.aggregate([
+//             { $match: baseQuery },
+//             {
+//                 $group: {
+//                     _id: "$subcategory",
+//                     count: { $sum: 1 }
+//                 }
+//             }
+//         ]);
+//         const brandCounts = await ProductDB.aggregate([
+//             { $match: baseQuery },
+//             {
+//                 $group: {
+//                     _id: "$brandname",
+//                     count: { $sum: 1 }
+//                 }
+//             }
+//         ]);
+
+//         res.render('User/pages/products', {
+//             products,
+//             subcategoryCounts,
+//             categoryCounts,
+//             brandCounts,
+//             sortBy,
+//             searchResults: [],
+//         });
+//     } catch (err) {
+//         console.error(err.message);
+//         res.status(500).send('Internal Server Error');
+//     }
+// };
 const loadProducts = async (req, res) => {
     try {
         const search = req.query.search;
         const baseQuery = { isDelete: false };
+        const selectedCategories = req.query.category || [];
+        const selectedSubcategories = req.query.subcategory || [];
+        const selectedBrands = req.query.brandname || [];
+
+        // console.log(selectedCategories,selectedSubcategories,selectedBrands)
+        // Include checkbox filter conditions
         if (search) {
             baseQuery.$or = [
                 { brandname: { $regex: new RegExp(search, 'i') } },
@@ -76,6 +147,18 @@ const loadProducts = async (req, res) => {
                 { subcategory: { $regex: new RegExp(search, 'i') } },
                 { varientname: { $regex: new RegExp(search, 'i') } }
             ];
+        }
+
+        if (selectedCategories.length > 0) {
+            baseQuery.category = { $in: selectedCategories };
+        }
+
+        if (selectedSubcategories.length > 0) {
+            baseQuery.subcategory = { $in: selectedSubcategories };
+        }
+
+        if (selectedBrands.length > 0) {
+            baseQuery.brandname = { $in: selectedBrands };
         }
 
         const sortBy = req.query.sort || 'default';
@@ -130,6 +213,9 @@ const loadProducts = async (req, res) => {
         res.status(500).send('Internal Server Error');
     }
 };
+
+
+
 
 
 

@@ -14,6 +14,11 @@ const securepassword = async (password) => {
     }
 }
 
+function isValidPassword(password) {
+    const passwordRegex = /^(?=.*[!@#$%^&*(),.?":{}|<>])(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
+    return passwordRegex.test(password);
+}
+
 
 
 // load profile
@@ -129,18 +134,26 @@ const saveChangePassword = async (req, res) => {
     try {
         const id = req.session.user;
         const user = await UserDB.findOne({ _id: id });
-        console.log(user)
+        // console.log(user)
         if (await bcrypt.compare(oldpassword, user.password)) {
             if (password === confirmpassword) {
-                user.password = await bcrypt.hash(password, 10)
-                await user.save()
-                req.flash('error', 'Password Updated Successfully');
-                res.render('User/pages/changepassword')
+                if (isValidPassword(password)) {
+                    user.password = await bcrypt.hash(password, 10)
+                    await user.save()
+                    req.flash('error', 'Password Updated Successfully');
+                    res.render('User/pages/changepassword')
+                }
+                else {
+                    req.flash('error', 'Password Must include Symbol and numnber Capital and small charecters');
+                    res.render('User/pages/changepassword')
+                }
             } else {
-                console.log("password and cnfirm pasword isint matching")
+                req.flash('error', 'Enter a Valied  Password ');
+                res.render('User/pages/changepassword')
             }
         } else {
-            console.log("Old pass is wrong")
+            req.flash('error', 'Old  Password is Wrong');
+            res.render('User/pages/changepassword')
         }
     } catch (err) {
         console.log(err)
@@ -174,17 +187,17 @@ const updateAddress = async (req, res) => {
 
 // show order list
 const loadOrderList = async (req, res) => {
-    if(!req.session.user){
+    if (!req.session.user) {
         return res.redirect('/login')
     }
     const order = await OrderDB.find({ user: req.session.user })
-    res.render('User/pages/orderlist',{order})
+    res.render('User/pages/orderlist', { order })
 }
 
-const test= async (req,res)=>{
+const test = async (req, res) => {
     const order = await OrderDB.find({ userId: req.session.user })
     // console.log(order)
-    res.render('User/pages/test',{order})
+    res.render('User/pages/test', { order })
 }
 
 

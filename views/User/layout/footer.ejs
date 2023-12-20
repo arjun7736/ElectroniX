@@ -6,8 +6,10 @@
 <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio,line-clamp"></script> 
 
 <script>
-    function addToCart(productId) {
-        const data = { product: productId };
+    function addToCart(productId,quantity=1) {
+        
+  const data = { product: productId,quantity };
+        // const data = { product: productId };
         fetch('/addtocart', {
             method: 'POST',
             headers: {

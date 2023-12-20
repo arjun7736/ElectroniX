@@ -15,16 +15,16 @@
                     <div class="space-y-2">
                        <% categoryCounts.forEach((value)=>{ %>
                             <div class="flex items-center">
-                                <input type="checkbox" name="cat-1" id="cat-<%= value._id %>"
-                                    class="text-primary focus:ring-0 rounded-sm cursor-pointer">
+                                <input type="checkbox" name="category" id="cat-<%= value._id %>"
+                                    class="text-primary focus:ring-0 rounded-sm cursor-pointer" onclick="handleCheckboxChange()">
                                 <label for="cat-1" id="cat-<%= value._id %>" class="text-gray-600 ml-3 cusror-pointer"><%= value._id %></label>
                                 <div class="ml-auto text-gray-600 text-sm"><%= value.count %></div>
                             </div>
                        <% })%>
                        <% subcategoryCounts.forEach((value)=>{ %>
                         <div class="flex items-center">
-                            <input type="checkbox" name="cat-1" id="subcat-<%= value._id %>"
-                                class="text-primary focus:ring-0 rounded-sm cursor-pointer">
+                            <input type="checkbox" name="subcategory" id="subcat-<%= value._id %>"
+                                class="text-primary focus:ring-0 rounded-sm cursor-pointer" onclick="handleCheckboxChange()">
                             <label for="cat-1" id="subcat-<%= value._id %>" class="text-gray-600 ml-3 cusror-pointer"><%= value._id %></label>
                             <div class="ml-auto text-gray-600 text-sm"><%= value.count %></div>
                         </div>
@@ -39,9 +39,9 @@
 
                         <% brandCounts.forEach((value)=>{ %>  
                         <div class="flex items-center">
-                            <input type="checkbox" name="brand-1" id="brand-<%= value._id %>"
-                                class="text-primary focus:ring-0 rounded-sm cursor-pointer">
-                            <label for="brand-1" class="text-gray-600 ml-3 cusror-pointer"><%= value._id %></label>
+                            <input type="checkbox" name="brand" id="brand-<%= value._id %>"
+                                class="text-primary focus:ring-0 rounded-sm cursor-pointer" onclick="handleCheckboxChange()">
+                            <label for="brand-1" id="brand-<%= value._id %>" class="text-gray-600 ml-3 cusror-pointer"><%= value._id %></label>
                             <div class="ml-auto text-gray-600 text-sm"><%= value.count %></div>
                         </div>
                         <% })%>
@@ -223,3 +223,30 @@
         }
     });
 </script> 
+
+
+<script>
+    function handleCheckboxChange() {
+        const selectedCategories = Array.from(document.querySelectorAll('input[name="category"]:checked')).map(checkbox => checkbox.value);
+        const selectedSubcategories = Array.from(document.querySelectorAll('input[name="subcategory"]:checked')).map(checkbox => checkbox.value);
+        const selectedBrands = Array.from(document.querySelectorAll('input[name="brand"]:checked')).map(checkbox => checkbox.value);
+        fetch(`/products?category=${selectedCategories.join(',')}&subcategory=${selectedSubcategories.join(',')}&brand=${selectedBrands.join(',')}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Request failed with status ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            document.getElementById('dataContainer').innerHTML = data;
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+</script>
