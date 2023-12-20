@@ -286,6 +286,7 @@ const insertUser = async (req, res) => {
     const { username, email, password, confirmpassword, mobile } = req.body;
 
     const existingMail = await UserDB.findOne({ email: { $regex: new RegExp(email, 'i') } })
+    const existingMobile = await UserDB.findOne({ mobile })
     if (existingMail) {
         return res.render('User/pages/register', { error: 'ExistingEmail', email: null, username, mobile })
     }
@@ -301,7 +302,9 @@ const insertUser = async (req, res) => {
     if (!isValidPassword(password)) {
         return res.render('User/pages/register', { error: 'InvalidPassword', email, username, mobile })
     }
-
+    if (existingMobile) {
+        return res.render('User/pages/register', { error: 'ExistingMobile', email, username, mobile:null })
+    }
 
 
     if (password === confirmpassword) {

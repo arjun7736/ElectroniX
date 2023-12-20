@@ -34,6 +34,10 @@
                   <% if (error === 'MobileRequired') { %>
                     <p class="text-red-500 text-sm mt-4">Mobile Cannot be Empty</p>
                         <% }  %>
+                        <% if (error === 'ExistingMobile') { %>
+                          <p class="text-red-500 text-sm mt-4">Mobile Number Already exist</p>
+                              <% }  %>
+                              
                 </div>
 
 
