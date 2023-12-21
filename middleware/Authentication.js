@@ -4,8 +4,6 @@ const UserDB = require('../model/userModel')
 const isUserLoggedIn = async (req, res, next) => {
   if (req.session.user) {
     res.redirect('/')
-  } else if (req.session.admin) {
-    res.redirect('/admin/dashboard');
   } else {
     next()
   }
@@ -16,8 +14,6 @@ const isUserLoggedIn = async (req, res, next) => {
 const isAdminLoggedIn = async (req, res, next) => {
   if (req.session.admin) {
     next();
-  } else if (req.session.user) {
-    res.redirect('/');
   } else {
     res.render("Admin/pages/login")
   }
