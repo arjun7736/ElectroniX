@@ -10,8 +10,8 @@ const accountController =require('../controller/profileController');
 const ckeckoutController= require('../controller/checkOutController');
 
 
-
 userRoute.get('/blocked',(req,res)=>res.render('User/pages/blocked'))
+
 userRoute.get('/register', Auth.isUserLoggedIn, userController.loadRegister)
 
 userRoute.post('/register',userController.setRegistrationDataMiddleware, userController.insertUser)
@@ -56,6 +56,8 @@ userRoute.post('/placeOrder',Auth.isUserBlocked, ckeckoutController.saveOrder)
 
 userRoute.get('/orderSuccess',Auth.isUserBlocked,ckeckoutController.loadSuccess)
 
+userRoute.get('/orderdetails/:id',accountController.loadOrderDetails)
+
 userRoute.get('/account',Auth.isUserBlocked,accountController.loadprofile)
 
 userRoute.post('/account',Auth.isUserBlocked,accountController.saveEditProfile)
@@ -78,6 +80,7 @@ userRoute.get('/orderlist',Auth.isUserBlocked,accountController.loadOrderList)
 
 userRoute.post('/cancelOrder/:id',ckeckoutController.cancelOrder)
 
+userRoute.post('/cancelItem/:id/:id',ckeckoutController.cancelItem)
 
 
 module.exports = userRoute

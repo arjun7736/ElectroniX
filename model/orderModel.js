@@ -20,6 +20,10 @@ const orderSchema = new mongoose.Schema({
             type: Number,
             required: true
         },
+        itemCancelled:{
+            type : Boolean,
+            default  : false
+        },
         totalAmount: Number
     }],
     status: {

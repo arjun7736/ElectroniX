@@ -50,7 +50,7 @@ const saveOrder = async (req, res) => {
 
 // load order success page
 const loadSuccess = async (req, res) => {
-    if(!req.session.user){
+    if (!req.session.user) {
         return res.redirect("/login");
     }
     const order = await OrderDB.find({ user: req.session.user }).sort({ orderDate: -1 }).limit(1).populate('products.product')
@@ -77,7 +77,29 @@ const cancelOrder = async (req, res) => {
     }
 }
 
+// cancel each iem from existing order
+const cancelItem = async (req, res) => {
+    const { itemID, orderid,reason } = req.body
+    try {
+        const order = await OrderDB.findById(orderid);
+        const product = order.products.find(product => product._id.toString() === itemID);
+        product.itemCancelled = 'true';
+        
+        await OrderDB.updateOne({ _id: orderid }, { $set: { cancelReason: reason } });
 
+        const allOrderItemsCancelled = order.products.every(item => item.itemCancelled);
+        console.log(allOrderItemsCancelled)
+        if (allOrderItemsCancelled) { 
+            await OrderDB.updateOne({ _id: orderid }, { $set: { status: "Cancelled" } });
+        }
+        // Save the updated order
+        await order.save();
+        return res.json({ success: true, message: 'Item cancelled successfully.' });
+    } catch (error) {
+        console.error('Error cancelling item:', error);
+        return { success: false, message: 'Failed to cancel item. Please try again.' };
+    }
+}
 
 
 module.exports = {
@@ -85,5 +107,5 @@ module.exports = {
     saveOrder,
     loadSuccess,
     cancelOrder,
-
+    cancelItem
 }

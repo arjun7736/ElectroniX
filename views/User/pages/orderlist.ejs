@@ -14,7 +14,7 @@
       </div>
       <div class="flex-grow">
         <p class="text-gray-600">Hello,</p>
-        <h4 class="text-gray-800 font-medium">name</h4>
+        <h4 class="text-gray-800 font-medium"><%=user.username%></h4>
       </div>
     </div>
 
@@ -101,7 +101,7 @@
     </div>
     <ul class="list-none p-4 rounded-md shadow-md">
       <%order.forEach((value)=>{ %>
-      <li
+      <a href="/orderdetails/<%=value._id%>"><li
         class="flex col-span-4 mt-5 items-center shadow-lg justify-between p-4 border-b border-gray-200"
       >
         <div class="flex flex-col">
@@ -147,11 +147,22 @@
           >
             <% }%>
         </div>
-      </li>
+      </li></a>
       <% })%>
     </ul>
+    
+  <div class="pagination mt-4">
+    <% for (let i = 1; i <= totalPages; i++) { %>
+        <a href="/orderlist?page=<%= i %>" class="px-3 py-1 mx-1 rounded-md <%= currentPage == i ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700' %>">
+            <%= i %>
+        </a>
+    <% } %>
   </div>
+  
+  </div>
+  
 </div>
+
 <%- include('../layout/footer') %>
 
    <script>

@@ -186,20 +186,66 @@ const updateAddress = async (req, res) => {
 }
 
 // show order list
+// const loadOrderList = async (req, res) => {
+//     const ITEMS_PER_PAGE = 10;
+//     try {
+//         const page = parseInt(req.query.page) || 1; 
+//         const skip = (page - 1) * ITEMS_PER_PAGE; 
+
+//         if (!req.session.user) {
+//             return res.redirect('/login')
+//         }
+//         const order = await OrderDB.find({ user: req.session.user })
+
+//         res.render('User/pages/orderlist', { order })
+//     } catch (error) {
+
+//     }
+// }
+
+
 const loadOrderList = async (req, res) => {
+    const ITEMS_PER_PAGE = 5; 
+
     if (!req.session.user) {
-        return res.redirect('/login')
+        return res.redirect('/login');
     }
-    const order = await OrderDB.find({ user: req.session.user })
-    res.render('User/pages/orderlist', { order })
-}
 
-const test = async (req, res) => {
-    const order = await OrderDB.find({ userId: req.session.user })
-    // console.log(order)
-    res.render('User/pages/test', { order })
-}
+    const page = parseInt(req.query.page) || 1; 
+    const skip = (page - 1) * ITEMS_PER_PAGE; 
 
+    try {
+        const totalOrders = await OrderDB.countDocuments({ user: req.session.user });
+        const totalPages = Math.ceil(totalOrders / ITEMS_PER_PAGE);
+
+        const order = await OrderDB.find({ user: req.session.user })
+            .skip(skip)
+            .limit(ITEMS_PER_PAGE);
+        res.render('User/pages/orderlist', { order, currentPage: page, totalPages });
+    } catch (error) {
+        console.error('Error fetching orders:', error);
+        res.status(500).send('Internal Server Error');
+    }
+};
+
+module.exports = { loadOrderList };
+
+
+
+
+
+
+// load Order Details
+const loadOrderDetails = async (req, res) => {
+    try {
+        const _id = req.params.id;
+        const order = await OrderDB.findOne({ _id }).populate('products.product').populate('user')
+
+        res.render("User/pages/orderdetails", { order });
+    } catch (error) {
+        console.log(error);
+    }
+};
 
 
 module.exports = {
@@ -213,7 +259,7 @@ module.exports = {
     getEditAddress,
     updateAddress,
     loadOrderList,
-    test
+    loadOrderDetails
 
 
 }
