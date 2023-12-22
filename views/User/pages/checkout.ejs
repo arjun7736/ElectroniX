@@ -192,24 +192,6 @@
 </form>
     <div class="flex border-l  flex-col w-full ml-0 lg:ml-12 lg:w-2/5 mr-0">      
       <div class="pt-12 md:pt-0 2xl:ps-4 ml-20">
-        <!-- <h2 class="text-xl font-bold">Order Summary</h2>
-        <div class="mt-8">
-          <div class="flex flex-col space-y-4">
-
-<%cartData.forEach((value)=>{  %> 
-            <div class="flex space-x-4">
-              <div>
-                <h2 class="text-xl font-bold"><%=value.product.brandname%> <%=value.product.varientname%> </h2>
-                <p class="text-sm"><%=value.product.category%> <%=value.product.subcategory%></p>
-                <span class="text-red-600">Price  </span>&#8377; <%=value.totalAmount%>
-              </div>
-             
-            </div>
-            <% }) %>
-
-          </div>
-        </div> -->
-
         <div class="py-2">
           <label
             for="promo"
@@ -295,39 +277,58 @@
 </div>
 <%- include('../layout/footer') %>
 
-
 <script>
- async function checkOut(){
-  const address=document.getElementById(`addressOption`)
-  const payment =document.getElementById('paymentOption')
-
-  const selectedPaymentOption = payment.querySelector('input[name="payment"]:checked').value
-
-  const selectedAddrerssOption = address.querySelector('input[name="selectedAddress"]:checked').value
-
-  const data ={address:selectedAddrerssOption,payment:selectedPaymentOption}
-  fetch(`/placeOrder/?address=${selectedAddrerssOption}&&payment=${selectedPaymentOption}`, {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json',
-  },
-  body: JSON.stringify({data}),
-})
-  .then(response => response.json())
-  .then(data => {
-    Swal.fire({
-  title: "Good job!",
-  text: "Order Placed!",
-  icon: "success"
-}).then(() => {
-        window.location.href = '/orderSuccess';
-      })
-
- 
-})
-  .catch(error => {
-    console.error('Error:', error);
-  });
- }
-
-</script>
+  async function checkOut() {
+    try {
+      const address = document.getElementById(`addressOption`);
+      const payment = document.getElementById('paymentOption');
+  
+      const selectedPaymentOption = payment.querySelector('input[name="payment"]:checked').value;
+      const selectedAddrerssOption = address.querySelector('input[name="selectedAddress"]:checked').value;
+  
+      const data = { address: selectedAddrerssOption, payment: selectedPaymentOption };
+  
+      // Fetch the stock check result
+      const stockCheckResponse = await fetch('/checkStock', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ data }),
+      });
+  
+      const stockCheckResult = await stockCheckResponse.json();
+  
+      if (stockCheckResult.success) {
+        // Proceed with placing the order
+        const orderResponse = await fetch(`/placeOrder/?address=${selectedAddrerssOption}&&payment=${selectedPaymentOption}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ data }),
+        });
+  
+        const orderData = await orderResponse.json();
+  
+        // Display a success SweetAlert and redirect on successful order placement
+        Swal.fire({
+          title: 'Order Placed!',
+          text: 'Good job!',
+          icon: 'success'
+        }).then(() => {
+          window.location.href = '/orderSuccess';
+        });
+      } else {
+        Swal.fire({
+          title: 'Insufficient Stock',
+          text: 'The stock for some products is insufficient. Please review your order.',
+          icon: 'error'
+        });
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  }
+  </script>
+  

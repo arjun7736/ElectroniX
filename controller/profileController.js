@@ -228,7 +228,6 @@ const loadOrderList = async (req, res) => {
     }
 };
 
-module.exports = { loadOrderList };
 
 
 

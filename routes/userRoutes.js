@@ -82,5 +82,6 @@ userRoute.post('/cancelOrder/:id',ckeckoutController.cancelOrder)
 
 userRoute.post('/cancelItem/:id/:id',ckeckoutController.cancelItem)
 
+userRoute.post('/checkStock',ckeckoutController.checkStock)
 
 module.exports = userRoute

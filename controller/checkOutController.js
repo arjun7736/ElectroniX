@@ -41,6 +41,15 @@ const saveOrder = async (req, res) => {
             grandTotal: user.grandTotal
         })
         const data = await order.save()
+
+        for (const cartItem of user.cart) {
+            const product = await ProductDB.findById(cartItem.product);
+            product.quantity -= cartItem.quantity;
+            await product.save();
+        }
+        user.cart = [];
+        await user.save();
+
         return res.json(data);
     } catch (error) {
         console.log(error)
@@ -61,45 +70,92 @@ const loadSuccess = async (req, res) => {
 
 // cancelorder
 const cancelOrder = async (req, res) => {
-    let { id } = req.params
-    const { reason } = req.body
+    let { id } = req.params;
+    const { reason } = req.body;
     try {
+        const order = await OrderDB.findOne({ orderId: id });
+
+        for (const product of order.products) {
+            const originalProduct = await ProductDB.findById(product.product);
+            originalProduct.quantity += product.quantity;
+            await originalProduct.save();
+        }
+        for (const product of order.products) {
+            product.itemCancelled = true;
+        }
+        await order.save();
+
         const result = await OrderDB.findOneAndUpdate(
             { orderId: id },
-            { $set: { status: "Cancelled", cancelReason: reason } },
+            { $set: { status: 'Cancelled', cancelReason: reason } },
             { new: true }
         );
-        return res.json(result);
 
+
+
+        return res.json({ success: true, message: 'Order cancelled successfully.', result });
     } catch (err) {
-        req.flash('danger', err.message)
-        return res.redirect('/orderlist')
+        console.error('Error cancelling order:', err);
+        return res.status(500).json({ success: false, message: 'Failed to cancel order. Please try again.' });
     }
-}
+};
+
 
 // cancel each iem from existing order
+
 const cancelItem = async (req, res) => {
-    const { itemID, orderid,reason } = req.body
+    const { itemID, orderid, reason } = req.body;
     try {
         const order = await OrderDB.findById(orderid);
         const product = order.products.find(product => product._id.toString() === itemID);
-        product.itemCancelled = 'true';
-        
+
+        const canceledQuantity = product.quantity;
+        const originalProduct = await ProductDB.findById(product.product);
+        originalProduct.quantity += canceledQuantity;
+
+        product.itemCancelled = true;
+
         await OrderDB.updateOne({ _id: orderid }, { $set: { cancelReason: reason } });
 
         const allOrderItemsCancelled = order.products.every(item => item.itemCancelled);
-        console.log(allOrderItemsCancelled)
-        if (allOrderItemsCancelled) { 
+        if (allOrderItemsCancelled) {
             await OrderDB.updateOne({ _id: orderid }, { $set: { status: "Cancelled" } });
         }
-        // Save the updated order
+        await originalProduct.save();
         await order.save();
-        return res.json({ success: true, message: 'Item cancelled successfully.' });
+
+        return res.json({ success: true, message: 'Item canceled successfully.' });
     } catch (error) {
-        console.error('Error cancelling item:', error);
-        return { success: false, message: 'Failed to cancel item. Please try again.' };
+        console.error('Error canceling item:', error);
+        return res.status(500).json({ success: false, message: 'Failed to cancel item. Please try again.' });
     }
-}
+};
+
+
+
+// check stock
+const checkStock = async (req, res) => {
+    try {
+        const user = await UserDB.findOne({ _id: req.session.user });
+
+        for (const cartItem of user.cart) {
+            const product = await ProductDB.findOne({ _id: cartItem.product });
+
+            if (product.quantity < cartItem.quantity) {
+                console.log("Insufficient stock for product:", product._id);
+                return res.json({ success: false, insufficientStockProducts: [{ productId: product._id, quantity: product.quantity }] });
+            }
+        }
+
+        console.log("All products have sufficient stock");
+        return res.json({ success: true });
+    } catch (error) {
+        console.error('Error checking stock:', error);
+        return res.status(500).json({ success: false, message: 'Internal Server Error' });
+    }
+};
+
+
 
 
 module.exports = {
@@ -107,5 +163,6 @@ module.exports = {
     saveOrder,
     loadSuccess,
     cancelOrder,
-    cancelItem
+    cancelItem,
+    checkStock
 }
