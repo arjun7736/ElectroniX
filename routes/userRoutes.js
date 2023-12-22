@@ -8,6 +8,8 @@ const adminController = require('../controller/adminController');
 const cartController = require('../controller/cartController');
 const accountController =require('../controller/profileController');
 const ckeckoutController= require('../controller/checkOutController');
+const multer = require('multer');
+const upload = multer();
 
 
 userRoute.get('/blocked',(req,res)=>res.render('User/pages/blocked'))
@@ -61,6 +63,8 @@ userRoute.get('/orderdetails/:id',accountController.loadOrderDetails)
 userRoute.get('/account',Auth.isUserBlocked,accountController.loadprofile)
 
 userRoute.post('/account',Auth.isUserBlocked,accountController.saveEditProfile)
+
+userRoute.post('/uploadProfileImage',upload.single('image'),accountController.uploadProfileImage)
 
 userRoute.get('/address',Auth.isUserBlocked,accountController.loadAddress)
 

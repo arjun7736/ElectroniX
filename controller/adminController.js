@@ -15,6 +15,7 @@ const multer = require('multer');
 const upload = multer();
 const mongoose = require('mongoose');
 const sharp = require('sharp');
+const fileUpload = require('express-fileupload');
 
 
 

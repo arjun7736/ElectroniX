@@ -3,6 +3,9 @@ const ProductDB = require("../model/productModel")
 const AddressDB = require('../model/addressModel')
 const bcrypt = require('bcrypt');
 const OrderDB = require('../model/orderModel')
+const multer = require('multer');
+const upload = multer();
+const fileUpload = require('express-fileupload');
 
 
 const securepassword = async (password) => {
@@ -37,10 +40,10 @@ const loadprofile = async (req, res) => {
 const loadAddress = async (req, res) => {
     try {
         const id = req.session.user;
-        console.log(id)
+        const user = await UserDB.findById(req.session.user);
         const Address = await AddressDB.find({ userId: id })
         if (req.session.user) {
-            res.render('User/pages/address', { Address })
+            res.render('User/pages/address', { Address ,user})
         } else {
             console.log("poyi login cheyyeda")
             res.redirect('/login')
@@ -55,11 +58,16 @@ const loadAddress = async (req, res) => {
 
 // load change password
 const loadChangePassword = async (req, res) => {
-    if (req.session.user) {
-        res.render('User/pages/changePassword')
-    } else {
-        console.log("poyi login cheyyeda")
-        res.redirect('/login')
+    try {
+        if (req.session.user) {
+            const user = await UserDB.findById(req.session.user);
+            res.render('User/pages/changePassword', { user })
+        } else {
+            console.log("poyi login cheyyeda")
+            res.redirect('/login')
+        }
+    } catch (error) {
+        console.log(error)
     }
 }
 
@@ -87,7 +95,8 @@ const saveEditProfile = async (req, res) => {
 const loadAddAddress = async (req, res) => {
     try {
         if (req.session.user) {
-            res.render('User/pages/addaddress')
+            const user = await UserDB.findById(req.session.user);
+            res.render('User/pages/addaddress', { user })
         } else {
             console.log("poyi login cheyyeda")
             res.redirect('/')
@@ -162,9 +171,15 @@ const saveChangePassword = async (req, res) => {
 
 // edit address
 const getEditAddress = async (req, res) => {
-    const id = req.params.id;
-    const address = await AddressDB.findById(id);
-    res.render('User/pages/editaddress', { address })
+    try {
+        const user = await UserDB.findById(req.session.user);
+        const id = req.params.id;
+        const address = await AddressDB.findById(id);
+        res.render('User/pages/editaddress', { address, user })
+    }
+    catch (error) {
+        console.log(error)
+    }
 }
 
 // save edited address
@@ -184,44 +199,26 @@ const updateAddress = async (req, res) => {
         console.log(err);
     })
 }
-
 // show order list
-// const loadOrderList = async (req, res) => {
-//     const ITEMS_PER_PAGE = 10;
-//     try {
-//         const page = parseInt(req.query.page) || 1; 
-//         const skip = (page - 1) * ITEMS_PER_PAGE; 
-
-//         if (!req.session.user) {
-//             return res.redirect('/login')
-//         }
-//         const order = await OrderDB.find({ user: req.session.user })
-
-//         res.render('User/pages/orderlist', { order })
-//     } catch (error) {
-
-//     }
-// }
-
-
 const loadOrderList = async (req, res) => {
-    const ITEMS_PER_PAGE = 5; 
+    const ITEMS_PER_PAGE = 5;
 
     if (!req.session.user) {
         return res.redirect('/login');
     }
 
-    const page = parseInt(req.query.page) || 1; 
-    const skip = (page - 1) * ITEMS_PER_PAGE; 
+    const page = parseInt(req.query.page) || 1;
+    const skip = (page - 1) * ITEMS_PER_PAGE;
 
     try {
+        const user = await UserDB.findById(req.session.user);
         const totalOrders = await OrderDB.countDocuments({ user: req.session.user });
         const totalPages = Math.ceil(totalOrders / ITEMS_PER_PAGE);
 
         const order = await OrderDB.find({ user: req.session.user })
             .skip(skip)
             .limit(ITEMS_PER_PAGE);
-        res.render('User/pages/orderlist', { order, currentPage: page, totalPages });
+        res.render('User/pages/orderlist', { order, currentPage: page, totalPages ,user});
     } catch (error) {
         console.error('Error fetching orders:', error);
         res.status(500).send('Internal Server Error');
@@ -247,6 +244,22 @@ const loadOrderDetails = async (req, res) => {
 };
 
 
+// add profile image
+const uploadProfileImage = async (req, res) => {
+    try {
+        const userId = req.session.user;
+        const imageData = {
+            data: req.file.buffer,
+            contentType: req.file.mimetype,
+        };
+        await UserDB.findByIdAndUpdate(userId, { profileImage: imageData });
+        res.json({ success: true });
+    } catch (error) {
+        console.error('Error uploading profile image:', error);
+        res.status(500).json({ success: false, message: 'Internal Server Error' });
+    }
+}
+
 module.exports = {
     loadprofile,
     loadAddress,
@@ -258,7 +271,9 @@ module.exports = {
     getEditAddress,
     updateAddress,
     loadOrderList,
-    loadOrderDetails
+    loadOrderDetails,
+    uploadProfileImage,
+
 
 
 }

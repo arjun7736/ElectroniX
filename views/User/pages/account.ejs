@@ -2,117 +2,32 @@
 <%- include('../layout/navbar') %>
 
 <div class="container grid grid-cols-12 items-start gap-6 pt-4 pb-16">
-
-  <div class="col-span-3 shadow-lg">
-    <div class="px-4 py-3 shadow flex h-48 items-center gap-4">
-      <div class="flex-shrink-0">
-        <img
-          src="    "
-          alt="profile"
-          class="rounded-full w-24 h-24 border border-gray-200 p-1 object-cover"
-        />
-      </div>
-      <div class="flex-grow">
-        <p class="text-gray-600">Hello,</p>
-        <h4 class="text-gray-800 font-medium"><%=user.username%></h4>
-      </div>
-    </div>
-
-    <div
-      class="mt-6 bg-white shadow rounded p-4 divide-y divide-gray-200 space-y-4 text-gray-600"
-    >
-      <div class="space-y-1 pl-8">
-        <a
-          href="#"
-          class="relative text-primary block font-medium capitalize transition"
-        >
-          <span class="absolute -left-8 top-0 text-base">
-            <i class="fa-regular fa-address-card"></i>
-          </span>
-          Manage account
-        </a>
-        <a
-          href="/account"
-          class="relative hover:text-primary block capitalize transition"
-        >
-          Profile information
-        </a>
-        <a
-          href="/address"
-          class="relative hover:text-primary block capitalize transition"
-        >
-          Manage addresses
-        </a>
-        <a
-          href="/changepassword"
-          class="relative hover:text-primary block capitalize transition"
-        >
-          Change password
-        </a>
-      </div>
-
-      <div class="space-y-1 pl-8 pt-4">
-        <a
-          href="/orderlist"
-          class="relative hover:text-primary block font-medium capitalize transition"
-        >
-          <span class="absolute -left-8 top-0 text-base">
-            <i class="fa-solid fa-box-archive"></i>
-          </span>
-          My order history
-        </a>
-      </div>
-
-      <div class="space-y-1 pl-8 pt-4">
-        <a
-          href="#"
-          class="relative hover:text-primary block font-medium capitalize transition"
-        >
-          <span class="absolute -left-8 top-0 text-base">
-            <i class="fa-regular fa-credit-card"></i>
-          </span>
-          Payment methods
-        </a>
-        <a
-          href="#"
-          class="relative hover:text-primary block capitalize transition"
-        >
-          voucher
-        </a>
-      </div>
-
-      <div class="space-y-1 pl-8 pt-4">
-        <a
-          href="/logout"
-          class="relative hover:text-primary block font-medium capitalize transition"
-        >
-          <span class="absolute -left-8 top-0 text-base">
-            <i class="fa-regular fa-arrow-right-from-bracket"></i>
-          </span>
-          Logout
-        </a>
-      </div>
-    </div>
-  </div>
+  <%- include('../layout/sidebar') %>
 
   <div class="col-span-9 shadow-lg rounded px-6 pt-5 pb-7 ">
     <h4 class="text-lg font-medium capitalize mb-4">Profile information</h4>
-
     <div class="flex ml-10 mb-6">
       <div class="relative">
-        <img
-          src="path/to/profile/photo.jpg"
-          alt="profile"
-          class="rounded-full w-20 h-20 border border-gray-200 p-1 object-cover"
-        />
-        <!-- Add an overlay for changing profile photo -->
-        <div
-          class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 hover:opacity-100 transition duration-300"
-        >
-          <button class="text-white">Change Photo</button>
-        </div>
+        <label for="profileImage" class="cursor-pointer">
+          <img
+            id="profileImagePreview"
+            src="data:image/jpg;base64, <%= user.profileImage.data.toString('base64') %>"
+            alt="profile"
+            class="rounded-full w-40 h-40 border border-gray-200 p-1 object-cover"
+          />
+          <div
+            class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 hover:opacity-100 transition duration-300"
+          >
+            <button class="text-white" onclick="triggerFileInput()">Change Photo</button>
+          </div>
+        </label>
+        <input type="file" id="profileImage" class="hidden" accept="image/*" onchange="handleImageChange(event)">
       </div>
     </div>
+    
+
+
+
 
     <div class="space-y-4">
       <div class="grid grid-cols-2 my-6">
@@ -256,4 +171,90 @@
       }
     }
   });
+</script>
+
+<!-- <script>
+  function triggerFileInput() {
+    document.getElementById('profileImage').click();
+  }
+
+  async function handleImageChange(event) {
+    const fileInput = event.target;
+    const file = fileInput.files[0];
+
+    if (file) {
+      const formData = new FormData();
+      formData.append('image', file);
+
+      try {
+        // Send the image file to the server
+        const response = await fetch('/uploadProfileImage', {
+          method: 'POST',
+          body: formData,
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          window.alert('Profile image uploaded successfully.');
+          
+        } else {
+          window.alert('Failed to upload profile image:', data.message);
+        }
+      } catch (error) {
+        window.alert('Error uploading profile image:', error);
+      }
+    }
+  }
+</script> -->
+<script>
+  function triggerFileInput() {
+    document.getElementById('profileImage').click();
+  }
+
+  async function handleImageChange(event) {
+    const fileInput = event.target;
+    const file = fileInput.files[0];
+
+    if (file) {
+      const formData = new FormData();
+      formData.append('image', file);
+
+      try {
+        // Send the image file to the server
+        const response = await fetch('/uploadProfileImage', {
+          method: 'POST',
+          body: formData,
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          // Display SweetAlert on success
+          Swal.fire({
+            icon: 'success',
+            title: 'Profile Image Uploaded!',
+            text: 'Profile image uploaded successfully.',
+          }).then(() => {
+            // Reload the webpage after clicking "OK"
+            location.reload();
+          });
+        } else {
+          // Display SweetAlert on failure
+          Swal.fire({
+            icon: 'error',
+            title: 'Failed to Upload Profile Image',
+            text: `Error: ${data.message}`,
+          });
+        }
+      } catch (error) {
+        // Display SweetAlert on error
+        Swal.fire({
+          icon: 'error',
+          title: 'Error Uploading Profile Image',
+          text: `Error: ${error}`,
+        });
+      }
+    }
+  }
 </script>
