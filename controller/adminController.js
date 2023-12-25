@@ -13,12 +13,10 @@ const crypto = require('crypto');
 require('dotenv').config();
 const multer = require('multer');
 const upload = multer();
+const { ObjectId } = require('mongoose').Types;
 const mongoose = require('mongoose');
 const sharp = require('sharp');
 const fileUpload = require('express-fileupload');
-
-
-
 
 
 
@@ -667,48 +665,84 @@ const orderDetails = async (req, res) => {
 }
 
 // update Quantity
+// const updateQuantity = async (req, res) => {
+//     const { itemID, orderid } = req.body;
+//     const userId = req.session.user;
+
+//     try {
+//         const pro = await ProductDB.findOne({ _id: itemID });
+//         const userBeforeUpdate = await OrderDB.findOne({ _id: orderid, 'products.product': itemID });
+//         console.log(userBeforeUpdate)
+//         if (!userBeforeUpdate) {
+//             return res.status(404).json({ message: 'User not found or product not in cart' });
+//         }
+
+//             const updatedQuantity = parseInt(quantity);
+//             const previousQuantity = userBeforeUpdate.cart.find(item => item.product.equals(product)).quantity;
+
+//             const updatedUser = await UserDB.findOneAndUpdate(
+//                 { _id: userId, 'cart.product': product },
+//                 {
+//                     $set: {
+//                         'cart.$.quantity': updatedQuantity,
+//                     },
+//                     $inc: {
+//                         'cart.$.totalAmount': pro.price * (updatedQuantity - previousQuantity),
+//                         'grandTotal': pro.price * (updatedQuantity - previousQuantity),
+//                     },
+//                 },
+//                 { new: true }
+//             );
+
+//             res.json({
+//                 message: 'Quantity updated',
+//                 quantity: updatedUser.cart.find(item => item.product.equals(product)).quantity,
+//                 totalAmount: updatedUser.cart.find(item => item.product.equals(product)).totalAmount,
+//                 grandtotal: updatedUser.grandTotal
+//             });
+//     } catch (error) {
+//             console.error('Error updating quantity:', error);
+//             res.status(500).json({ message: 'Failed to update quantity' });
+//     }
+// };
+
+
 const updateQuantity = async (req, res) => {
-    const { itemID, orderid } = req.body;
-    const userId = req.session.user;
-
     try {
-        const pro = await ProductDB.findOne({ _id: itemID });
-            const userBeforeUpdate = await OrderDB.findOne({ _id: orderid, 'products.product': itemID });
-console.log(userBeforeUpdate)
-            if (!userBeforeUpdate) {
-                return res.status(404).json({ message: 'User not found or product not in cart' });
-            }
+        const { orderId, productId, newQuantity } = req.body;
+        // Find the order by orderId
+        const order = await OrderDB.findById(orderId)
 
-        //     const updatedQuantity = parseInt(quantity);
-        //     const previousQuantity = userBeforeUpdate.cart.find(item => item.product.equals(product)).quantity;
+        const productToUpdate = order.products.find(product => product.product.toString() === productId);
 
-        //     const updatedUser = await UserDB.findOneAndUpdate(
-        //         { _id: userId, 'cart.product': product },
-        //         {
-        //             $set: {
-        //                 'cart.$.quantity': updatedQuantity,
-        //             },
-        //             $inc: {
-        //                 'cart.$.totalAmount': pro.price * (updatedQuantity - previousQuantity),
-        //                 'grandTotal': pro.price * (updatedQuantity - previousQuantity),
-        //             },
-        //         },
-        //         { new: true }
-        //     );
+        // Update the product details
+        const product = await ProductDB.findById(productId)
 
-        //     res.json({
-        //         message: 'Quantity updated',
-        //         quantity: updatedUser.cart.find(item => item.product.equals(product)).quantity,
-        //         totalAmount: updatedUser.cart.find(item => item.product.equals(product)).totalAmount,
-        //         grandtotal: updatedUser.grandTotal
-        //     });
+        productToUpdate.quantity = newQuantity;
+        productToUpdate.totalAmount = product.price * newQuantity;
+
+        // Recalculate grandTotal based on updated product details
+        // order.grandTotal = order.products.reduce((total, product) => total + product.totalAmount, 0);
+        order.grandTotal = order.products
+        .filter(product => !product.itemCancelled) 
+        .reduce((total, product) => total + product.totalAmount, 0);
+
+
+        order.totalPrice = order.products
+        .filter(product => !product.itemCancelled) 
+        .reduce((total, product) => total + product.totalAmount, 0);
+
+
+        console.log(order.grandTotal)
+        // Save the updated order
+        await order.save();
+
+        res.json({ success: true, order });
     } catch (error) {
-        //     console.error('Error updating quantity:', error);
-        //     res.status(500).json({ message: 'Failed to update quantity' });
+        console.error(error);
+        res.status(500).json({ error: 'Internal Server Error' });
     }
-};
-
-
+}
 
 
 

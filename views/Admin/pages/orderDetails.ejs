@@ -67,7 +67,7 @@
                 
                 <svg
                   class="fill-current text-gray-600 w-3 cursor-pointer"
-                  onclick="decreaseQuantity('<%=value.product._id%>', '<%=order._id%>', '<%= value._id %>')"
+                  onclick="updateQuantity('<%= order._id %>', '<%= value.product._id %>','<%= value.quantity - 1 %>')"
                   viewBox="0 0 448 512"
                 >
                   <path
@@ -78,8 +78,8 @@
                 
                 <svg
                   class="fill-current text-gray-600 w-3 cursor-pointer"
-                  onclick="increaseQuantity('<%=value.product._id%>', '<%=order._id%>', '<%= value._id %>')"
-                  viewBox="0 0 448 512"
+                  onclick="updateQuantity('<%= order._id %>', '<%= value.product._id %>', '<%= value.quantity + 1 %>')"     
+                             viewBox="0 0 448 512"
                 >
                   <path
                     d="M416 208H272V64c0-17.67-14.33-32-32-32h-32c-17.67 0-32 14.33-32 32v144H32c-17.67 0-32 14.33-32 32v32c0 17.67 14.33 32 32 32h144v144c0 17.67 14.33 32 32 32h32c17.67 0 32-14.33 32-32V304h144c17.67 0 32-14.33 32-32v-32c0-17.67-14.33-32-32-32z"
@@ -88,7 +88,7 @@
               </td>
               
             <td class="px-4 py-2"><%=value.product.price%></td>
-            <td class="px-4 py-2"><%=value.totalAmount%></td>
+            <td class="px-4 py-2"id="totalPrice-<%=value.product._id%>"><%=value.totalAmount%></td>
             <td class="px-4 py-2">
               <%if(value.itemCancelled){ %> 
                <a
@@ -130,87 +130,39 @@
 
 <%- include('../componants/footer') %>
 <script>
-  function updateQuantityAndPrice(itemId, orderId, quantityChange, cancelButtonId) {
-    fetch(`/admin/updateQuantity/${orderId}/${itemId}`, {
+  function updateQuantity(orderId, productId, newQuantity) {
+    const quantityElement = document.getElementById(`quantity-${productId}`);
+  const totalPriceElement = document.getElementById(`totalPrice-${productId}`);
+
+
+    // Make an AJAX request to update the quantity and totalAmount
+    fetch(`/admin/updateQuantity/${orderId}/${productId}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        itemID: itemId,
-        orderid: orderId,
-        quantityChange: quantityChange,
+        orderId: orderId,
+        productId: productId,
+        newQuantity: newQuantity,
       }),
     })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log(data);
-        if (data.success) {
-          // Update quantity on the page
-          const quantityElement = document.getElementById(`quantity-${itemId}`);
-          if (quantityElement) {
-            const newQuantity = parseInt(quantityElement.innerText) + quantityChange;
-            quantityElement.innerText = newQuantity;
-          }
+    .then(response => response.json())
+    .then(data => {
+      console.log('Updated product:', data.order);
+     
+      // Update the UI with the new data if needed
+      document.getElementById('subTotal').innerText = data.order.totalPrice;
+      document.getElementById('grandTotal').innerText = data.order.grandTotal;
+      quantityElement.innerText = newQuantity;
+      totalPriceElement.innerText = data.order.products.find(
+      product => product.product === productId
+    ).totalAmount
 
-          // Update total amount on the page
-          const totalAmountElement = document.getElementById(`totalAmount-${itemId}`);
-          if (totalAmountElement) {
-            const newTotalAmount = parseFloat(totalAmountElement.innerText) + data.totalAmountChange;
-            totalAmountElement.innerText = newTotalAmount.toFixed(2);
-          }
-
-          // Update subtotal and grand total on the page
-          const subTotalElement = document.getElementById('subTotal');
-          const grandTotalElement = document.getElementById('grandTotal');
-          if (subTotalElement && grandTotalElement) {
-            const newSubTotal = parseFloat(subTotalElement.innerText) + data.totalAmountChange;
-            const newGrandTotal = parseFloat(grandTotalElement.innerText) + data.totalAmountChange;
-            subTotalElement.innerText = newSubTotal.toFixed(2);
-            grandTotalElement.innerText = newGrandTotal.toFixed(2);
-          }
-
-          // Use Toastify to show a success message
-          Toastify({
-            text: 'Quantity and total have been updated.',
-            duration: 3000,
-            gravity: 'bottom', // 'top' or 'bottom'
-            position: 'right', // 'left', 'center', or 'right'
-            backgroundColor: 'green',
-            stopOnFocus: true,
-          }).showToast();
-        } else {
-          // Use Toastify to show an error message
-          Toastify({
-            text: 'Failed to update quantity. Please try again.',
-            duration: 3000,
-            gravity: 'bottom', // 'top' or 'bottom'
-            position: 'right', // 'left', 'center', or 'right'
-            backgroundColor: 'red',
-            stopOnFocus: true,
-          }).showToast();
-        }
-      })
-      .catch((error) => {
-        console.error('Error:', error);
-        // Use Toastify to show an error message
-        Toastify({
-          text: 'Failed to update quantity. Please try again.',
-          duration: 3000,
-          gravity: 'bottom', // 'top' or 'bottom'
-          position: 'right', // 'left', 'center', or 'right'
-          backgroundColor: 'red',
-          stopOnFocus: true,
-        }).showToast();
-      });
-  }
-
-  function decreaseQuantity(itemId, orderId, cancelButtonId) {
-    updateQuantityAndPrice(itemId, orderId, -1, cancelButtonId);
-  }
-
-  function increaseQuantity(itemId, orderId, cancelButtonId) {
-    updateQuantityAndPrice(itemId, orderId, 1, cancelButtonId);
+    })
+    .catch(error => {
+      console.error('Error updating product:', error);
+    });
   }
 </script>
 
