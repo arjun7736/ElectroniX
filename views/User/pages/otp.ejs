@@ -25,7 +25,7 @@
                 <input class="m-2 border h-10 w-10 text-center form-control rounded" type="text" id="third" maxlength="1" oninput="moveToNext(this, 'fourth')" /> 
                 <input class="m-2 border h-10 w-10 text-center form-control rounded" type="text" id="fourth" maxlength="1" oninput="moveToNext(this, 'btn')"/>
               </div>
-              <a href="/">  <button type="button" class="text-white mt-3 bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" id="btn" onclick="verifyOTP()">Submit OTP</button></a>
+              <a >  <button type="button" class="text-white mt-3 bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" id="btn" onclick="verifyOTP()">Submit OTP</button></a>
                 
                 <input type="hidden" name="email" value="<%= email %>" id="demo1"> 
                 
@@ -43,37 +43,107 @@
   
 <%- include('../layout/footer') %>
 
-
-<script>
+<!-- <script>
 function verifyOTP() {
-    const first = document.getElementById('first').value 
-    const second =document.getElementById('second').value 
-    const third  =document.getElementById('third').value 
-   const fourth = document.getElementById('fourth').value;
-const OTP= first+second+third+fourth
-const email=document.getElementById("demo1").value
+  const first = document.getElementById('first').value;
+  const second = document.getElementById('second').value;
+  const third = document.getElementById('third').value;
+  const fourth = document.getElementById('fourth').value;
+  const OTP = first + second + third + fourth;
+  const email = document.getElementById('demo1').value;
+  const verifyOTPEndpoint = '/otp';
+
+  fetch(verifyOTPEndpoint, {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ OTP, email }),
+  })
+      .then(response => response.json())
+      .then(data => {
+          if (data.success) {
+              // Show a success toast using Tippy.js
+              tippy('#btn', {
+                  content: 'Logged in!',
+                  placement: 'bottom',
+                  theme: 'light',
+                  trigger: 'manual',
+              }).show();
+                  location.href = '/';
+          } else {
+              // Show a SweetAlert for incorrect OTP
+              Swal.fire({
+                  icon: 'error',
+                  title: 'Incorrect OTP',
+                  text: 'Please try again.',
+              });
+          }
+      })
+      .catch(error => {
+          console.error('Error:', error);
+      });
+}
+
+</script> -->
+<script>
+  function verifyOTP() {
+    const first = document.getElementById('first').value;
+    const second = document.getElementById('second').value;
+    const third = document.getElementById('third').value;
+    const fourth = document.getElementById('fourth').value;
+    const OTP = first + second + third + fourth;
+    const email = document.getElementById('demo1').value;
     const verifyOTPEndpoint = '/otp';
+  
     fetch(verifyOTPEndpoint, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ OTP,email }),
+        body: JSON.stringify({ OTP, email }),
     })
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                alert('OTP is correct. Verification successful!');
+                // Show a success toast using Toastify
+                Toastify({
+                    text: 'Logged in!',
+                    backgroundColor: 'green',
+                    duration: 2000,  // Duration in milliseconds
+                    close: false,
+                    gravity: 'bottom', // Available: 'top', 'bottom', 'left', 'right'
+                    position: 'center', // Available: 'left', 'center', 'right'
+                    offset: { x: 0, y: 10 },
+                    className: 'toastify-success',
+                }).showToast();
+  
+                // Redirect to the landing page after a short delay
+                setTimeout(() => {
+                    location.href = '/';
+                }, 1000);
             } else {
-                alert('Incorrect OTP. Please try again.');
+                // Show a SweetAlert for incorrect OTP
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Incorrect OTP',
+                    text: 'Please try again.',
+                });
             }
         })
         .catch(error => {
             console.error('Error:', error);
         });
-}
+  }
+  </script>
+  
 
-</script>
+
+
+
+
+
+
 
 <script>
   function resendOtp(){

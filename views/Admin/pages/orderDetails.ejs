@@ -1,0 +1,263 @@
+<%- include('../componants/header') %>
+
+
+<div class="container mx-auto px-4 mt-8 mb-16">
+  <div>
+    <h2 class="text-3xl font-bold text-gray-900 dark:text-black">
+      Order Details
+    </h2>
+  </div>
+  <div class="mt-6 bg-white shadow-lg rounded p-4">
+    <div class="flex flex-col sm:flex-row justify-between">
+      <div>
+        <p class="text-gray-600">Ordered Date: <%=order.orderDate.toLocaleDateString()%></p>
+        <p class="text-gray-600">Order : <%=order.orderId%></p>
+      </div>
+      <div class="mt-4 sm:mt-0">
+        <a href=""> <p class="text-gray-600">Invoice</p></a>
+      </div>
+    </div>
+
+    <div class="mt-6 grid grid-cols-3 gap-4">
+      <div>
+        <h4 class="text-gray-800 font-medium">Shipping Address</h4>
+        <p class="text-gray-600">
+          <%=order.deliveryAddress[0].username%><br />
+          <%=order.deliveryAddress[0].address%><br />
+          <%=order.deliveryAddress[0].city%><br />
+          <%=order.deliveryAddress[0].district%>  <%=order.deliveryAddress[0].postcode%><br />
+          <%=order.deliveryAddress[0].state%>
+        </p>
+      </div>
+      <div>
+        <h4 class="text-gray-800 font-medium">Payment Methods</h4>
+        <p class="text-gray-600"> <%=order.paymentMethod%></p>
+      </div>
+      <div>
+        <h4 class="text-gray-800 font-medium">Delivery Status</h4>
+        <%if(order.status == 'Cancelled'){ %> 
+        <p class="text-red-600"> <%=order.status%></p>
+        <% }else if (order.status == "Delivered") { %>
+          <p class="text-green-600"> <%=order.status%></p>
+          <% }else if (order.status == "Pending" || order.status == "Shipped" || order.status == "Processing" ) { %>
+            <p class="text-yellow-600"> <%=order.status%></p>
+        <% }%>
+      </div>
+    </div>
+
+    <div class="mt-6 overflow-hidden  rounded-lg shadow-lg">
+      <table class="w-full text-left text-gray-600">
+        <thead>
+          <tr>
+            <th class="px-4 py-2 font-medium text-sm">Item(s)</th>
+            <th class="px-4 py-2 font-medium text-sm">Qty</th>
+            <th class="px-4 py-2 font-medium text-sm">Price</th>
+            <th class="px-4 py-2 font-medium text-sm">Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          <%order.products.forEach((value)=>{ %> 
+
+          <tr>
+            <td class="px-4 py-2">
+            <%=value.product.brandname%> <%=value.product.varientname%>
+            </td>
+    
+            <td class="px-4 py-2 flex items-center">
+                
+                <svg
+                  class="fill-current text-gray-600 w-3 cursor-pointer"
+                  onclick="decreaseQuantity('<%=value.product._id%>', '<%=order._id%>', '<%= value._id %>')"
+                  viewBox="0 0 448 512"
+                >
+                  <path
+                    d="M416 208H32c-17.67 0-32 14.33-32 32v32c0 17.67 14.33 32 32 32h384c17.67 0 32-14.33 32-32v-32c0-17.67-14.33-32-32-32z"
+                  />
+                </svg>
+                <span class="w-5 mr-2 ml-2 text-center" ><p  id="quantity-<%= value.product._id %>"> <%= value.quantity %></p></span>
+                
+                <svg
+                  class="fill-current text-gray-600 w-3 cursor-pointer"
+                  onclick="increaseQuantity('<%=value.product._id%>', '<%=order._id%>', '<%= value._id %>')"
+                  viewBox="0 0 448 512"
+                >
+                  <path
+                    d="M416 208H272V64c0-17.67-14.33-32-32-32h-32c-17.67 0-32 14.33-32 32v144H32c-17.67 0-32 14.33-32 32v32c0 17.67 14.33 32 32 32h144v144c0 17.67 14.33 32 32 32h32c17.67 0 32-14.33 32-32V304h144c17.67 0 32-14.33 32-32v-32c0-17.67-14.33-32-32-32z"
+                  />
+                </svg>
+              </td>
+              
+            <td class="px-4 py-2"><%=value.product.price%></td>
+            <td class="px-4 py-2"><%=value.totalAmount%></td>
+            <td class="px-4 py-2">
+              <%if(value.itemCancelled){ %> 
+               <a
+              id="<%= value._id %>"
+              onclick="cancelItem('<%= value._id %>','<%= order._id%>')"
+              class="hidden cursor-pointer ml-3 px-3 py-1.5 rounded-md bg-red-500 text-white"
+              >Cancel This Item</a>
+              <%} else{%>
+                <a
+              id="<%= value._id %>"
+              onclick="cancelItem('<%= value._id %>','<%= order._id%>','<%= value._id %>')"
+              class=" cursor-pointer ml-3 px-3 py-1.5 rounded-md bg-red-500 text-white"
+              >Cancel This Item</a>
+                <%}%>
+            </td>
+          </tr>
+          <% })%>
+
+        </tbody>
+      </table>
+      <div class="px-4 py-2 flex justify-between">
+        <p class="text-gray-600">Subtotal:</p>
+        <p class="text-gray-600" id="subTotal"><%=order.totalPrice%></p>
+      </div>
+      
+      <div class="px-4 py-2 flex justify-between">
+        <p class="text-gray-600">Promotion Applied:</p>
+        <p class="text-gray-600">0</p>
+      </div>
+      <div
+        class="px-4 py-2 font-bold text-lg text-gray-800 flex justify-between"
+      >
+        <p>Grand Total:</p>
+        <p class="text-gray-600" id="grandTotal"><%=order.grandTotal%></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('../componants/footer') %>
+<script>
+  function updateQuantityAndPrice(itemId, orderId, quantityChange, cancelButtonId) {
+    fetch(`/admin/updateQuantity/${orderId}/${itemId}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        itemID: itemId,
+        orderid: orderId,
+        quantityChange: quantityChange,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        if (data.success) {
+          // Update quantity on the page
+          const quantityElement = document.getElementById(`quantity-${itemId}`);
+          if (quantityElement) {
+            const newQuantity = parseInt(quantityElement.innerText) + quantityChange;
+            quantityElement.innerText = newQuantity;
+          }
+
+          // Update total amount on the page
+          const totalAmountElement = document.getElementById(`totalAmount-${itemId}`);
+          if (totalAmountElement) {
+            const newTotalAmount = parseFloat(totalAmountElement.innerText) + data.totalAmountChange;
+            totalAmountElement.innerText = newTotalAmount.toFixed(2);
+          }
+
+          // Update subtotal and grand total on the page
+          const subTotalElement = document.getElementById('subTotal');
+          const grandTotalElement = document.getElementById('grandTotal');
+          if (subTotalElement && grandTotalElement) {
+            const newSubTotal = parseFloat(subTotalElement.innerText) + data.totalAmountChange;
+            const newGrandTotal = parseFloat(grandTotalElement.innerText) + data.totalAmountChange;
+            subTotalElement.innerText = newSubTotal.toFixed(2);
+            grandTotalElement.innerText = newGrandTotal.toFixed(2);
+          }
+
+          // Use Toastify to show a success message
+          Toastify({
+            text: 'Quantity and total have been updated.',
+            duration: 3000,
+            gravity: 'bottom', // 'top' or 'bottom'
+            position: 'right', // 'left', 'center', or 'right'
+            backgroundColor: 'green',
+            stopOnFocus: true,
+          }).showToast();
+        } else {
+          // Use Toastify to show an error message
+          Toastify({
+            text: 'Failed to update quantity. Please try again.',
+            duration: 3000,
+            gravity: 'bottom', // 'top' or 'bottom'
+            position: 'right', // 'left', 'center', or 'right'
+            backgroundColor: 'red',
+            stopOnFocus: true,
+          }).showToast();
+        }
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+        // Use Toastify to show an error message
+        Toastify({
+          text: 'Failed to update quantity. Please try again.',
+          duration: 3000,
+          gravity: 'bottom', // 'top' or 'bottom'
+          position: 'right', // 'left', 'center', or 'right'
+          backgroundColor: 'red',
+          stopOnFocus: true,
+        }).showToast();
+      });
+  }
+
+  function decreaseQuantity(itemId, orderId, cancelButtonId) {
+    updateQuantityAndPrice(itemId, orderId, -1, cancelButtonId);
+  }
+
+  function increaseQuantity(itemId, orderId, cancelButtonId) {
+    updateQuantityAndPrice(itemId, orderId, 1, cancelButtonId);
+  }
+</script>
+
+
+      <script>
+        function cancelItem(itemId, orderId, cancelButtonId) {
+          Swal.fire({
+            title: 'Are you sure?',
+            text: 'Do you want to cancel this item?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, cancel it!',
+          }).then((result) => {
+            if (result.isConfirmed) {
+              fetch(`/cancelItem/${orderId}/${itemId}`, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                  itemID: itemId,
+                  orderid: orderId,
+                  reason: "Admin Cancelled"
+                }),
+              })
+                .then((response) => response.json())
+                .then((data) => {
+                  if (data.success) {
+                    Swal.fire('Item Canceled!', 'Your item has been canceled.', 'success');
+                    document.getElementById(cancelButtonId).style.display = 'none';
+                    document.getElementById('grandTotal').innerText = data.updatedOrder.grandTotal;
+                    document.getElementById('subTotal').innerText = data.updatedOrder.totalPrice;
+    
+    
+                  } else {
+                    Swal.fire('Error', 'Failed to cancel item. Please try again.', 'error');
+                  }
+                })
+                .catch((error) => {
+                  console.error('Error:', error);
+                  Swal.fire('Error', 'Failed to cancel item. Please try again.', 'error');
+                });
+            }
+          });
+        }
+      </script>
+      
+  

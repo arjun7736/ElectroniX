@@ -103,8 +103,73 @@ const cancelOrder = async (req, res) => {
 
 // cancel each iem from existing order
 
+// const cancelItem = async (req, res) => {
+//     const { itemID, orderid, reason } = req.body;
+//     try {
+//         const order = await OrderDB.findById(orderid);
+//         const product = order.products.find(product => product._id.toString() === itemID);
+
+//         const canceledQuantity = product.quantity;
+//         const originalProduct = await ProductDB.findById(product.product);
+//         originalProduct.quantity += canceledQuantity;
+
+//         product.itemCancelled = true;
+
+//         await OrderDB.updateOne({ _id: orderid }, { $set: { cancelReason: reason } });
+
+//         const allOrderItemsCancelled = order.products.every(item => item.itemCancelled);
+//         if (allOrderItemsCancelled) {
+//             await OrderDB.updateOne({ _id: orderid }, { $set: { status: "Cancelled" } });
+//         }
+//         await originalProduct.save();
+//         await order.save();
+
+//         return res.json({ success: true, message: 'Item canceled successfully.' });
+//     } catch (error) {
+//         console.error('Error canceling item:', error);
+//         return res.status(500).json({ success: false, message: 'Failed to cancel item. Please try again.' });
+//     }
+// };
+// const cancelItem = async (req, res) => {
+//     const { itemID, orderid, reason } = req.body;
+
+//     try {
+//         const order = await OrderDB.findById(orderid);
+//         const product = order.products.find(product => product._id.toString() === itemID);
+
+//         const canceledQuantity = product.quantity;
+//         const originalProduct = await ProductDB.findById(product.product);
+//         originalProduct.quantity += canceledQuantity;
+
+//         product.itemCancelled = true;
+
+//         await OrderDB.updateOne({ _id: orderid }, { $set: { cancelReason: reason } });
+
+//         const allOrderItemsCancelled = order.products.every(item => item.itemCancelled);
+
+//         // Check if it's not the last product in the order
+//         if (order.products.length > 1 && !allOrderItemsCancelled) {
+//             // Subtract the canceled product's total amount from grandTotal
+//             order.totalPrice-=product.totalAmount
+//             order.grandTotal -= product.totalAmount;
+//         }
+
+//         if (allOrderItemsCancelled) {
+//             await OrderDB.updateOne({ _id: orderid }, { $set: { status: "Cancelled" } });
+//         }
+
+//         await originalProduct.save();
+//         await order.save();
+
+//         return res.json({ success: true, message: 'Item canceled successfully.' });
+//     } catch (error) {
+//         console.error('Error canceling item:', error);
+//         return res.status(500).json({ success: false, message: 'Failed to cancel item. Please try again.' });
+//     }
+// };
 const cancelItem = async (req, res) => {
     const { itemID, orderid, reason } = req.body;
+
     try {
         const order = await OrderDB.findById(orderid);
         const product = order.products.find(product => product._id.toString() === itemID);
@@ -118,18 +183,32 @@ const cancelItem = async (req, res) => {
         await OrderDB.updateOne({ _id: orderid }, { $set: { cancelReason: reason } });
 
         const allOrderItemsCancelled = order.products.every(item => item.itemCancelled);
+
+        // Check if it's not the last product in the order
+        if (order.products.length > 1 && !allOrderItemsCancelled) {
+            // Subtract the canceled product's total amount from grandTotal
+            order.totalPrice -= product.totalAmount;
+            order.grandTotal -= product.totalAmount;
+        }
+
         if (allOrderItemsCancelled) {
             await OrderDB.updateOne({ _id: orderid }, { $set: { status: "Cancelled" } });
         }
-        await originalProduct.save();
-        await order.save();
 
-        return res.json({ success: true, message: 'Item canceled successfully.' });
+        await originalProduct.save();
+        const updatedOrder = await order.save(); // Save the order and get the updated order details
+
+        return res.json({ success: true, message: 'Item canceled successfully.', updatedOrder });
     } catch (error) {
         console.error('Error canceling item:', error);
         return res.status(500).json({ success: false, message: 'Failed to cancel item. Please try again.' });
     }
 };
+
+
+
+
+
 
 
 

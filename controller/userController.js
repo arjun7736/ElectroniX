@@ -329,39 +329,83 @@ const insertUser = async (req, res) => {
 
 
 
-const verifyAndregister = async (req, res) => {
-    // console.log(req.body)
-    const { OTP, email } = req.body
-    const user = await OTPDB.find({ email: email })
-    const otp = user[0].otp
-    console.log(OTP, otp)
+// const verifyAndregister = async (req, res) => {
+//     // console.log(req.body)
+//     const { OTP, email } = req.body
+//     const user = await OTPDB.find({ email: email })
+//     const otp = user[0].otp
+//     console.log(OTP, otp)
 
-    if (OTP == otp) {
-        const data = registrationData.getRegistrationData();
-        const { username, email, password, mobile } = data;
-        registrationData.clearRegistrationData();
-        const spassword = await securepassword(password)
-        const user = new UserDB({
-            username,
-            email,
-            password: spassword,
-            mobile
-        })
-        const userData = await user.save()
-        if (userData) {
-            const user = await UserDB.findOne({ email: email })
-            // console.log(user)
-            req.session.user = user._id;
-            // console.log(req.session.user)
-            res.redirect('/')
+//     if (OTP == otp) {
+//         const data = registrationData.getRegistrationData();
+//         const { username, email, password, mobile } = data;
+//         registrationData.clearRegistrationData();
+//         const spassword = await securepassword(password)
+//         const user = new UserDB({
+//             username,
+//             email,
+//             password: spassword,
+//             mobile
+//         })
+//         const userData = await user.save()
+//         if (userData) {
+//             const user = await UserDB.findOne({ email: email })
+//             // console.log(user)
+//             req.session.user = user._id;
+//             // console.log(req.session.user)
+//             res.redirect('/')
+//         }
+//     }
+//     else {
+//         req.flash('error', 'InValied OTP');
+//         console.log("Working error")
+//         return res.render('User/pages/register')
+//     }
+// }
+const verifyAndregister = async (req, res) => {
+    try {
+        const { OTP, email } = req.body;
+        const user = await OTPDB.find({ email: email });
+        const otp = user[0].otp;
+
+        if (OTP == otp) {
+            const data = registrationData.getRegistrationData();
+            const { username, email, password, mobile } = data;
+            registrationData.clearRegistrationData();
+
+            const spassword = await securepassword(password);
+            const user = new UserDB({
+                username,
+                email,
+                password: spassword,
+                mobile,
+            });
+
+            const userData = await user.save();
+
+            if (userData) {
+                const user = await UserDB.findOne({ email: email });
+                req.session.user = user._id;
+                return res.json({success:true ,message:'Registration Successfull'})
+            }
+        } else {
+            req.flash('error', 'Invalid OTP');
+            console.log('Incorrect OTP');
+            return res.json({success:false ,message:'Incorrect OTP'})
         }
+    } catch (error) {
+        console.error('Error verifying and registering:', error);
+        req.flash('error', 'Internal server error. Please try again later.');
+        res.render('User/pages/register');
     }
-    else {
-        req.flash('error', 'InValied OTP');
-        console.log("Working error")
-        return res.render('User/pages/register')
-    }
-}
+};
+
+
+
+
+
+
+
 
 // resent otp
 const resendOtp = async (req, res) => {

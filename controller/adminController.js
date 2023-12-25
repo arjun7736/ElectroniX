@@ -89,8 +89,8 @@ const loadUser = async (req, res) => {
         const totalPages = Math.ceil(totalUsers / ITEMS_PER_PAGE);
 
         const userList = await UserDB.find()
-        .skip((page - 1) * ITEMS_PER_PAGE)
-        .limit(ITEMS_PER_PAGE);
+            .skip((page - 1) * ITEMS_PER_PAGE)
+            .limit(ITEMS_PER_PAGE);
 
         res.render('Admin/pages/userlist', { userList, totalPages, currentPage: page });
     } catch (error) {
@@ -107,17 +107,17 @@ const loadDash = (req, res) => {
 
 // load products
 const loadProducts = async (req, res) => {
-    const ITEMS_PER_PAGE = 7; 
+    const ITEMS_PER_PAGE = 7;
 
     try {
         const page = req.query.page || 1;
         const totalProducts = await ProductDB.countDocuments();
         const totalPages = Math.ceil(totalProducts / ITEMS_PER_PAGE);
         const productList = await ProductDB.find({})
-        .skip((page - 1) * ITEMS_PER_PAGE)
-        .limit(ITEMS_PER_PAGE)
-        .exec();
-        res.render('Admin/pages/products', { productList,totalPages,currentPage: page});
+            .skip((page - 1) * ITEMS_PER_PAGE)
+            .limit(ITEMS_PER_PAGE)
+            .exec();
+        res.render('Admin/pages/products', { productList, totalPages, currentPage: page });
     } catch (error) {
         console.error("Error fetching user list:", error);
         res.status(500).send('Internal Server Error');
@@ -318,7 +318,7 @@ const addProduct = async (req, res) => {
 
             for (const file of req.files) {
                 const croppedBuffer = await sharp(file.buffer)
-                    .resize({ width: 1000, height: 1000 })  
+                    .resize({ width: 1000, height: 1000 })
                     .toBuffer();
 
                 product.images.push({
@@ -621,8 +621,8 @@ const loadOrderList = async (req, res) => {
                 .populate('user')
                 .populate('products.product')
                 .populate('deliveryAddress')
-                .skip((page - 1) * ITEMS_PER_PAGE) 
-                .limit(ITEMS_PER_PAGE)              
+                .skip((page - 1) * ITEMS_PER_PAGE)
+                .limit(ITEMS_PER_PAGE)
                 .exec();
             res.render('Admin/pages/orderlist', { OrderData, totalPages, currentPage: page });
         }
@@ -650,6 +650,70 @@ const changeDeliveryStatus = async (req, res) => {
         res.status(500).json({ error: 'Internal Server Error' });
     }
 };
+
+
+// orderDetails
+const orderDetails = async (req, res) => {
+    const { id } = req.params;
+    try {
+        // get the order details
+        const order = await OrderDB.findById(id).populate('user').populate('products.product');
+        res.render("Admin/pages/orderDetails", { order });
+    } catch (err) {
+        console.log(err);
+        res.send('An error occurred while fetching the data!')
+    }
+
+}
+
+// update Quantity
+const updateQuantity = async (req, res) => {
+    const { itemID, orderid } = req.body;
+    const userId = req.session.user;
+
+    try {
+        const pro = await ProductDB.findOne({ _id: itemID });
+            const userBeforeUpdate = await OrderDB.findOne({ _id: orderid, 'products.product': itemID });
+console.log(userBeforeUpdate)
+            if (!userBeforeUpdate) {
+                return res.status(404).json({ message: 'User not found or product not in cart' });
+            }
+
+        //     const updatedQuantity = parseInt(quantity);
+        //     const previousQuantity = userBeforeUpdate.cart.find(item => item.product.equals(product)).quantity;
+
+        //     const updatedUser = await UserDB.findOneAndUpdate(
+        //         { _id: userId, 'cart.product': product },
+        //         {
+        //             $set: {
+        //                 'cart.$.quantity': updatedQuantity,
+        //             },
+        //             $inc: {
+        //                 'cart.$.totalAmount': pro.price * (updatedQuantity - previousQuantity),
+        //                 'grandTotal': pro.price * (updatedQuantity - previousQuantity),
+        //             },
+        //         },
+        //         { new: true }
+        //     );
+
+        //     res.json({
+        //         message: 'Quantity updated',
+        //         quantity: updatedUser.cart.find(item => item.product.equals(product)).quantity,
+        //         totalAmount: updatedUser.cart.find(item => item.product.equals(product)).totalAmount,
+        //         grandtotal: updatedUser.grandTotal
+        //     });
+    } catch (error) {
+        //     console.error('Error updating quantity:', error);
+        //     res.status(500).json({ message: 'Failed to update quantity' });
+    }
+};
+
+
+
+
+
+
+
 
 
 
@@ -682,7 +746,9 @@ module.exports = {
     saveUpdateSubCategory,
     loadAddCategory,
     loadOrderList,
-    changeDeliveryStatus
+    changeDeliveryStatus,
+    orderDetails,
+    updateQuantity
 
 
 

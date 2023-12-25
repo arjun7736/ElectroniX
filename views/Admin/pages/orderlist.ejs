@@ -179,40 +179,27 @@
                 <th class="px-4 py-3">Order Status</th>
               </tr>
             </thead>
-            <tbody
-              class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800"
-            >
+            <tbody class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800" >
               <% OrderData.forEach((value) => { %>
-
-              <tr class="text-gray-700 dark:text-gray-400">
+            <tr class="text-gray-700 dark:text-gray-400">
                 <td class="px-4 py-3">
-                  <div class="flex items-center text-sm">
-                    <!-- Avatar with inset shadow -->
-                    <div
-                      class="relative hidden w-8 h-8 mr-3 rounded-full md:block"
-                    >
-                    </div>
+                 <a href="/admin/orderDetails/<%=value._id%>"> <div class="flex items-center text-sm">
                     <div>
                       <p class="font-semibold"><%= value.user.username %></p>
                       <p class="text-xs text-gray-600 dark:text-gray-400">
                         <%= value.user.mobile %>
                       </p>
                     </div>
-                  </div>
+                  </div></a>
                 </td>
 
                 <td class="px-4 py-3 text-xs">
-                  <div
-                  class="relative hidden w-8 h-8 mr-3 rounded-full md:block"
-                >
-                 
-                </div>
                 <%value.products.forEach((value)=>{ %> 
-                <div>
+                <div class="ml-3">
                   <p class="font-semibold"><%= value.product.brandname %></p>
                 </div>
                 <% })%>
-              </div>
+               </div>
                 </td>
 
                 <td class="px-4 py-3 text-xs">
@@ -222,19 +209,16 @@
                  
                 </div>
                 <%value.products.forEach((value)=>{ %> 
-                <div>
+                <div class="ml-5">
                   <p id="<%= value.quantity %>" class="font-semibold"><%= value.quantity %></p>  
                 </div>
                 <% })%>
-              </div>
+               </div>
                 </td>
 
                 <td class="px-4 py-3">
                   <div class="flex items-center text-sm">
-                    <div
-                      class="relative hidden w-8 h-8 mr-3 rounded-full md:block">
-                    </div>
-                    <div>
+                    <div class="ml-5">
                       <p class="font-semibold"><%= value.grandTotal %></p>
                     </div>
                   </div>
@@ -280,7 +264,7 @@
                   </div>
                </td>
                
-              </tr>
+               </tr>
               <% }); %>
             </tbody>
           </table>

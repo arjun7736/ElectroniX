@@ -12,10 +12,13 @@ const upload =multer({storage:storage})
 
 
 
+//------------------------------login Route  --------------------------
 
 adminRoute.get('/login',Auth.isAdminLoggedIn,adminController.loadLogin)
 
 adminRoute.post('/login',adminController.adminCheck)
+
+//------------------------------Dashboard Route  --------------------------
 
 adminRoute.get('/dashboard',Auth.isAdminLoggedIn,adminController.loadDash)
 
@@ -25,13 +28,13 @@ adminRoute.post("/userlist/block/:id",adminController.toggleBlockUser)
 
 adminRoute.get('/banner',Auth.isAdminLoggedIn,adminController.loadBanner)
 
-adminRoute.get('/category',adminController.loadCategory)
+adminRoute.get('/category',Auth.isAdminLoggedIn,adminController.loadCategory)
 
-adminRoute.get('/addcategory',adminController.loadAddCategory)
+adminRoute.get('/addcategory',Auth.isAdminLoggedIn,adminController.loadAddCategory)
 
 adminRoute.post('/addcategory',adminController.addCategory)
 
-adminRoute.get('/editcategory/:productid',adminController.getEditCategory)
+adminRoute.get('/editcategory/:productid',Auth.isAdminLoggedIn,adminController.getEditCategory)
 
 adminRoute.post('/editcategory/:productid',adminController.saveUpdateCategory)
 
@@ -41,10 +44,9 @@ adminRoute.get('/addbrands',Auth.isAdminLoggedIn,adminController.loadAddBrand)
 adminRoute.post('/addbrands',adminController.addBrands)
 
 
-adminRoute.get('/editbrand/:productid',adminController.getEditBrand)
+adminRoute.get('/editbrand/:productid',Auth.isAdminLoggedIn,adminController.getEditBrand)
 
 adminRoute.post('/editbrand/:productid',adminController.saveUpdateBrand)
-
 
 
 adminRoute.get('/products',Auth.isAdminLoggedIn,adminController.loadProducts)
@@ -53,7 +55,7 @@ adminRoute.get('/addproducts',Auth.isAdminLoggedIn,adminController.loadAddproduc
 
 adminRoute.post('/addproducts',upload.array('images',3),adminController.addProduct)
 
-adminRoute.get('/editproducts/:productid',adminController.loadProductDetails)
+adminRoute.get('/editproducts/:productid',Auth.isAdminLoggedIn,adminController.loadProductDetails)
 
 adminRoute.post('/editproducts/:productid',upload.array('images',3),adminController.saveEditProduct)
 
@@ -67,11 +69,15 @@ adminRoute.get('/addsubcategory',Auth.isAdminLoggedIn,adminController.loadAddSub
 
 adminRoute.post('/addsubcategory',adminController.addSubCategory)
 
-adminRoute.get('/editsubcategory/:productid',adminController.getEditSubCategory)
+adminRoute.get('/editsubcategory/:productid',Auth.isAdminLoggedIn,adminController.getEditSubCategory)
 
 adminRoute.post('/editsubcategory/:productid',adminController.saveUpdateSubCategory)
 
-adminRoute.get('/orderlist',adminController.loadOrderList)
+adminRoute.get('/orderlist',Auth.isAdminLoggedIn,adminController.loadOrderList)
+
+adminRoute.get('/orderDetails/:id',Auth.isAdminLoggedIn,adminController.orderDetails)
+
+adminRoute.post('/updateQuantity/:orderId/:itemId',adminController.updateQuantity)
 
 adminRoute.post('/userlist/updateStatus/:userId', adminController.changeDeliveryStatus);
 

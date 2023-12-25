@@ -21,51 +21,6 @@ const loadCart = async (req, res) => {
 
 
 // add product to cart
-// const addToCart = async (req, res) => {
-//     const userId = req.session.user;
-//     const { product,quantity } = req.body;
-
-//     try {
-//         const pro = await ProductDB.findOne({ _id: product });
-//         const user = await UserDB.findById(userId).populate('cart.product');
-//         const cart = user.cart;
-//         const incrementAmount = pro.price;
-
-//         const productInTheCart = cart.find(cartItem => cartItem.product.equals(product));
-
-//         if (productInTheCart) {
-//             await UserDB.updateOne(
-//                 { _id: userId, "cart.product": product },
-//                 {
-//                     $inc: {
-//                         "cart.$.quantity": 1,
-//                         "cart.$.totalAmount": incrementAmount,
-//                         "grandTotal": incrementAmount
-//                     }
-//                 }
-//             );
-
-//             return res.json({ message: "The product quantity incremented" });
-//         } else {
-//             await UserDB.updateOne(
-//                 { _id: userId },
-//                 {
-//                     $addToSet: {
-//                         cart: { product, quantity: 1, totalAmount: incrementAmount },
-//                     },
-//                     $inc: {
-//                         "grandTotal": incrementAmount
-//                     }
-//                 }
-//             );
-
-//             return res.json({ message: 'Product added to cart' });
-//         }
-//     } catch (error) {
-//         console.error('Error adding product to cart:', error);
-//         res.status(500).json({ message: 'Failed to add product to cart' });
-//     }
-// };
 const addToCart = async (req, res) => {
     const userId = req.session.user;
     console.log(req.body)
