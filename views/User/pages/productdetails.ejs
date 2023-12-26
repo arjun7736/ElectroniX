@@ -1,24 +1,20 @@
 <%- include('../layout/header') %>
 <%- include('../layout/navbar') %>
 
-    <div class="px-20  py-5 container grid grid-cols-2 gap-6">
+    <div class="container px-4 sm:px-6 lg:px-8 py-4 grid grid-cols-1 sm:grid-cols-2 gap-6">
 
-        <div id="main" class="overflow-hidden ">
-            <img src="data:image/jpg;base64, <%= produtDetail.images[0].data.toString('base64') %>" alt="product" class="  hover:scale-150" >
+        <div id="main" class="overflow-hidden">
+            <img src="data:image/jpg;base64, <%= produtDetail.images[0].data.toString('base64') %>" alt="product" class="w-full hover:scale-150">
            
             <div class="grid grid-cols-5 gap-4 mt-4 img" id="img">
-<%produtDetail.images.forEach((value,index)=>{%>   
-                <img src="data:image/jpg;base64, <%= value.data.toString('base64') %>" alt="product2" class="w-full cursor-pointer border img" onclick="changeMainImage(this, '<%= index %>')">
-                <%  })%>
+                <% produtDetail.images.forEach((value, index) => { %>
+                    <img src="data:image/jpg;base64, <%= value.data.toString('base64') %>" alt="product2" class="w-full cursor-pointer border img" onclick="changeMainImage(this, '<%= index %>')">
+                <% }) %>
             </div>
-          </div>
+        </div>
     
-
-
-
-
-        <div class="">
-            <h2 class="text-3xl font-medium uppercase mb-2"><%=produtDetail.brandname%>  <%=produtDetail.varientname%>  </h2>
+        <div class="sm:pl-4">
+            <h2 class="text-3xl font-medium uppercase mb-2"><%=produtDetail.brandname%> <%=produtDetail.varientname%></h2>
             <div class="flex items-center">
                 <div class="flex gap-1 text-sm text-yellow-400">
                     <span><svg class="w-[10px] h-[20px] fill-[#f4b406]" viewBox="0 0 576 512" xmlns="http://www.w3.org/2000/svg">
@@ -40,6 +36,8 @@
                 </div>
                 <div class="text-xs text-gray-500 ml-3">(150)</div>
             </div>
+             
+            
             <div class="space-y-2">
                 <p class="text-gray-800 font-semibold space-x-2">
                     <span>Availability: </span>
@@ -54,15 +52,18 @@
                     <span class="text-gray-600"><%=produtDetail.category%> - <%=produtDetail.subcategory%> </span>
                 </p>
             </div>
-            <div class="flex items-baseline mb-1 space-x-2 font-roboto mt-4">
+
+
+
+
+
+            <!-- Responsive Quantity Counter -->
+            <div class="sm:flex items-baseline mb-1 space-x-2 font-roboto mt-4">
                 <p class="text-xl text-primary font-semibold">&#8377; <%=produtDetail.price%></p>
-            </div>
-
-            <!-- <p class="mt-4 text-gray-600"></p> -->
-
-            <div class="mt-4">
+    
                 <div class="flex flex-row h-10 w-28 rounded-lg relative bg-transparent mt-1">
-                    
+
+
                     <form class="max-w-xs mx-auto">
                         <label for="counter-input" class="block mb-1 text-sm font-medium text-gray-900 dark:text-black ">Choose quantity:</label>
                         <div class="relative flex items-center">
@@ -93,14 +94,17 @@
                     <i class="fa-solid fa-heart"></i> Wishlist
                 </a>
             </div>
+                </div>
+            </div>
         </form>
 
         </div>
     </div>
     <!-- ./product-detail -->
-
+    
     <!-- description -->
-    <div class="container pt-5 px-20 pb-16">
+    <div class="container pt-5 px-4 sm:px-6 lg:px-8 pb-16">
+
         <h3 class="border-b border-gray-200 font-roboto text-black pb-3 font-medium">Product details</h3>
         <div class="w-3/5 pt-6">
             <div class="text-black">
@@ -109,9 +113,10 @@
         </div>
     </div>
     <!-- ./description -->
-
+    
     <!-- related product -->
-    <div class="container pb-16 px-32">
+    <div class="container pb-16 px-4 sm:px-6 lg:px-8">
+
         <h2 class="text-2xl font-medium text-gray-800 uppercase mb-6">Related products</h2>
         <div class="grid grid-cols-4 gap-6">
             <div class="bg-white shadow rounded overflow-hidden group">
@@ -149,115 +154,14 @@
                 <a href="#" class="block w-full py-1 text-center text-black bg-red-500 border border-primary rounded-b hover:bg-transparent hover:text-primary transition">Add
                     to cart</a>
             </div>
-            <div class="bg-white shadow rounded overflow-hidden group">
-                <div class="relative">
-                    <img src="https://media.wired.com/photos/5d39dc7c039d660008515e2e/master/w_320,c_limit/Gear-Logitech-G-PRO-X-Gaming-Headset.jpg" alt="product 1" class="w-full">
-                    <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center 
-                    justify-center gap-2 opacity-0 group-hover:opacity-100 transition">
-                        <a href="#" class="text-white text-lg w-9 h-8 rounded-full bg-primary flex items-center justify-center hover:bg-gray-800 transition" title="view product">
-                            <i class="fa-solid fa-magnifying-glass"></i>
-                        </a>
-                        <a href="#" class="text-white text-lg w-9 h-8 rounded-full bg-primary flex items-center justify-center hover:bg-gray-800 transition" title="add to wishlist">
-                            <i class="fa-solid fa-heart"></i>
-                        </a>
-                    </div>
-                </div>
-                <div class="pt-4 pb-3 px-4">
-                    <a href="#">
-                        <h4 class="uppercase font-medium text-xl mb-2 text-gray-800 hover:text-primary transition">Logitech-G-PRO-X-Gaming-Headset</h4>
-                    </a>
-                    <div class="flex items-baseline mb-1 space-x-2">
-                        <p class="text-xl text-primary font-semibold">$45.00</p>
-                        <p class="text-sm text-gray-400 line-through">$55.90</p>
-                    </div>
-                    <div class="flex items-center">
-                        <div class="flex gap-1 text-sm text-yellow-400">
-                            <span><i class="fa-solid fa-star"></i></span>
-                            <span><i class="fa-solid fa-star"></i></span>
-                            <span><i class="fa-solid fa-star"></i></span>
-                            <span><i class="fa-solid fa-star"></i></span>
-                            <span><i class="fa-solid fa-star"></i></span>
-                        </div>
-                        <div class="text-xs text-gray-500 ml-3">(150)</div>
-                    </div>
-                </div>
-                <a href="#" class="block w-full py-1 text-center text-black bg-red-500 border border-primary rounded-b hover:bg-transparent hover:text-primary transition">Add
-                    to cart</a>
-            </div>
-            <div class="bg-white shadow rounded overflow-hidden group">
-                <div class="relative">
-                    <img src="https://media.wired.com/photos/5d39dc7c039d660008515e2e/master/w_320,c_limit/Gear-Logitech-G-PRO-X-Gaming-Headset.jpg" alt="product 1" class="w-full">
-                    <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center 
-                    justify-center gap-2 opacity-0 group-hover:opacity-100 transition">
-                        <a href="#" class="text-white text-lg w-9 h-8 rounded-full bg-primary flex items-center justify-center hover:bg-gray-800 transition" title="view product">
-                            <i class="fa-solid fa-magnifying-glass"></i>
-                        </a>
-                        <a href="#" class="text-white text-lg w-9 h-8 rounded-full bg-primary flex items-center justify-center hover:bg-gray-800 transition" title="add to wishlist">
-                            <i class="fa-solid fa-heart"></i>
-                        </a>
-                    </div>
-                </div>
-                <div class="pt-4 pb-3 px-4">
-                    <a href="#">
-                        <h4 class="uppercase font-medium text-xl mb-2 text-gray-800 hover:text-primary transition">
-                            Logitech-G-PRO-X-Gaming-Headset</h4>
-                    </a>
-                    <div class="flex items-baseline mb-1 space-x-2">
-                        <p class="text-xl text-primary font-semibold">$45.00</p>
-                        <p class="text-sm text-gray-400 line-through">$55.90</p>
-                    </div>
-                    <div class="flex items-center">
-                        <div class="flex gap-1 text-sm text-yellow-400">
-                            <span><i class="fa-solid fa-star"></i></span>
-                            <span><i class="fa-solid fa-star"></i></span>
-                            <span><i class="fa-solid fa-star"></i></span>
-                            <span><i class="fa-solid fa-star"></i></span>
-                            <span><i class="fa-solid fa-star"></i></span>
-                        </div>
-                        <div class="text-xs text-gray-500 ml-3">(150)</div>
-                    </div>
-                </div>
-                <a href="#" class="block w-full py-1 text-center text-black bg-red-500 border border-primary rounded-b hover:bg-transparent hover:text-primary transition">Add
-                    to cart</a>
-            </div>
-            <div class="bg-white shadow rounded overflow-hidden group">
-                <div class="relative">
-                    <img src="https://media.wired.com/photos/5d39dc7c039d660008515e2e/master/w_320,c_limit/Gear-Logitech-G-PRO-X-Gaming-Headset.jpg" alt="product 1" class="w-full">
-                    <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center 
-                    justify-center gap-2 opacity-0 group-hover:opacity-100 transition">
-                        <a href="#" class="text-white text-lg w-9 h-8 rounded-full bg-primary flex items-center justify-center hover:bg-gray-800 transition" title="view product">
-                            <i class="fa-solid fa-magnifying-glass"></i>
-                        </a>
-                        <a href="#" class="text-white text-lg w-9 h-8 rounded-full bg-primary flex items-center justify-center hover:bg-gray-800 transition" title="add to wishlist">
-                            <i class="fa-solid fa-heart"></i>
-                        </a>
-                    </div>
-                </div>
-                <div class="pt-4 pb-3 px-4">
-                    <a href="#">
-                        <h4 class="uppercase font-medium text-xl mb-2 text-gray-800 hover:text-primary transition">
-                            Logitech-G-PRO-X-Gaming-Headset</h4>
-                    </a>
-                    <div class="flex items-baseline mb-1 space-x-2">
-                        <p class="text-xl text-primary font-semibold">$45.00</p>
-                        <p class="text-sm text-gray-400 line-through">$55.90</p>
-                    </div>
-                    <div class="flex items-center">
-                        <div class="flex gap-1 text-sm text-yellow-400">
-                            <span><i class="fa-solid fa-star"></i></span>
-                            <span><i class="fa-solid fa-star"></i></span>
-                            <span><i class="fa-solid fa-star"></i></span>
-                            <span><i class="fa-solid fa-star"></i></span>
-                            <span><i class="fa-solid fa-star"></i></span>
-                        </div>
-                        <div class="text-xs text-gray-500 ml-3">(150)</div>
-                    </div>
-                </div>
-                <a href="#" class="block w-full py-1 text-center text-black bg-red-500 border border-primary rounded-b hover:bg-transparent hover:text-primary transition">Add
-                    to cart</a>
-            </div>
-        </div>
+
     </div>
+    
+
+
+
+
+
 
     <%- include('../layout/footer') %>
 
