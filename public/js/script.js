@@ -35,7 +35,7 @@ function hideAndCountdown() {
 
 
 // Product image change
-function changeMainImage(clickedImage) {
+function changeMainImage(clickedImage, index) {
   const mainImage = document.getElementById('main').querySelector('img');
   mainImage.src = clickedImage.src;
 }

@@ -3,12 +3,12 @@
 
     <div class="px-20  py-5 container grid grid-cols-2 gap-6">
 
-        <div id="main">
-            <img src="data:image/jpg;base64, <%= produtDetail.images[0].data.toString('base64') %>" alt="product" class="w-full  hover:scale-150">
+        <div id="main" class="overflow-hidden ">
+            <img src="data:image/jpg;base64, <%= produtDetail.images[0].data.toString('base64') %>" alt="product" class="  hover:scale-150" >
            
-            <div class="grid grid-cols-5 gap-4 mt-4" id="thumbnailContainer">
-<%produtDetail.images.forEach((value)=>{%>   
-                <img src="data:image/jpg;base64, <%= value.data.toString('base64') %>" alt="product2" class="w-full cursor-pointer border" onclick="changeMainImage(this)">
+            <div class="grid grid-cols-5 gap-4 mt-4 img" id="img">
+<%produtDetail.images.forEach((value,index)=>{%>   
+                <img src="data:image/jpg;base64, <%= value.data.toString('base64') %>" alt="product2" class="w-full cursor-pointer border img" onclick="changeMainImage(this, '<%= index %>')">
                 <%  })%>
             </div>
           </div>
@@ -263,117 +263,6 @@
 
 
 
-
-    <!-- <script>
-        async function updateQuantity(productId, newQuantity) {
-          try {
-            const data = { product: productId, quantity: newQuantity };
-        
-            const response = await fetch("/updateQuantity", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify(data),
-            });
-        
-            const result = await response.json();
-        
-            console.log("Success:", result);
-        
-            const quantityElement = document.getElementById(`quantity_${productId}`);
-            const totalAmountElement = document.getElementById(`totalAmount_${productId}`);
-            const grandTotalElement = document.getElementById('grandTotal');
-        
-            if (quantityElement && totalAmountElement && grandTotalElement) {
-              quantityElement.value = result.quantity;
-              totalAmountElement.textContent = result.totalAmount;
-              grandTotalElement.textContent = result.grandtotal;
-            }
-        
-            showToast("Quantity updated!");
-          } catch (error) {
-            console.error("Error:", error);
-            showToast("Failed to update quantity.", "error");
-          }
-        }
-        
-        function increaseQuantity(productId) {
-          const quantityElement = document.getElementById(`quantity_${productId}`);
-          const currentQuantity = parseInt(quantityElement.value);
-        
-          if (currentQuantity < 10) {
-            const newQuantity = currentQuantity + 1;
-            updateQuantity(productId, newQuantity);
-          }
-        }
-        
-        function decreaseQuantity(productId) {
-          const quantityElement = document.getElementById(`quantity_${productId}`);
-          const currentQuantity = parseInt(quantityElement.value);
-        
-          if (currentQuantity > 1) {
-            const newQuantity = currentQuantity - 1;
-            updateQuantity(productId, newQuantity);
-          }
-        }
-        </script> -->
-
-<!-- 
-        <script>
-            async function updateQuantity(productId, newQuantity) {
-                try {
-                    const data = { product: productId, quantity: newQuantity };
-        
-                    const response = await fetch("/updateQuantity", {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                        body: JSON.stringify(data),
-                    });
-        
-                    const result = await response.json();
-        
-                    console.log("Success:", result);
-        
-                    const quantityElement = document.getElementById(`quantity_${productId}`);
-                    const totalAmountElement = document.getElementById(`totalAmount_${productId}`);
-                    const grandTotalElement = document.getElementById('grandTotal');
-        
-                    if (quantityElement && totalAmountElement && grandTotalElement) {
-                        quantityElement.value = result.quantity;
-                        // Update other elements as needed
-                    }
-        
-                    showToast("Quantity updated!");
-                } catch (error) {
-                    console.error("Error:", error);
-                    showToast("Failed to update quantity.", "error");
-                }
-            }
-        
-            function increaseQuantity(productId) {
-                const quantityElement = document.getElementById(`quantity_${productId}`);
-                const currentQuantity = parseInt(quantityElement.value);
-        
-                if (currentQuantity < 10) {
-                    const newQuantity = currentQuantity + 1;
-                    updateQuantity(productId, newQuantity);
-                }
-            }
-        
-            function decreaseQuantity(productId) {
-                const quantityElement = document.getElementById(`quantity_${productId}`);
-                const currentQuantity = parseInt(quantityElement.value);
-        
-                if (currentQuantity > 1) {
-                    const newQuantity = currentQuantity - 1;
-                    updateQuantity(productId, newQuantity);
-                }
-            }
-        </script> -->
-
 <script>
         function decreaseQuantity(productId) {
             const inputElement = document.getElementById(`quantity_${productId}`);
@@ -382,13 +271,12 @@
               inputElement.value = currentValue - 1;
               document.getElementById(`decrement-button`).disabled = false;
             }
-            // Update your data based on the decreased quantity
           }
 
           function increaseQuantity(productId) {
   const inputElement = document.getElementById(`quantity_${productId}`);
   inputElement.value = Number(inputElement.value) + 1;
-  // Update your data based on the increased quantity
 }
 
         </script>
+        
