@@ -170,13 +170,12 @@ const loadProductDetails = async (req, res) => {
 
 // save edit product
 const saveEditProduct = async (req, res) => {
-    const { images, brandname, category, subcategory, varientname, price, quantity, description } = req.body;
+    const { brandname, category, subcategory, varientname, price, quantity, description } = req.body;
+    const { productid } = req.params;
 
-    const { productid } = req.params
-    console.log(productid)
     try {
-        const updateFields =
-        {
+        
+        const updateFields = {
             brandname: brandname,
             category: category,
             subcategory: subcategory,
@@ -184,16 +183,26 @@ const saveEditProduct = async (req, res) => {
             price: price,
             quantity: quantity,
             description: description,
-        }
+        };
 
         const updatedProduct = await ProductDB.findByIdAndUpdate(
             productid,
             { $set: updateFields },
             { new: true }
         );
-        if (req.files) {
 
+        if (!updatedProduct) {
+            console.log("Error: Product not found");
+            return res.status(404).json({ error: "Product not found" });
+        }
+
+        if (req.files) {
             for (const file of req.files) {
+                if (!isValidImage(file)) {
+                    console.log("Invalid image file type");
+                    return res.status(400).json({ error: "Invalid image file type" });
+                }
+
                 const croppedBuffer = await sharp(file.buffer)
                     .resize({ width: 1000, height: 1000 })
                     .toBuffer();
@@ -203,17 +212,17 @@ const saveEditProduct = async (req, res) => {
                     contentType: file.mimetype,
                 });
             }
+
             await updatedProduct.save();
         }
 
-        if (updatedProduct) {
-            return res.redirect("/admin/products")
-        }
+        return res.redirect("/admin/products");
 
     } catch (error) {
-        console.log(error.message)
+        console.log(error.message);
+        return res.status(500).json({ error: "Internal Server Error" });
     }
-}
+};
 
 
 
@@ -289,21 +298,19 @@ const loadAddproducts = async (req, res) => {
 
 // save products
 const addProduct = async (req, res) => {
-    const { images, brandname, category, subcategory, varientname, price, quantity, description } = req.body;
-    try {
+    const { brandname, category, subcategory, varientname, price, quantity, description } = req.body;
 
+    try {
         const existingProduct = await ProductDB.findOne({ brandname, varientname });
 
         if (existingProduct) {
+            req.flash('error', `A product with ${brandname}&${varientname} is already exists`);
 
-            req.flash('error', `A product with ${brandname}&${varientname} is already exists`)
-
-            const brand = await BrandDB.find()
-            const category = await CategoryDB.find()
-            const subcategory = await SubCategoryDB.find()
-            res.render('Admin/pages/addproducts', { brand, category, subcategory })
-        }
-        else {
+            const brand = await BrandDB.find();
+            const category = await CategoryDB.find();
+            const subcategory = await SubCategoryDB.find();
+            return res.render('Admin/pages/addproducts', { brand, category, subcategory });
+        } else {
             const product = new ProductDB({
                 brandname,
                 category,
@@ -315,6 +322,14 @@ const addProduct = async (req, res) => {
             });
 
             for (const file of req.files) {
+                if (!isValidImage(file)) {
+                    req.flash('error', 'Invalid image file type.');
+                    const brand = await BrandDB.find();
+                    const category = await CategoryDB.find();
+                    const subcategory = await SubCategoryDB.find();
+                    return res.render('Admin/pages/addproducts', { brand, category, subcategory });
+                }
+
                 const croppedBuffer = await sharp(file.buffer)
                     .resize({ width: 1000, height: 1000 })
                     .toBuffer();
@@ -328,18 +343,23 @@ const addProduct = async (req, res) => {
             const newproduct = await product.save();
 
             if (newproduct) {
+                req.flash('success', 'Product added successfully.');
                 return res.redirect('/admin/products');
             } else {
                 console.log("Error: Product not saved");
                 return res.status(500).json({ error: "Internal Server Error" });
             }
         }
-
     } catch (error) {
         console.log("Error Occurred:", error.message);
         return res.status(500).json({ error: "Catch Server Error" });
     }
 };
+
+function isValidImage(file) {
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml']; 
+    return allowedTypes.includes(file.mimetype);
+}
 
 
 

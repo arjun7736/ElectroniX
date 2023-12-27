@@ -276,27 +276,7 @@
 
 <%- include('../componants/footer') %>
 
- <script>
-  function deleteImage(imageId,productId) {
-    const preview =document.getElementById(`image-preview_${imageId}`)
 
-    const confirmed = window.confirm("Are you sure you want to delete this image?");
-    console.log(imageId)
-    if (confirmed) {
-      fetch(`/admin/deleteimage/${imageId}/${productId}`, {
-        method: "post",
-      })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log(data)
-        preview.remove()
-      })
-      .catch((error) => {
-        console.error("Error deleting image:", error);
-      });
-    }
-  }
-</script> 
 <script>
   document.addEventListener("DOMContentLoaded", function () {
     // Function to handle file input change event
@@ -306,7 +286,7 @@
 
       // Display selected images (up to 3)
       const files = event.target.files;
-      for (let i = 0; i < Math.min(files.length, 3); i++) {
+      for (let i = 0; i < Math.min(files.length, 10); i++) {
         const file = files[i];
         const reader = new FileReader();
         const previewImage = document.createElement("img");
@@ -327,3 +307,55 @@
   });
 </script>
 
+<!-- 
+ <script>
+  function deleteImage(imageId,productId) {
+    const preview =document.getElementById(`image-preview_${imageId}`)
+
+    const confirmed = window.confirm("Are you sure you want to delete this image?");
+    console.log(imageId)
+    if (confirmed) {
+      fetch(`/admin/deleteimage/${imageId}/${productId}`, {
+        method: "post",
+      })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data)
+        preview.remove()
+      })
+      .catch((error) => {
+        console.error("Error deleting image:", error);
+      });
+    }
+  }
+</script>  -->
+
+<script>
+  function deleteImage(imageId, productId) {
+    const preview = document.getElementById(`image-preview_${imageId}`);
+
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        fetch(`/admin/deleteimage/${imageId}/${productId}`, {
+          method: "post",
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            console.log(data);
+            preview.remove();
+          })
+          .catch((error) => {
+            console.error("Error deleting image:", error);
+          });
+      }
+    });
+  }
+</script>

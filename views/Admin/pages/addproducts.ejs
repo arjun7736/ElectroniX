@@ -266,6 +266,7 @@
 </div>
 
 <%- include('../componants/footer') %>
+
 <script>
   document.addEventListener("DOMContentLoaded", function () {
     // Function to handle file input change event
@@ -275,14 +276,22 @@
 
       // Display selected images (up to 3)
       const files = event.target.files;
-      for (let i = 0; i < Math.min(files.length, 3); i++) {
+      if (files.length > 3) {
+        // Show error toast if more than 3 images are selected
+        showToast('Please select up to 3 images.');
+        // Clear the file input to prevent further processing
+        event.target.value = '';
+        return;
+      }
+
+      for (let i = 0; i < files.length; i++) {
         const file = files[i];
         const reader = new FileReader();
         const previewImage = document.createElement("img");
 
         reader.onload = function (e) {
           previewImage.src = e.target.result;
-          previewImage.classList.add("w-full", "h-32","mt-2", "object-cover", "rounded-md");
+          previewImage.classList.add("w-full", "h-32", "mt-2", "object-cover", "rounded-md");
           previewContainer.appendChild(previewImage);
         };
 
@@ -294,5 +303,14 @@
     const fileInput = document.getElementById("image");
     fileInput.addEventListener("change", handleFileInputChange);
   });
+  function showToast(message, type = 'success') {
+        Toastify({
+            text: message,
+            duration: 3000,
+            close: false,
+            gravity: 'bottom', 
+            position: 'right', 
+            backgroundColor: type === 'danger' ? '#28a745' : '#dc3545',
+        }).showToast();
+        }
 </script>
-
