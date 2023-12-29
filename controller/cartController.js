@@ -149,8 +149,6 @@ const updateQuantityInCart = async (req, res) => {
 
 
 
-
-
 module.exports = {
     loadCart,
     addToCart,

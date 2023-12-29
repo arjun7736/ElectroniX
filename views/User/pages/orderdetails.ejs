@@ -14,11 +14,11 @@
         <p class="text-gray-600">Order : <%=order.orderId%></p>
       </div>
       <div class="mt-4 sm:mt-0">
-        <a href=""> <p class="text-gray-600">Invoice</p></a>
+        <a href=""> <p class="text-gray-600 ">Invoice</p></a>
       </div>
     </div>
 
-    <div class="mt-6 grid grid-cols-3 gap-4">
+    <div class="mt-6 grid grid-cols-4 gap-4">
       <div>
         <h4 class="text-gray-800 font-medium">Shipping Address</h4>
         <p class="text-gray-600">
@@ -34,14 +34,24 @@
         <p class="text-gray-600"> <%=order.paymentMethod%></p>
       </div>
       <div>
+        <h4 class="text-gray-800 font-medium">Payment Status</h4>
+        <%if(order.paymentStatus=='Paid'){ %> 
+        <p class="text-green-600"> <%=order.paymentStatus%></p>
+        <%}else{%>
+          <p class="text-orange-600"> <%=order.paymentStatus%></p>
+        <%}%>
+      </div>
+      <div>
         <h4 class="text-gray-800 font-medium">Delivery Status</h4>
-        <%if(order.status == 'Cancelled'){ %> 
+        <%if(order.status == 'Cancelled' ){ %>
+          <p class="text-red-600"> <%=order.status%></p>
+          <%}else if(order.status == "Return"){%>
         <p class="text-red-600"> <%=order.status%></p>
         <% }else if (order.status == "Delivered") { %>
           <p class="text-green-600"> <%=order.status%></p>
-          <% }else if (order.status == "Pending" || order.status == "Shipped" || order.status == "Processing" ) { %>
+          <% }else{%>
             <p class="text-yellow-600"> <%=order.status%></p>
-        <% }%>
+          <%}%>
       </div>
     </div>
 
@@ -66,7 +76,7 @@
             <td class="px-4 py-2"><%=value.product.price%></td>
             <td class="px-4 py-2"><%=value.totalAmount%></td>
             <td class="px-4 py-2">
-              <%if(value.itemCancelled){ %> 
+              <%if(value.itemCancelled || order.status =='Delivered' || order.status =='Return' ){ %> 
                <a
               id="<%= value._id %>"
               onclick="cancelItemAndUpdateTotal('<%= value._id %>','<%= order._id%>')"

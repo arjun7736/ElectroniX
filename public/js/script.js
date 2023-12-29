@@ -39,3 +39,14 @@ function changeMainImage(clickedImage, index) {
   const mainImage = document.getElementById('main').querySelector('img');
   mainImage.src = clickedImage.src;
 }
+
+function showToast(message, type = 'success') {
+  Toastify({
+      text: message,
+      duration: 3000,
+      close: false,
+      gravity: 'bottom', 
+      position: 'right', 
+      backgroundColor: type === 'success' ? '#28a745' : '#dc3545',
+  }).showToast();
+}

@@ -155,6 +155,9 @@
       </ul>
     </div>
   </aside>
+
+
+  
   <div class="flex flex-col flex-1 w-full">
     <%- include('../componants/navbar') %>
     <main class="h-full overflow-y-auto">
@@ -236,7 +239,7 @@
                 </td>
 
                 <td class="px-4 py-3">
-                  <div class="flex items-center text-sm">
+                  <div class="flex items-center text-sm" id="<%= value._id %>">
                     <div
                       class="relative hidden w-8 h-8 mr-3 rounded-full md:block">
                     </div>
@@ -247,20 +250,22 @@
                 </td>
 
                 <td class="px-4 py-3">
-                  <div class="flex items-center text-sm">
-                     <div class="relative hidden w-8 h-8 mr-3 rounded-full md:block"></div>
-                     <div>
-                        <% if (value.status === 'Cancelled') { %>
-                           <p class="font-semibold text-red-500">Cancelled</p>
-                        <% } else { %>
-                           <select class="status-dropdown text-black" data-user-id="<%= value._id %>">
-                              <option value="Pending" <%= value.status === 'Pending' ? 'selected' : '' %>>Pending</option>
-                              <option value="Processing" <%= value.status === 'Processing' ? 'selected' : '' %>>Processing</option>
-                              <option value="Shipped" <%= value.status === 'Shipped' ? 'selected' : '' %>>Shipped</option>
-                              <option value="Delivered" <%= value.status === 'Delivered' ? 'selected' : '' %>>Delivered</option>
-                           </select>
-                        <% } %>
-                     </div>
+                  <div class="flex items-center text-sm" id="statusContainer_<%= value._id %>">
+                    <div class="relative hidden w-8 h-8 mr-3 rounded-full md:block"></div>
+                    <div class="status-dropdown-container" id="statusDropdownContainer_<%= value._id %>">
+                      <% if (value.status === 'Delivered') { %>
+                        <p class="font-semibold text-green-500">Delivered</p>
+                        <%}else if(value.status === 'Return'){%>
+                          <p class="font-semibold text-red-500">Return</p>
+                      <% } else { %>
+                        <select class="status-dropdown text-black" data-order-id="<%= value._id %>" id="statusDropdown_<%= value._id %>">
+                          <option value="Pending" <%= value.status === 'Pending' ? 'selected' : '' %>>Pending</option>
+                          <option value="Processing" <%= value.status === 'Processing' ? 'selected' : '' %>>Processing</option>
+                          <option value="Shipped" <%= value.status === 'Shipped' ? 'selected' : '' %>>Shipped</option>
+                          <option value="Delivered" <%= value.status === 'Delivered' ? 'selected' : '' %>>Delivered</option>
+                        </select>
+                      <% } %>
+                    </div>
                   </div>
                </td>
                
@@ -288,29 +293,96 @@
 
 <%- include('../componants/footer') %>
 
-
 <script>
-const statusDropdowns = document.querySelectorAll('.status-dropdown');
-const updateUserStatus = async (userId, newStatus) => {
-   try {
-      const response = await fetch(`/admin/userlist/updateStatus/${userId}`, {
-         method: 'POST',
-         headers: {
-            'Content-Type': 'application/json',
-         },
-         body: JSON.stringify({newStatus }),
-      });
-      const updatedUser = await response.json();
-      console.log('User status updated:', updatedUser);
-   } catch (error) {
-      console.error('Error updating user status:', error);
-   }
-};
-statusDropdowns.forEach((dropdown) => {
-   dropdown.addEventListener('change', (event) => {
-      const userId = event.target.dataset.userId;
-      const newStatus = event.target.value;
-      updateUserStatus(userId, newStatus);
-   });
+  document.addEventListener('DOMContentLoaded', () => {
+
+  const statusDropdowns = document.querySelectorAll('.status-dropdown');
+
+  const updateOrderStatus = async (orderId, newStatus) => {
+     try {
+        const response = await fetch(`/admin/orderlist/updateStatus/${orderId}`, {
+           method: 'POST',
+           headers: {
+              'Content-Type': 'application/json',
+           },
+           body: JSON.stringify({ newStatus }),
+        });
+        const updatedOrder = await response.json();
+        const statusDropdownContainer = document.getElementById(`statusDropdownContainer_${orderId}`);
+
+        console.log('Order status updated:', updatedOrder);
+        const statusContainer = document.getElementById(`statusContainer_${orderId}`);
+        if(updatedOrder.status =='Delivered'){
+           statusContainer.innerHTML = `<p class="font-semibold text-green-500">${newStatus}</p>`;
+        }
+         if(updatedOrder.status =='Return'){
+          statusDropdownContainer.innerHTML = `<p class="font-semibold text-green-500">Delivered</p>`;
+
+        }
+       
+     } catch (error) {
+        console.error('Error updating order status:', error);
+     }
+  };
+
+  statusDropdowns.forEach((dropdown) => {
+     dropdown.addEventListener('change', (event) => {
+      const orderId = event.target.dataset.orderId; 
+         const newStatus = event.target.value;
+        updateOrderStatus(orderId, newStatus);
+     });
+  });
 });
+
 </script>
+
+<!-- 
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const statusDropdowns = document.querySelectorAll('.status-dropdown');
+
+    const updateOrderStatus = async (orderId, newStatus) => {
+      try {
+        const response = await fetch(`/admin/orderlist/updateStatus/${orderId}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ newStatus }),
+        });
+        const updatedOrder = await response.json();
+
+        console.log('Order status updated:', updatedOrder);
+
+        const statusContainer = document.getElementById(`statusContainer_${orderId}`);
+        const statusDropdownContainer = document.getElementById(`statusDropdownContainer_${orderId}`);
+        const statusDropdown = document.getElementById(`statusDropdown_${orderId}`);
+
+        if (updatedOrder.status === 'Delivered') {
+          // Hide the dropdown
+          statusDropdownContainer.innerHTML = `<p class="font-semibold text-green-500">Delivered</p>`;
+        } else {
+          // Show the dropdown
+          statusDropdownContainer.innerHTML = `
+            <select class="status-dropdown text-black" data-order-id="${orderId}" id="statusDropdown_${orderId}">
+              <option value="Pending" ${updatedOrder.status === 'Pending' ? 'selected' : ''}>Pending</option>
+              <option value="Processing" ${updatedOrder.status === 'Processing' ? 'selected' : ''}>Processing</option>
+              <option value="Shipped" ${updatedOrder.status === 'Shipped' ? 'selected' : ''}>Shipped</option>
+              <option value="Delivered" ${updatedOrder.status === 'Delivered' ? 'selected' : ''}>Delivered</option>
+            </select>
+          `;
+        }
+      } catch (error) {
+        console.error('Error updating order status:', error);
+      }
+    };
+
+    statusDropdowns.forEach((dropdown) => {
+      dropdown.addEventListener('change', async (event) => {
+        const orderId = event.target.dataset.orderId;
+        const newStatus = event.target.value;
+        await updateOrderStatus(orderId, newStatus);
+      });
+    });
+  });
+</script>  -->

@@ -277,58 +277,131 @@
 </div>
 <%- include('../layout/footer') %>
 
+
 <script>
   async function checkOut() {
     try {
       const address = document.getElementById(`addressOption`);
-      const payment = document.getElementById('paymentOption');
-  
-      const selectedPaymentOption = payment.querySelector('input[name="payment"]:checked').value;
-      const selectedAddrerssOption = address.querySelector('input[name="selectedAddress"]:checked').value;
-  
-      const data = { address: selectedAddrerssOption, payment: selectedPaymentOption };
-  
-      // Fetch the stock check result
-      const stockCheckResponse = await fetch('/checkStock', {
-        method: 'POST',
+      const payment = document.getElementById("paymentOption");
+
+      const selectedPaymentOption = payment.querySelector(
+        'input[name="payment"]:checked'
+      ).value;
+      const selectedAddrerssOption = address.querySelector(
+        'input[name="selectedAddress"]:checked'
+      ).value;
+
+      const data = {
+        address: selectedAddrerssOption,
+        payment: selectedPaymentOption,
+      };
+      const stockCheckResponse = await fetch("/checkStock", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ data }),
       });
-  
+
       const stockCheckResult = await stockCheckResponse.json();
-  
+
       if (stockCheckResult.success) {
-        // Proceed with placing the order
-        const orderResponse = await fetch(`/placeOrder/?address=${selectedAddrerssOption}&&payment=${selectedPaymentOption}`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ data }),
-        });
-  
-        const orderData = await orderResponse.json();
-  
-        // Display a success SweetAlert and redirect on successful order placement
-        Swal.fire({
-          title: 'Order Placed!',
-          text: 'Good job!',
-          icon: 'success'
-        }).then(() => {
-          window.location.href = '/orderSuccess';
-        });
+        if (selectedPaymentOption == "razorpay") {
+          
+          var orderId;
+          $(document).ready(function () {
+            var settings = {
+              url: "/razorPay",
+              method: "POST",
+              timeout: 0,
+              headers: {
+                "Content-Type": "application/json",
+              },
+              data: JSON.stringify({
+                amount: "<%=user.grandTotal%>",
+              }),
+            };
+            $.ajax(settings).done(function (response) {
+              console.log(response);
+              orderId = response.orderId;
+              console.log(orderId);
+              $("button").show();
+            });
+          });
+
+          var options = {
+            key: "rzp_test_267SWOvtmQRkZI",
+            amount: "<%=user.grandTotal%>" * 100, 
+            currency: "INR",
+            name: "ElectroniX",
+            description: "Test Transaction",
+            image: "https://example.com/your_logo",
+            order_id: orderId, 
+            handler:async function  (response) {
+              showToast("Payment Successfull", "success");
+              const orderResponse = await fetch(`/placeOrder/?address=${selectedAddrerssOption}&&payment=${selectedPaymentOption}`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ data }),
+            }
+          );
+
+          const orderData = await orderResponse.json();
+          Swal.fire({
+            title: "Order Placed!",
+            text: "Good job!",
+            icon: "success",
+          }).then(() => {
+            window.location.href = "/orderSuccess";
+          });
+
+            },
+            prefill: {
+              name: "Gaurav Kumar",
+              email: "gaurav.kumar@example.com",
+              contact: "9000090000",
+            },
+            notes: {
+              address: "Razorpay Corporate Office",
+            },
+            theme: {
+              color: "#3399cc",
+            },
+          };
+         
+          var rzp1 = new Razorpay(options);
+          rzp1.open();
+          
+        } else if (selectedPaymentOption == "cod") {
+          const orderResponse = await fetch(`/placeOrder/?address=${selectedAddrerssOption}&&payment=${selectedPaymentOption}`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ data }),
+            }
+          );
+
+          const orderData = await orderResponse.json();
+          Swal.fire({
+            title: "Order Placed!",
+            text: "Good job!",
+            icon: "success",
+          }).then(() => {
+            window.location.href = "/orderSuccess";
+          });
+        } else {
+          console.log("Wallet");
+        }
       } else {
-        Swal.fire({
-          title: 'Insufficient Stock',
-          text: 'The stock for some products is insufficient. Please review your order.',
-          icon: 'error'
-        });
+        showToast("Insufficient stock for product", "error");
       }
     } catch (error) {
-      console.error('Error:', error);
+      console.error("Error:", error);
     }
   }
-  </script>
-  
+</script>

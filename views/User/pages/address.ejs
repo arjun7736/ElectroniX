@@ -14,10 +14,22 @@
    
 <% Address.forEach((value)=>{  %> 
     <div class="col-span-4 shadow-lg">
-        <div class="shadow rounded bg-white p-6">
+        <div class="shadow rounded bg-white p-6 relative">
             <div class="flex items-center justify-between mb-4">
                 <h3 class="font-medium text-gray-800 text-lg"></h3>
-                <a href="/editaddress/<%=value._id%>" class="text-primary">Edit</a>
+                <div class="relative group">
+                    <div class="cursor-pointer" onclick="toggleDropdown('<%=value._id%>')">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                            class="h-6 w-6 text-gray-600">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </div>
+                    <div id="dropdownMenu<%=value._id%>" class="absolute hidden bg-white border shadow-lg rounded-md right-0 mt-2 space-y-2">
+                        <a href="/editaddress/<%=value._id%>" class="block px-4 py-2 text-gray-700">Edit</a>
+                        <button onclick="deleteAddress('<%=value._id%>')" class="block px-4 py-2 text-red-600">Delete</button>
+                    </div>
+                </div>
             </div>
             <div class="space-y-2">
                 <div class="pb-4 mb-4 flex flex-col md:flex-row md:items-center">
@@ -33,6 +45,7 @@
             </div>
         </div>
     </div>
+
     <% })%>
 
 
@@ -44,3 +57,32 @@
 <!-- ./info -->
 </div>
 <%- include('../layout/footer') %>
+<script>
+    function toggleDropdown(addressId) {
+        var dropdownMenu = document.getElementById('dropdownMenu'+addressId);
+        dropdownMenu.classList.toggle('hidden');
+    }
+</script>
+
+<script>
+    function deleteAddress(addressId) {
+        fetch(`/deleteAddress/${addressId}`, {
+            method: 'POST',
+        })
+        .then(response => {
+            if (response.ok) {
+                console.log('Address deleted successfully');
+                showToast('Address Deleted!','success');
+
+            } else {
+                console.error('Error deleting address:', response.status);
+                showToast('Error in Deleting Address !','error');
+            }
+        })
+        .catch(error => {
+            console.error('Error deleting address:', error);
+        });
+
+    }
+    
+</script>

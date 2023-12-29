@@ -69,6 +69,11 @@ const loadLanding = async (req, res) => {
 //     try {
 //         const search = req.query.search;
 //         const baseQuery = { isDelete: false };
+//         const selectedCategories = req.query.category || [];
+//         const selectedSubcategories = req.query.subcategory || [];
+//         const selectedBrands = req.query.brandname || [];
+
+        
 //         if (search) {
 //             baseQuery.$or = [
 //                 { brandname: { $regex: new RegExp(search, 'i') } },
@@ -76,6 +81,18 @@ const loadLanding = async (req, res) => {
 //                 { subcategory: { $regex: new RegExp(search, 'i') } },
 //                 { varientname: { $regex: new RegExp(search, 'i') } }
 //             ];
+//         }
+
+//         if (selectedCategories.length > 0) {
+//             baseQuery.category = { $in: selectedCategories };
+//         }
+
+//         if (selectedSubcategories.length > 0) {
+//             baseQuery.subcategory = { $in: selectedSubcategories };
+//         }
+
+//         if (selectedBrands.length > 0) {
+//             baseQuery.brandname = { $in: selectedBrands };
 //         }
 
 //         const sortBy = req.query.sort || 'default';
@@ -130,16 +147,18 @@ const loadLanding = async (req, res) => {
 //         res.status(500).send('Internal Server Error');
 //     }
 // };
+
 const loadProducts = async (req, res) => {
     try {
+        const ITEMS_PER_PAGE = 6; 
+        const page = parseInt(req.query.page) || 1;
+
         const search = req.query.search;
         const baseQuery = { isDelete: false };
         const selectedCategories = req.query.category || [];
         const selectedSubcategories = req.query.subcategory || [];
         const selectedBrands = req.query.brandname || [];
 
-        // console.log(selectedCategories,selectedSubcategories,selectedBrands)
-        // Include checkbox filter conditions
         if (search) {
             baseQuery.$or = [
                 { brandname: { $regex: new RegExp(search, 'i') } },
@@ -171,7 +190,15 @@ const loadProducts = async (req, res) => {
             sortOptions = {};
         }
 
-        const products = await ProductDB.find(baseQuery).sort(sortOptions);
+        const totalProducts = await ProductDB.countDocuments(baseQuery);
+        const totalPages = Math.ceil(totalProducts / ITEMS_PER_PAGE);
+        const skip = (page - 1) * ITEMS_PER_PAGE;
+
+        const products = await ProductDB.find(baseQuery)
+            .sort(sortOptions)
+            .skip(skip)
+            .limit(ITEMS_PER_PAGE);
+
         const categoryCounts = await ProductDB.aggregate([
             { $match: baseQuery },
             {
@@ -207,14 +234,14 @@ const loadProducts = async (req, res) => {
             brandCounts,
             sortBy,
             searchResults: [],
+            currentPage: page,
+            totalPages,
         });
     } catch (err) {
         console.error(err.message);
         res.status(500).send('Internal Server Error');
     }
 };
-
-
 
 
 

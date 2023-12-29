@@ -79,6 +79,6 @@ adminRoute.get('/orderDetails/:id',Auth.isAdminLoggedIn,adminController.orderDet
 
 adminRoute.post('/updateQuantity/:orderId/:itemId',adminController.updateQuantity)
 
-adminRoute.post('/userlist/updateStatus/:userId', adminController.changeDeliveryStatus);
+adminRoute.post('/orderlist/updateStatus/:userId', adminController.changeDeliveryStatus);
 
 module.exports = adminRoute

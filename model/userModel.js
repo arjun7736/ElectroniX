@@ -48,19 +48,23 @@ const userSchema = new mongoose.Schema({
         type: Number,
         default: 0
     },
+    wallet: {
+        type: Number,
+        default: 0
+    },
+    walletHistory: [{
+        date: {
+            type: Date,
+        },
+        amount: {
+            type: Number
+        },
+        message: {
+            type: String
+        }
+    }],
 })
 
-
-userSchema.pre('save', function(next) {
-     const user = this;
-    user.cart.forEach(cartItem => {
-        cartItem.totalAmount = cartItem.quantity * cartItem.product.price;
-    });
-
-    user.grandTotal = user.cart.reduce((total, cartItem) => total + cartItem.totalAmount, 0);
-
-    next();
-});
 
 
 const Collection = mongoose.model('User', userSchema)

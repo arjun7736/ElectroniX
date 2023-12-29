@@ -25,35 +25,48 @@
           <p class="mr-4 font-semibold text-green-500">
             &#8377; <%=value.grandTotal %>
           </p>
-          <%if(value.status=='Cancelled'){  %>  
+          <%if(value.status=='Cancelled' || value.status =='Return'){  %>  
           <p id="orderStatus_<%=value.orderId%>" class="uppercase text-red-500 font-semibold mr-3">
             <%=value.status %>
           </p>
-          <% } else{ %>  
-            <p id="orderStatus_<%=value.orderId%>" class="uppercase text-orange-300 font-semibold mr-3">
+          <% } else if(value.status =='Delivered'){ %>  
+            <p id="orderStatus_<%=value.orderId%>" class="uppercase text-green-500 font-semibold mr-3">
                 <%=value.status %>
               </p>
-            <% } %>
-          <a
-            href=""
-            class="inline-block px-4 py-2 rounded-md bg-gray-200 hover:bg-gray-300 text-gray-500"
-            >Get Invoice</a
-          >
-          <%if(value.status=='Cancelled'){  %>  
+            <% } else{%> 
+              <p id="orderStatus_<%=value.orderId%>" class="uppercase text-orange-500 font-semibold mr-3">
+              <% } %>
+          
+          <%if(value.status=='Cancelled' || value.status =='Return' ){  %>  
           <a
             id="<%= value.orderId %>"
             onclick="cancelOrder('<%=value.orderId%>')"
             class=" hidden cursor-pointer ml-3 px-4 py-2 rounded-md bg-red-500 text-white"
             >Cancel Order</a
           >
-          <% } else{ %>   
-            <a
+          <% } else if(value.status=='Delivered'){ %>   
+            
+          <a
+          id="<%= value.orderId %>"
+          onclick="returnProduct('<%=value.orderId%>')"
+          class="inline-block uppercase cursor-pointer ml-3 px-4 py-2 rounded-md bg-red-500 text-white" >Return</a>
+            <% } else{%>
+              <a
             id="<%= value.orderId %>"
             onclick="cancelOrder('<%=value.orderId%>')"
             class="inline-block  cursor-pointer ml-3 px-4 py-2 rounded-md bg-red-500 text-white"
             >Cancel Order</a
           >
-            <% }%>
+
+              <%}%>
+
+              <a
+              href=""
+              class="inline-block px-4 py-2 rounded-md bg-gray-200 hover:bg-gray-300 text-gray-500"
+              >Get Invoice</a
+            >
+
+
         </div>
       </li></a>
       <% })%>
@@ -149,4 +162,63 @@
       });
     }
   </script>
-  
+
+<script>
+  function returnProduct(orderId){
+    Swal.fire({
+        title: 'Are you sure?',
+        text: 'You will not be able to recover this order!',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, return it!',
+        cancelButtonText: 'No, keep it'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        Swal.fire({
+          title: 'Return Reason',
+          input: 'text',
+          inputLabel: 'Please provide a reason for the return',
+          inputPlaceholder: 'Enter your reason here...',
+          showCancelButton: true,
+          confirmButtonText: 'Submit',
+          cancelButtonText: 'Cancel',
+          inputValidator: (value) => {
+            if (!value) {
+              return 'You need to provide a reason!';
+            }
+          }
+        }).then((reasonResult) => {
+          if (reasonResult.isConfirmed) {
+            const returnReason = reasonResult.value;
+            fetch(`/returnOrder/${orderId}`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ reason: returnReason }),
+            })
+            .then(response => {
+              if (response.ok) {
+                // Show success toast
+                
+                showToast('Product returned successfully','success');
+              } else {
+                // Show error toast
+                showToast('Failed to return product !','error');
+              }
+            })
+            .catch(error => {
+              console.error('Error returning product:', error);
+              // Show error toast
+              showToast('Failed to return product !','error');
+            });
+          }
+        });
+      }
+    }).catch((err) => {
+      console.error('Error in returnProduct:', err);
+      // Show error toast
+      toastr.error('Failed to initiate return process');
+    });
+  }
+</script>

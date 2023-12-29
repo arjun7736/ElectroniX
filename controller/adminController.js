@@ -174,7 +174,7 @@ const saveEditProduct = async (req, res) => {
     const { productid } = req.params;
 
     try {
-        
+
         const updateFields = {
             brandname: brandname,
             category: category,
@@ -357,7 +357,7 @@ const addProduct = async (req, res) => {
 };
 
 function isValidImage(file) {
-    const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml']; 
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml'];
     return allowedTypes.includes(file.mimetype);
 }
 
@@ -652,17 +652,23 @@ const loadOrderList = async (req, res) => {
 
 // change status
 const changeDeliveryStatus = async (req, res) => {
-    const userId = req.params.userId;
-    const newStatus = req.body.newStatus;
-    console.log(req.body)
     try {
-        const updatedUser = await OrderDB.findByIdAndUpdate(userId, { status: newStatus }, { new: true });
-
-        if (updatedUser) {
-            res.status(200).json({ message: 'Success' });
-        } else {
-            res.status(404).json({ error: 'User not found' });
+        const userId = req.params.userId;
+        const newStatus = req.body.newStatus;
+        if (newStatus == 'Delivered') {
+            const updatedUser = await OrderDB.findByIdAndUpdate(userId, { status: newStatus, deliverdAt: Date.now(),paymentStatus:'Paid' }, { new: true });
+            console.log(updatedUser.status)
+            const status =updatedUser.status
+            res.json({ success: true, status });
+            
         }
+        else {
+            const updatedUser = await OrderDB.findByIdAndUpdate(userId, { status: newStatus }, { new: true });
+            const status =updatedUser.status
+
+            res.json({ success: true, status });
+        }
+        
     } catch (error) {
         console.error('Error updating user status:', error);
         res.status(500).json({ error: 'Internal Server Error' });
@@ -744,13 +750,13 @@ const updateQuantity = async (req, res) => {
         // Recalculate grandTotal based on updated product details
         // order.grandTotal = order.products.reduce((total, product) => total + product.totalAmount, 0);
         order.grandTotal = order.products
-        .filter(product => !product.itemCancelled) 
-        .reduce((total, product) => total + product.totalAmount, 0);
+            .filter(product => !product.itemCancelled)
+            .reduce((total, product) => total + product.totalAmount, 0);
 
 
         order.totalPrice = order.products
-        .filter(product => !product.itemCancelled) 
-        .reduce((total, product) => total + product.totalAmount, 0);
+            .filter(product => !product.itemCancelled)
+            .reduce((total, product) => total + product.totalAmount, 0);
 
 
         console.log(order.grandTotal)

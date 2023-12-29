@@ -3,6 +3,8 @@ const ProductDB = require("../model/productModel")
 const AddressDB = require("../model/addressModel")
 const { v4: uuidv4 } = require("uuid");
 const OrderDB = require("../model/orderModel")
+const Razorpay = require('razorpay');
+
 
 const loadCheckout = async (req, res) => {
     try {
@@ -29,8 +31,13 @@ const saveOrder = async (req, res) => {
         const user = await UserDB.findById(req.session.user).populate('cart')
         const addres = await AddressDB.find({ userId: req.session.user })
         const currentAddress = addres[address]
-        // console.log(addres)
         const orderId = uuidv4()
+        let paymentstatus = 0;
+        if (payment == 'razorpay' || payment == 'wallet') {
+            paymentstatus = 'Paid'
+        } else {
+            paymentstatus = 'Pending'
+        }
         const order = new OrderDB({
             orderId: orderId,
             user: req.session.user,
@@ -39,7 +46,8 @@ const saveOrder = async (req, res) => {
             deliveryAddress: [currentAddress],
             paymentMethod: payment,
             grandTotal: user.grandTotal,
-            orderDate:Date.now()
+            orderDate: Date.now(),
+            paymentStatus: paymentstatus
         })
         const data = await order.save()
 
@@ -49,6 +57,7 @@ const saveOrder = async (req, res) => {
             await product.save();
         }
         user.cart = [];
+        user.grandTotal = 0;
         await user.save();
 
         return res.json(data);
@@ -76,8 +85,14 @@ const cancelOrder = async (req, res) => {
     try {
         const order = await OrderDB.findOne({ orderId: id });
 
+        if(!order.paymentMethod=='cod'){
+            const user = await UserDB.findById(req.session.user)
+            user.wallet +=order.grandTotal
+            await user.save();
+        }
+
         for (const product of order.products) {
-            const originalProduct = await ProductDB.findById(product.product);
+            const originalProduct = await ProductDB.findById(product.product)
             originalProduct.quantity += product.quantity;
             await originalProduct.save();
         }
@@ -86,12 +101,12 @@ const cancelOrder = async (req, res) => {
         }
         await order.save();
 
+
         const result = await OrderDB.findOneAndUpdate(
             { orderId: id },
             { $set: { status: 'Cancelled', cancelReason: reason } },
             { new: true }
         );
-
 
 
         return res.json({ success: true, message: 'Order cancelled successfully.', result });
@@ -103,7 +118,6 @@ const cancelOrder = async (req, res) => {
 
 
 // cancel each iem from existing order
-
 const cancelItem = async (req, res) => {
     const { itemID, orderid, reason } = req.body;
 
@@ -111,9 +125,16 @@ const cancelItem = async (req, res) => {
         const order = await OrderDB.findById(orderid);
         const product = order.products.find(product => product._id.toString() === itemID);
 
+       
         const canceledQuantity = product.quantity;
         const originalProduct = await ProductDB.findById(product.product);
         originalProduct.quantity += canceledQuantity;
+
+        if(!order.paymentMethod=='cod'){
+            const user = await UserDB.findById(req.session.user)
+            user.wallet +=originalProduct.price
+            await user.save();
+        }
 
         product.itemCancelled = true;
 
@@ -172,6 +193,58 @@ const checkStock = async (req, res) => {
 };
 
 
+// return Order
+const returnOrder = async (req, res) => {
+    try {
+        const { reason } = req.body
+        const { orderId } = req.params
+        const order = await OrderDB.findOne({ orderId: orderId });
+        order.returnReason = reason
+        order.status = 'Return'
+        for (const orderItem of order.products) {
+            const product = await ProductDB.findById(orderItem.product);
+            if (product) {
+                product.quantity = + orderItem.quantity;
+                await product.save();
+            }
+        }
+        order.save()
+        //wallet+=grandTotal
+        res.json({ success: true, order })
+    }
+    catch (error) {
+        console.log(error);
+    }
+}
+
+// razor pay
+const razorPay = async (req, res) => {
+    try {
+        var instance = new Razorpay({
+            key_id: process.env.RAZORKEY,
+            key_secret: process.env.RAZORSECRET,
+        });
+        var instance = new Razorpay({ key_id: process.env.RAZORKEY, key_secret: process.env.RAZORSECRET })
+        const user = await UserDB.findById(req.session.user)
+
+        var options = {
+            amount: user.grandTotal,
+            currency: "INR",
+            receipt: "order_rcptid_11"
+        };
+        instance.orders.create(options, function (err, order) {
+            res.json({ orderId: order.id });
+        });
+    }
+    catch (error) {
+        console.log(error)
+    }
+}
+
+
+
+
+
 
 
 module.exports = {
@@ -180,5 +253,7 @@ module.exports = {
     loadSuccess,
     cancelOrder,
     cancelItem,
-    checkStock
+    checkStock,
+    returnOrder,
+    razorPay
 }

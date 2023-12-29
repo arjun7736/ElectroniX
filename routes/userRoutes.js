@@ -76,6 +76,8 @@ userRoute.get('/editaddress/:id',Auth.isUserBlocked,accountController.getEditAdd
 
 userRoute.post('/editaddress/:id',accountController.updateAddress)
 
+userRoute.post('/deleteAddress/:id',accountController.deleteAddress)
+
 userRoute.get('/changepassword',Auth.isUserBlocked,accountController.loadChangePassword)
 
 userRoute.post('/changepassword',accountController.saveChangePassword)
@@ -86,6 +88,12 @@ userRoute.post('/cancelOrder/:id',ckeckoutController.cancelOrder)
 
 userRoute.post('/cancelItem/:id/:id',ckeckoutController.cancelItem)
 
+userRoute.post('/returnOrder/:orderId',ckeckoutController.returnOrder)
+
 userRoute.post('/checkStock',ckeckoutController.checkStock)
+
+userRoute.get('/wallet',Auth.isUserBlocked,accountController.loadWallet)
+
+userRoute.post('/razorPay',ckeckoutController.razorPay,)
 
 module.exports = userRoute

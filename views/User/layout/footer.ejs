@@ -6,6 +6,8 @@
 <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio,line-clamp"></script> 
 <script src="https://cdn.jsdelivr.net/npm/alpinejs@2.8.2/dist/alpine.min.js" defer></script>
 <script src="https://unpkg.com/@popperjs/core@2/dist/umd/popper.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
 <script>
     function addToCart(productId,quantity=1) {
@@ -22,7 +24,7 @@
         .then(response => response.json())
         .then(data => {
             console.log('Success:', data);
-            showToast('Product added to cart!');
+            showToast('Product added to cart!','success');
         })
         .catch((error) => {
             console.error('Error:', error);

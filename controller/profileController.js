@@ -7,7 +7,6 @@ const multer = require('multer');
 const upload = multer();
 const fileUpload = require('express-fileupload');
 
-
 const securepassword = async (password) => {
     try {
         const passwordHash = await bcrypt.hash(password, 10)
@@ -43,7 +42,7 @@ const loadAddress = async (req, res) => {
         const user = await UserDB.findById(req.session.user);
         const Address = await AddressDB.find({ userId: id })
         if (req.session.user) {
-            res.render('User/pages/address', { Address ,user})
+            res.render('User/pages/address', { Address, user })
         } else {
             console.log("poyi login cheyyeda")
             res.redirect('/login')
@@ -109,7 +108,6 @@ const loadAddAddress = async (req, res) => {
 // save address
 const saveAddress = async (req, res) => {
     const { username, mobile, email, address, city, state, postcode, district } = req.body
-    console.log(req.body)
     try {
         const user = await UserDB.findById(req.session.user);
         const newaddress = new AddressDB({
@@ -124,10 +122,10 @@ const saveAddress = async (req, res) => {
             district,
         })
         await newaddress.save();
-        res.status(200).json({ message: 'Address added successfully' });
+        showToast('Address Added!', 'success');
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: 'Internal Server Error' });
+        showToast('Address Not Added!', 'error');
     }
 }
 
@@ -216,9 +214,10 @@ const loadOrderList = async (req, res) => {
         const totalPages = Math.ceil(totalOrders / ITEMS_PER_PAGE);
 
         const order = await OrderDB.find({ user: req.session.user })
+            .sort({ orderDate: -1 })
             .skip(skip)
             .limit(ITEMS_PER_PAGE);
-        res.render('User/pages/orderlist', { order, currentPage: page, totalPages ,user});
+        res.render('User/pages/orderlist', { order, currentPage: page, totalPages, user });
     } catch (error) {
         console.error('Error fetching orders:', error);
         res.status(500).send('Internal Server Error');
@@ -260,6 +259,42 @@ const uploadProfileImage = async (req, res) => {
     }
 }
 
+// delete Address
+const deleteAddress = async (req, res) => {
+    try {
+        const { id } = req.params
+        const deleted = await AddressDB.findByIdAndDelete(id)
+        if (deleted) {
+            res.json({ success: true })
+        }
+        else {
+            res.json({ success: false })
+        }
+    }
+    catch (error) {
+        console.log(error)
+    }
+}
+
+
+// load Wallet
+const loadWallet = async (req, res) => {
+    try {
+        if (req.session.user) {
+            const user = await UserDB.findById(req.session.user);
+            res.render('User/pages/wallet',{user})
+        }
+    }
+    catch (error) {
+        console.log(error)
+    }
+}
+
+
+
+
+
+
 module.exports = {
     loadprofile,
     loadAddress,
@@ -273,7 +308,8 @@ module.exports = {
     loadOrderList,
     loadOrderDetails,
     uploadProfileImage,
-
+    deleteAddress,
+    loadWallet
 
 
 }

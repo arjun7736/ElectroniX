@@ -156,57 +156,15 @@
           originalEmail = updatedEmail;
           originalMobile = updatedMobile;
 
-          await Swal.fire({
-            title: "Success!",
-            text: "Profile information updated successfully!",
-            icon: "success",
-          });
+          await  showToast('Profile information updated successfully!','success')
         } else {
-          await Swal.fire({
-            title: "Error!",
-            text: "Failed to update profile information. Please try again.",
-            icon: "error",
-          });
+          await  showToast('Failed to update profile information. Please try again','error')
         }
       }
     }
   });
 </script>
 
-<!-- <script>
-  function triggerFileInput() {
-    document.getElementById('profileImage').click();
-  }
-
-  async function handleImageChange(event) {
-    const fileInput = event.target;
-    const file = fileInput.files[0];
-
-    if (file) {
-      const formData = new FormData();
-      formData.append('image', file);
-
-      try {
-        // Send the image file to the server
-        const response = await fetch('/uploadProfileImage', {
-          method: 'POST',
-          body: formData,
-        });
-
-        const data = await response.json();
-
-        if (data.success) {
-          window.alert('Profile image uploaded successfully.');
-          
-        } else {
-          window.alert('Failed to upload profile image:', data.message);
-        }
-      } catch (error) {
-        window.alert('Error uploading profile image:', error);
-      }
-    }
-  }
-</script> -->
 <script>
   function triggerFileInput() {
     document.getElementById('profileImage').click();
@@ -221,7 +179,6 @@
       formData.append('image', file);
 
       try {
-        // Send the image file to the server
         const response = await fetch('/uploadProfileImage', {
           method: 'POST',
           body: formData,
@@ -230,30 +187,15 @@
         const data = await response.json();
 
         if (data.success) {
-          // Display SweetAlert on success
-          Swal.fire({
-            icon: 'success',
-            title: 'Profile Image Uploaded!',
-            text: 'Profile image uploaded successfully.',
-          }).then(() => {
-            // Reload the webpage after clicking "OK"
+          showToast('Profile Image Uploaded!','success')
+         .then(() => {
             location.reload();
           });
         } else {
-          // Display SweetAlert on failure
-          Swal.fire({
-            icon: 'error',
-            title: 'Failed to Upload Profile Image',
-            text: `Error: ${data.message}`,
-          });
+          showToast('Failed to Upload Profile Image','error')
         }
       } catch (error) {
-        // Display SweetAlert on error
-        Swal.fire({
-          icon: 'error',
-          title: 'Error Uploading Profile Image',
-          text: `Error: ${error}`,
-        });
+        showToast('Failed to Upload Profile Image','error')
       }
     }
   }

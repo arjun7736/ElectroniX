@@ -18,7 +18,7 @@
       </div>
     </div>
 
-    <div class="mt-6 grid grid-cols-3 gap-4">
+    <div class="mt-6 grid grid-cols-4 gap-4">
       <div>
         <h4 class="text-gray-800 font-medium">Shipping Address</h4>
         <p class="text-gray-600">
@@ -34,12 +34,20 @@
         <p class="text-gray-600"> <%=order.paymentMethod%></p>
       </div>
       <div>
+        <h4 class="text-gray-800 font-medium">Payment Status</h4>
+        <%if(order.paymentStatus=='Paid'){ %> 
+        <p class="text-green-600"> <%=order.paymentStatus%></p>
+        <%}else{%>
+          <p class="text-orange-600"> <%=order.paymentStatus%></p>
+        <%}%>
+      </div>
+      <div>
         <h4 class="text-gray-800 font-medium">Delivery Status</h4>
-        <%if(order.status == 'Cancelled'){ %> 
+        <%if(order.status == 'Cancelled' || order.status=='Return'){ %> 
         <p class="text-red-600"> <%=order.status%></p>
         <% }else if (order.status == "Delivered") { %>
           <p class="text-green-600"> <%=order.status%></p>
-          <% }else if (order.status == "Pending" || order.status == "Shipped" || order.status == "Processing" ) { %>
+          <% }else { %>
             <p class="text-yellow-600"> <%=order.status%></p>
         <% }%>
       </div>
@@ -65,32 +73,16 @@
     
             <td class="px-4 py-2 flex items-center">
                 
-                <svg
-                  class="fill-current text-gray-600 w-3 cursor-pointer"
-                  onclick="updateQuantity('<%= order._id %>', '<%= value.product._id %>','<%= value.quantity - 1 %>')"
-                  viewBox="0 0 448 512"
-                >
-                  <path
-                    d="M416 208H32c-17.67 0-32 14.33-32 32v32c0 17.67 14.33 32 32 32h384c17.67 0 32-14.33 32-32v-32c0-17.67-14.33-32-32-32z"
-                  />
-                </svg>
+              
                 <span class="w-5 mr-2 ml-2 text-center" ><p  id="quantity-<%= value.product._id %>"> <%= value.quantity %></p></span>
                 
-                <svg
-                  class="fill-current text-gray-600 w-3 cursor-pointer"
-                  onclick="updateQuantity('<%= order._id %>', '<%= value.product._id %>', '<%= value.quantity + 1 %>')"     
-                             viewBox="0 0 448 512"
-                >
-                  <path
-                    d="M416 208H272V64c0-17.67-14.33-32-32-32h-32c-17.67 0-32 14.33-32 32v144H32c-17.67 0-32 14.33-32 32v32c0 17.67 14.33 32 32 32h144v144c0 17.67 14.33 32 32 32h32c17.67 0 32-14.33 32-32V304h144c17.67 0 32-14.33 32-32v-32c0-17.67-14.33-32-32-32z"
-                  />
-                </svg>
+              
               </td>
               
             <td class="px-4 py-2"><%=value.product.price%></td>
             <td class="px-4 py-2"id="totalPrice-<%=value.product._id%>"><%=value.totalAmount%></td>
             <td class="px-4 py-2">
-              <%if(value.itemCancelled){ %> 
+              <%if(value.itemCancelled || order.status =='Delivered' || order.status =='Return'){ %> 
                <a
               id="<%= value._id %>"
               onclick="cancelItem('<%= value._id %>','<%= order._id%>')"
