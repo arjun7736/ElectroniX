@@ -88,6 +88,11 @@ const cancelOrder = async (req, res) => {
         if(!order.paymentMethod=='cod'){
             const user = await UserDB.findById(req.session.user)
             user.wallet +=order.grandTotal
+            user.walletHistory.push({
+                date:Date.now(),
+                amount:order.grandTotal ,
+                message: `${reason} orderId:-${order.orderId}`
+            });
             await user.save();
         }
 
@@ -142,9 +147,9 @@ const cancelItem = async (req, res) => {
 
         const allOrderItemsCancelled = order.products.every(item => item.itemCancelled);
 
-        // Check if it's not the last product in the order
+       
         if (order.products.length > 1 && !allOrderItemsCancelled) {
-            // Subtract the canceled product's total amount from grandTotal
+           
             order.totalPrice -= product.totalAmount;
             order.grandTotal -= product.totalAmount;
         }
@@ -154,7 +159,7 @@ const cancelItem = async (req, res) => {
         }
 
         await originalProduct.save();
-        const updatedOrder = await order.save(); // Save the order and get the updated order details
+        const updatedOrder = await order.save(); 
 
         return res.json({ success: true, message: 'Item canceled successfully.', updatedOrder });
     } catch (error) {
@@ -208,8 +213,15 @@ const returnOrder = async (req, res) => {
                 await product.save();
             }
         }
+        const user=await UserDB.findById(req.session.user)
+        user.wallet += order.grandTotal
+        user.walletHistory.push({
+            date: Date.now(),
+            amount:order.grandTotal ,
+            message:`${order.returnReason} orderId:-${order.orderId}`
+        });
+        await user.save()
         order.save()
-        //wallet+=grandTotal
         res.json({ success: true, order })
     }
     catch (error) {
