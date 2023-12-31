@@ -79,4 +79,10 @@ adminRoute.get('/orderDetails/:id',Auth.isAdminLoggedIn,adminController.orderDet
 
 adminRoute.post('/orderlist/updateStatus/:userId', adminController.changeDeliveryStatus);
 
+adminRoute.get('/coupens',Auth.isAdminLoggedIn,adminController.loadCoupens)
+
+adminRoute.get('/addcoupen',Auth.isAdminLoggedIn,adminController.loadaddCoupen)
+
+adminRoute.post('/addcoupen',adminController.addCoupon)
+
 module.exports = adminRoute

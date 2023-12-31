@@ -9,6 +9,7 @@ const BrandDB = require('../model/brandModel')
 const OrderDB = require('../model/orderModel')
 const CategoryDB = require('../model/categoryModel')
 const SubCategoryDB = require('../model/subcategoryModel')
+const CoupenDB = require('../model/coupenModel')
 const crypto = require('crypto');
 require('dotenv').config();
 const multer = require('multer');
@@ -656,19 +657,19 @@ const changeDeliveryStatus = async (req, res) => {
         const userId = req.params.userId;
         const newStatus = req.body.newStatus;
         if (newStatus == 'Delivered') {
-            const updatedUser = await OrderDB.findByIdAndUpdate(userId, { status: newStatus, deliverdAt: Date.now(),paymentStatus:'Paid' }, { new: true });
+            const updatedUser = await OrderDB.findByIdAndUpdate(userId, { status: newStatus, deliverdAt: Date.now(), paymentStatus: 'Paid' }, { new: true });
             console.log(updatedUser.status)
-            const status =updatedUser.status
+            const status = updatedUser.status
             res.json({ success: true, status });
-            
+
         }
         else {
             const updatedUser = await OrderDB.findByIdAndUpdate(userId, { status: newStatus }, { new: true });
-            const status =updatedUser.status
+            const status = updatedUser.status
 
             res.json({ success: true, status });
         }
-        
+
     } catch (error) {
         console.error('Error updating user status:', error);
         res.status(500).json({ error: 'Internal Server Error' });
@@ -690,7 +691,58 @@ const orderDetails = async (req, res) => {
 
 }
 
+// Load  coupens
+const loadCoupens = async (req, res) => {
+    try {
+        const coupen =await CoupenDB.find()
+        res.render('Admin/pages/coupens', { coupen })
+    }
+    catch (error) {
+        console.log(error)
+    }
+}
+// loadaddCoupen
+const loadaddCoupen = (req, res) => {
+    try {
+        res.render('Admin/pages/addcoupen')
+    }
+    catch (error) {
+        console.log(error)
+    }
+}
 
+// add coupen
+const addCoupon = async (req, res) => {
+    try {
+        console.log(req.body)
+        let { coupenname, discounttype, minpurchase, discountamountorpercentage, code, description,date } = req.body;
+        const coupen = new CoupenDB({
+            couponName:coupenname,
+            discountType:discounttype,
+            minimumPurchaseAmount:minpurchase,
+            discountAmountOrPercentage:discountamountorpercentage,
+            code:code,
+            description:description,
+            expaireDate:date
+        })
+        await coupen.save()
+        res.redirect('/admin/coupens')
+    }
+    catch (error) {
+        console.log(error)
+    }
+}
+
+// delete cuopen
+const deleteCoupon = async (req, res) => {
+    const { id } = req.params;
+    try {
+        await CoupenDB.remove({ _id: id })
+        res.redirect("/admin/coupons")
+    } catch (e) {
+        console.log(e)
+    }
+}
 
 
 
@@ -727,7 +779,10 @@ module.exports = {
     loadOrderList,
     changeDeliveryStatus,
     orderDetails,
-
+    loadCoupens,
+    addCoupon,
+    deleteCoupon,
+    loadaddCoupen
 
 
 

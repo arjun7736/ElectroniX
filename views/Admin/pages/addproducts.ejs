@@ -232,7 +232,7 @@
                 <% category.forEach(category => { %>
                     <option value="<%= category.categoryname %>"><%= category.categoryname %></option>
                 <% }); %>
-            </select>
+              </select>
               </div>
         
               <div class="mb-4">
@@ -241,7 +241,7 @@
                 <% subcategory.forEach(category => { %>
                     <option value="<%= category.subcategoryname %>"><%= category.subcategoryname %></option>
                 <% }); %>
-            </select>
+             </select>
               </div>
         
 
@@ -257,7 +257,7 @@
                 <div class="alert alert-danger text-red-500">
                     <%= messages.error %>
                 </div>
-            <% } %>
+             <% } %>
               <!-- Number Input -->
               <div class="mb-4">
                 <label for="quantity" class="block text-sm font-medium text-white">Quantity</label>
@@ -279,7 +279,7 @@
               <!-- Submit Button -->
            
               <button type="submit" class="w-full bg-blue-500 text-white p-2 rounded-md hover:bg-blue-700 cursor-pointer">Submit</button>
-            </form>
+             </form>
             </div>
           </div>
         </div>
