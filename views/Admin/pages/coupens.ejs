@@ -208,7 +208,7 @@
                 <%coupen.forEach((value)=>{%>
 
 
-                  <div class="bg-white rounded-lg shadow-md p-4 relative">
+                  <div class="bg-white rounded-lg shadow-md p-4 relative" id="remove<%=value._id%>">
                     <div class="flex items-center justify-between">
                       <div class="text-xl font-bold text-black"><%=value.couponName%></div>
                       <div class="flex space-x-2"> 
@@ -218,7 +218,7 @@
                           Edit
                         </button>
                       </a>
-                        <button
+                        <button id="delete<%=value._id%>"
                           class="relative z-10 p-2 rounded-full hover:bg-gray-200 focus:outline-none "
                           onclick="deleteCoupon('<%=value._id%>')"
                         >
@@ -243,3 +243,41 @@
 </div>
 
 <%- include('../componants/footer') %>
+
+<script>
+ 
+function deleteCoupon(id) {
+    const deletebtn = document.getElementById(`delete${id}`)
+    const remove =document.getElementById(`remove${id}`)
+    try {
+        deletebtn.addEventListener("click", async () => {
+            const delcoupen = await Swal.fire({
+                title: "Are you sure you want to Delete your Coupon?",
+                icon: "question",
+                showCancelButton: true,
+                confirmButtonText: "Yes, Delete it!",
+                cancelButtonText: "Cancel",
+            })
+            if (delcoupen.isConfirmed) {
+                const data =await fetch(`/admin/deleteCoupen/${id}`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                })
+                if (data.ok) {
+                    showToast('SuccessFully deleted ', 'success')
+remove.remove()
+                } else {
+                    showToast('Error in Deletion', 'error')
+                }
+              }
+              
+        })
+
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+</script>

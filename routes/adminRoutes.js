@@ -89,4 +89,8 @@ adminRoute.get('/editcoupen/:id',Auth.isAdminLoggedIn,adminController.loadeditCo
 
 adminRoute.post('/editcoupen/:id',adminController.saveEditCoupen)
 
+adminRoute.post('/deleteCoupen/:id',adminController.deleteCoupon)
+
+
+
 module.exports = adminRoute
