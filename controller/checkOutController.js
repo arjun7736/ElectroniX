@@ -2,6 +2,7 @@ const UserDB = require("../model/userModel")
 const ProductDB = require("../model/productModel")
 const AddressDB = require("../model/addressModel")
 const { v4: uuidv4 } = require("uuid");
+const CoupenDB = require('../model/coupenModel')
 const OrderDB = require("../model/orderModel")
 const Razorpay = require('razorpay');
 
@@ -85,12 +86,12 @@ const cancelOrder = async (req, res) => {
     try {
         const order = await OrderDB.findOne({ orderId: id });
 
-        if(!order.paymentMethod=='cod'){
+        if (!order.paymentMethod == 'cod') {
             const user = await UserDB.findById(req.session.user)
-            user.wallet +=order.grandTotal
+            user.wallet += order.grandTotal
             user.walletHistory.push({
-                date:Date.now(),
-                amount:order.grandTotal ,
+                date: Date.now(),
+                amount: order.grandTotal,
                 message: `${reason} orderId:-${order.orderId}`
             });
             await user.save();
@@ -130,14 +131,14 @@ const cancelItem = async (req, res) => {
         const order = await OrderDB.findById(orderid);
         const product = order.products.find(product => product._id.toString() === itemID);
 
-       
+
         const canceledQuantity = product.quantity;
         const originalProduct = await ProductDB.findById(product.product);
         originalProduct.quantity += canceledQuantity;
 
-        if(!order.paymentMethod=='cod'){
+        if (!order.paymentMethod == 'cod') {
             const user = await UserDB.findById(req.session.user)
-            user.wallet +=originalProduct.price
+            user.wallet += originalProduct.price
             await user.save();
         }
 
@@ -147,9 +148,9 @@ const cancelItem = async (req, res) => {
 
         const allOrderItemsCancelled = order.products.every(item => item.itemCancelled);
 
-       
+
         if (order.products.length > 1 && !allOrderItemsCancelled) {
-           
+
             order.totalPrice -= product.totalAmount;
             order.grandTotal -= product.totalAmount;
         }
@@ -159,7 +160,7 @@ const cancelItem = async (req, res) => {
         }
 
         await originalProduct.save();
-        const updatedOrder = await order.save(); 
+        const updatedOrder = await order.save();
 
         return res.json({ success: true, message: 'Item canceled successfully.', updatedOrder });
     } catch (error) {
@@ -213,12 +214,12 @@ const returnOrder = async (req, res) => {
                 await product.save();
             }
         }
-        const user=await UserDB.findById(req.session.user)
+        const user = await UserDB.findById(req.session.user)
         user.wallet += order.grandTotal
         user.walletHistory.push({
             date: Date.now(),
-            amount:order.grandTotal ,
-            message:`${order.returnReason} orderId:-${order.orderId}`
+            amount: order.grandTotal,
+            message: `${order.returnReason} orderId:-${order.orderId}`
         });
         await user.save()
         order.save()
@@ -253,7 +254,39 @@ const razorPay = async (req, res) => {
     }
 }
 
+// applyCoupen
+const applyCoupen = async (req, res) => {
+    try {
+        const { code } = req.body
+        const coupen = await CoupenDB.findOne({ code: code })
+        // console.log(coupen)
+        if (coupen.couponDone) {
+            console.log("This coupon has been used")
+            return res.status(400).json({ success: false, message: "This coupon has been used." })
+        } else {
+            if (coupen.discountType == 'Amount') {
+                const user = await UserDB.findById(req.session.user).populate('cart')
+                user.grandTotal -= coupen.discountAmountOrPercentage
+                const total = user.grandTotal
+                await user.save()
+                res.json({ success: true, total })
+                console.log("cartAmount")
+            } else {
+                console.log("total", total)
+                const user = await UserDB.findById(req.session.user).populate('cart')
+                user.grandTotal = (user.grandTotal * coupen.discountAmountOrPercentage) / 100;
+                const total = user.grandTotal;
+                await user.save()
+                res.json({ success: true, total })
+            }
 
+        }
+        await CoupenDB.findByIdAndUpdate(coupen._id,{couponDone:true})
+        console.log(coupen)
+    } catch (error) {
+        console.log(error)
+    }
+}
 
 
 
@@ -267,5 +300,6 @@ module.exports = {
     cancelItem,
     checkStock,
     returnOrder,
-    razorPay
+    razorPay,
+    applyCoupen
 }

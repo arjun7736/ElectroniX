@@ -96,4 +96,8 @@ userRoute.get('/wallet',Auth.isUserBlocked,accountController.loadWallet)
 
 userRoute.post('/razorPay',ckeckoutController.razorPay)
 
+userRoute.get('/coupen',accountController.loadCoupen)
+
+userRoute.post('/applyCoupen',ckeckoutController.applyCoupen)
+
 module.exports = userRoute

@@ -2,10 +2,12 @@ const UserDB = require("../model/userModel");
 const ProductDB = require("../model/productModel")
 const AddressDB = require('../model/addressModel')
 const bcrypt = require('bcrypt');
+const CoupenDB=require('../model/coupenModel')
 const OrderDB = require('../model/orderModel')
 const multer = require('multer');
 const upload = multer();
 const fileUpload = require('express-fileupload');
+
 
 const securepassword = async (password) => {
     try {
@@ -282,16 +284,23 @@ const loadWallet = async (req, res) => {
     try {
         if (req.session.user) {
             const user = await UserDB.findById(req.session.user);
-            res.render('User/pages/wallet',{user})
+            res.render('User/pages/wallet', { user })
         }
     }
     catch (error) {
         console.log(error)
     }
 }
-
-
-
+// load Coupens
+const loadCoupen = async (req, res) => {
+    try {
+        const user=await UserDB.findById(req.session.user)
+        const coupen = await CoupenDB.find()
+        res.render('User/pages/coupen', { coupen,user })
+    } catch (error) {
+        console.log(error)
+    }
+}
 
 
 
@@ -309,7 +318,8 @@ module.exports = {
     loadOrderDetails,
     uploadProfileImage,
     deleteAddress,
-    loadWallet
+    loadWallet,
+    loadCoupen
 
 
 }
