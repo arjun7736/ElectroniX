@@ -181,65 +181,134 @@
     <%- include('../componants/navbar') %> 
     <main class="h-full overflow-y-auto ">
         <div class="container px-6 mx-auto grid" id="dataContainer">        
-          <h1 class="text-2xl font-semibold mb-4 mt-10 text-white">Coupens</h1>
-          <span class="mb-3 right-0">
-            <a href="/admin/addcoupen">
-              <button
-                class="inline-block pl-2 pr-4 py-2 mr-2 bg-gray-800 hover:bg-gray-900 rounded font-semibold text-white"
-              >
-                <svg
-                  class="float-left w-6 h-6 fill-current mr-2"
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 100 100"
-                >
-                  <g>
-                    <rect x="35" y="30" width="40" height="8" />
-                    <rect x="50" y="15" width="8" height="40" />
-                  </g>
-                </svg>
-                Add Coupen
-              </button>
-            </a>
-          </span>
+          <h1 class="text-2xl font-semibold mb-4 mt-10 text-white">Edit Coupen</h1>
+          
+          <div class="w-1/2 ml-10">
+
+            <div class="mb-6">
+                <label for="coupenname" class="block text-sm font-medium text-white">Coupen Name</label>
+                <input type="text" id="coupenname" name="coupenname" value="<%=data.couponName%>" class="mt-1 p-2 border border-gray-300 rounded-md w-full">
+              </div> 
+
+
+
+           
+            <div class="  mb-4">
+              <label for="discounttype" class="block text-sm font-medium text-white">Discount Type</label>
+              <select id="discounttype" name="discounttype" class="mt-1 p-2 rounded-md w-full">
+                <option value="Percentage" <%= data.discountType === 'Percentage' ? 'selected' : '' %>>Percentage</option>
+                <option value="Amount" <%= data.discountType === 'Amount' ? 'selected' : '' %>>Amount</option>
+              </select>
+            </select>
+            </div>
       
-          <div class="container mx-auto p-4">
+            <div class="mb-4">
+                <label for="minpurchase" class="block text-sm font-medium text-white">Minimum Purchase Amount</label>
+                <input id="minpurchase" name="minpurchase" value="<%=data.minimumPurchaseAmount%>" type="number" class="mt-1 p-2 border border-gray-300 rounded-md w-full" min="0">
+                </div>
 
-              <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-1 gap-4">
-                <%coupen.forEach((value)=>{%>
+
+              <div class="mb-4">
+                <label for="discountamountorpercentage" class="block text-sm font-medium text-white">Discount Amount Or Percentage</label>
+                <input id="discountamountorpercentage" name="discountamountorpercentage" value="<%=data.discountAmountOrPercentage%>" type="number" class="mt-1 p-2 border border-gray-300 rounded-md w-full" min="0">
+              </div>
+
+              <div class="mb-4">
+                <label for="code" class="block text-sm font-medium text-white">Code</label>
+                <input id="code" name="code" type="text" value="<%=data.code%>" class="mt-1 p-2 border border-gray-300 rounded-md w-full" min="0">
+              </div>
 
 
-                  <div class="bg-white rounded-lg shadow-md p-4 relative">
-                    <div class="flex items-center justify-between">
-                      <div class="text-xl font-bold text-black"><%=value.couponName%></div>
-                      <div class="flex space-x-2"> 
-                        <a href="/admin/editcoupen/<%=value._id%>">
-                        <button
-                          class="relative z-10 p-2 rounded-full hover:bg-gray-200 focus:outline-none">
-                          Edit
-                        </button>
-                      </a>
-                        <button
-                          class="relative z-10 p-2 rounded-full hover:bg-gray-200 focus:outline-none "
-                          onclick="deleteCoupon('<%=value._id%>')"
-                        >
-                          Delete
-                        </button>
-                      </div>
-                    </div>
-                    <p class="mt-2 text-gray-700"><%=value.description%></p>
-                    <div class="text-sm mt-3 text-gray-500">Valid till <%=value.expaireDate.toLocaleDateString()%></div>
-                  </div>
-                  
-                <%})%>
 
+              <div class="relative max-w-sm">
+                <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                   <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z"/>
+                    </svg>
+                </div>
+                <input datepicker datepicker-buttons type="text"  id="date" name="date" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Select date">
               </div>
               
-          
-              </div>
+
+
+
+            <!-- Description Input -->
+            <div class="mb-4">
+              <label for="description" class="block text-sm font-medium text-white">Description</label>
+              <textarea id="description" name="description"   rows="2" class="mt-1 p-2 border border-gray-300 rounded-md w-full"></textarea>
+            </div>
+      
+            <!-- Submit Button -->
+         
+         <a onclick="saveEditCoupen('<%=data._id%>')">  <button type="submit" id="submit" class="w-full bg-blue-500 text-white p-2 rounded-md hover:bg-blue-700 cursor-pointer">Submit</button></a>
+          </div>
+        
           </div>                   
         </div>
-      </main>
+    </main>
 </div>
 </div>
 
 <%- include('../componants/footer') %>
+<script>
+
+    function saveEditCoupen(coupeId) {
+        const editConfirm = document.getElementById("submit");
+        const couponName = document.getElementById("coupenname").value;
+        const description = document.getElementById("description").value;
+        const discountType = document.getElementById("discounttype").value;
+        const minimumPurchaseAmount = document.getElementById("minpurchase").value;
+    const discountAmountOrPercentage = document.getElementById("discountamountorpercentage").value;
+    const code = document.getElementById("code").value;
+    const expaireDate = document.getElementById("date").value;
+    
+    editConfirm.addEventListener("click", async () => {
+        const confirm = await Swal.fire({
+            title: "Are you sure you want to update your Coupon?",
+            icon: "question",
+            showCancelButton: true,
+            confirmButtonText: "Yes, update it!",
+            cancelButtonText: "Cancel",
+        });
+
+        if (confirm.isConfirmed) {
+            try {
+                const data = await fetch(`/admin/editcoupen/${coupeId}`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        couponName: couponName,
+                        description: description,
+                        discountType: discountType,
+                        minimumPurchaseAmount: minimumPurchaseAmount,
+                        discountAmountOrPercentage: discountAmountOrPercentage,
+                        code: code,
+                        expaireDate: expaireDate,
+                    }),
+                });
+                if (data.status === 400) {
+  console.log('Code already exists');
+  await showToast('Coupon Already Exist!', 'error');
+
+  return;
+}
+                if (data.ok) {
+                    console.log('data ok',data)
+                    await showToast('Coupon updated successfully!', 'success');
+                      window.location.href = '/admin/coupens';
+                } else {
+                    console.error('Error in Coupon Updation:', data.statusText);
+                    await showToast('Error in Coupon Updation!', 'error');
+                }
+            } catch (error) {
+                console.error('Error in fetch:', error);
+                await showToast('Error in Coupon Updation!', 'error');
+                window.location.href = '/coupens';
+            }
+        }
+    });
+}
+
+                </script>

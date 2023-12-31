@@ -694,7 +694,7 @@ const orderDetails = async (req, res) => {
 // Load  coupens
 const loadCoupens = async (req, res) => {
     try {
-        const coupen =await CoupenDB.find()
+        const coupen = await CoupenDB.find()
         res.render('Admin/pages/coupens', { coupen })
     }
     catch (error) {
@@ -715,15 +715,15 @@ const loadaddCoupen = (req, res) => {
 const addCoupon = async (req, res) => {
     try {
         console.log(req.body)
-        let { coupenname, discounttype, minpurchase, discountamountorpercentage, code, description,date } = req.body;
+        let { coupenname, discounttype, minpurchase, discountamountorpercentage, code, description, date } = req.body;
         const coupen = new CoupenDB({
-            couponName:coupenname,
-            discountType:discounttype,
-            minimumPurchaseAmount:minpurchase,
-            discountAmountOrPercentage:discountamountorpercentage,
-            code:code,
-            description:description,
-            expaireDate:date
+            couponName: coupenname,
+            discountType: discounttype,
+            minimumPurchaseAmount: minpurchase,
+            discountAmountOrPercentage: discountamountorpercentage,
+            code: code,
+            description: description,
+            expaireDate: date
         })
         await coupen.save()
         res.redirect('/admin/coupens')
@@ -732,6 +732,47 @@ const addCoupon = async (req, res) => {
         console.log(error)
     }
 }
+
+
+// load edit coupen
+const loadeditCoupen = async (req, res) => {
+    try {
+        const id = req.params.id;
+        const data = await CoupenDB.findById(id);
+        res.render('Admin/pages/editcoupen', { data })
+    }
+    catch (error) {
+        console.log(error)
+    }
+}
+
+// save edit couepen
+const saveEditCoupen = async (req, res) => {
+    try {
+      const id = req.params.id;
+      const { couponName, description, discountType, minimumPurchaseAmount, discountAmountOrPercentage, code, expaireDate } = req.body;
+      const upadateCoupen = await CoupenDB.findById(id);
+      const existCode = await CoupenDB.findOne({ code: { $regex: new RegExp(code, 'i') } });
+      if (existCode && existCode.code ==code) {
+        console.log("exist code")
+        return res.status(400).json({ success: false, message: 'Code already exists' });
+    } else {
+        upadateCoupen.couponName = couponName;
+        upadateCoupen.description = description;
+        upadateCoupen.discountType = discountType;
+        upadateCoupen.minimumPurchaseAmount = minimumPurchaseAmount;
+        upadateCoupen.discountAmountOrPercentage = discountAmountOrPercentage;
+        upadateCoupen.code = code;
+        upadateCoupen.expaireDate = expaireDate;
+        await upadateCoupen.save();
+       return res.json({ success: true });
+      }
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ success: false, message: 'Internal Server Error' });
+    }
+  };
+  
 
 // delete cuopen
 const deleteCoupon = async (req, res) => {
@@ -782,8 +823,9 @@ module.exports = {
     loadCoupens,
     addCoupon,
     deleteCoupon,
-    loadaddCoupen
-
+    loadaddCoupen,
+    loadeditCoupen,
+    saveEditCoupen
 
 
 }
