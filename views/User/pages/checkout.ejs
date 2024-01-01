@@ -274,136 +274,155 @@
 
 
 <script>
-  async function checkOut() {
+  
+async function checkOut() {
     try {
-      const address = document.getElementById(`addressOption`);
-      const payment = document.getElementById("paymentOption");
+        const address = document.getElementById(`addressOption`);
+        const payment = document.getElementById("paymentOption");
 
-      const selectedPaymentOption = payment.querySelector(
-        'input[name="payment"]:checked'
-      ).value;
-      const selectedAddrerssOption = address.querySelector(
-        'input[name="selectedAddress"]:checked'
-      ).value;
+        const selectedPaymentOption = payment.querySelector(
+            'input[name="payment"]:checked'
+        ).value;
+        const selectedAddrerssOption = address.querySelector(
+            'input[name="selectedAddress"]:checked'
+        ).value;
 
-      const data = {
-        address: selectedAddrerssOption,
-        payment: selectedPaymentOption,
-        totalPrice:totalAmount
-      };
-      const stockCheckResponse = await fetch("/checkStock", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
-
-      const stockCheckResult = await stockCheckResponse.json();
-      const grandTotalElement = document.getElementById("grandTotal");
-      const grandTotalValue = grandTotalElement.textContent.trim();
-
-      if (stockCheckResult.success) {
-        if (selectedPaymentOption == "razorpay") {
-          
-          var orderId;
-          $(document).ready(function () {
-            var settings = {
-              url: "/razorPay",
-              method: "POST",
-              timeout: 0,
-              headers: {
+        const data = {
+            address: selectedAddrerssOption,
+            payment: selectedPaymentOption,
+            totalPrice: totalAmount
+        };
+        const stockCheckResponse = await fetch("/checkStock", {
+            method: "POST",
+            headers: {
                 "Content-Type": "application/json",
-              },
-              data: JSON.stringify({
-                amount: grandTotal,
-              }),
-            };
-            $.ajax(settings).done(function (response) {
-              console.log(response);
-              orderId = response.orderId;
-              console.log(orderId);
-              $("button").show();
-            });
-          });
+            },
+            body: JSON.stringify(data),
+        });
 
-          var options = {
-            key: "rzp_test_267SWOvtmQRkZI",
-            amount: grandTotal * 100, 
-            currency: "INR",
-            name: "ElectroniX",
-            description: "Test Transaction",
-            image: "https://example.com/your_logo",
-            order_id: orderId, 
-            handler:async function  (response) {
-              showToast("Payment Successfull", "success");
-              const orderResponse = await fetch(`/placeOrder/?address=${selectedAddrerssOption}&&payment=${selectedPaymentOption}`,
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({ data }),
+        const stockCheckResult = await stockCheckResponse.json();
+        const grandTotalElement = document.getElementById("grandTotal");
+        const grandTotalValue = grandTotalElement.textContent.trim();
+
+        if (stockCheckResult.success) {
+            if (selectedPaymentOption == "razorpay") {
+
+                var orderId;
+                $(document).ready(function () {
+                    var settings = {
+                        url: "/razorPay",
+                        method: "POST",
+                        timeout: 0,
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        data: JSON.stringify({
+                            amount: grandTotal,
+                        }),
+                    };
+                    $.ajax(settings).done(function (response) {
+                        console.log(response);
+                        orderId = response.orderId;
+                        console.log(orderId);
+                        $("button").show();
+                    });
+                });
+
+                var options = {
+                    key: "rzp_test_267SWOvtmQRkZI",
+                    amount: grandTotal * 100,
+                    currency: "INR",
+                    name: "ElectroniX",
+                    description: "Test Transaction",
+                    image: "https://example.com/your_logo",
+                    order_id: orderId,
+                    handler: async function (response) {
+                        showToast("Payment Successfull", "success");
+                        const orderResponse = await fetch(`/placeOrder/?address=${selectedAddrerssOption}&&payment=${selectedPaymentOption}`,
+                            {
+                                method: "POST",
+                                headers: {
+                                    "Content-Type": "application/json",
+                                },
+                                body: JSON.stringify({ data }),
+                            }
+                        );
+
+                        const orderData = await orderResponse.json();
+                        Swal.fire({
+                            title: "Order Placed!",
+                            text: "Good job!",
+                            icon: "success",
+                        }).then(() => {
+                            window.location.href = "/orderSuccess";
+                        });
+
+                    },
+                    prefill: {
+                        name: "Gaurav Kumar",
+                        email: "gaurav.kumar@example.com",
+                        contact: "9000090000",
+                    },
+                    notes: {
+                        address: "Razorpay Corporate Office",
+                    },
+                    theme: {
+                        color: "#3399cc",
+                    },
+                };
+                var rzp1 = new Razorpay(options);
+                rzp1.open();
+            } else if (selectedPaymentOption == "cod") {
+                const orderResponse = await fetch(`/placeOrder/?address=${selectedAddrerssOption}&&payment=${selectedPaymentOption}`,
+                    {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({ data }),
+                    }
+                );
+                const orderData = await orderResponse.json();
+                Swal.fire({
+                    title: "Order Placed!",
+                    text: "Good job!",
+                    icon: "success",
+                }).then(() => {
+                    window.location.href = "/orderSuccess";
+                });
+            } else {
+                const orderResponse = await fetch(`/placeOrder/?address=${selectedAddrerssOption}&&payment=${selectedPaymentOption}`,
+                    {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({ data }),
+                    }
+                );
+                if (orderResponse.status === 400) {
+                    await showToast('Wallet Amount Exeeds!', 'error');
+                } else {
+                    Swal.fire({
+                        title: "Order Placed!",
+                        text: "Good job!",
+                        icon: "success",
+                    }).then(() => {
+                        window.location.href = "/orderSuccess";
+                    });
+                }
             }
-          );
-
-          const orderData = await orderResponse.json();
-          Swal.fire({
-            title: "Order Placed!",
-            text: "Good job!",
-            icon: "success",
-          }).then(() => {
-            window.location.href = "/orderSuccess";
-          });
-
-            },
-            prefill: {
-              name: "Gaurav Kumar",
-              email: "gaurav.kumar@example.com",
-              contact: "9000090000",
-            },
-            notes: {
-              address: "Razorpay Corporate Office",
-            },
-            theme: {
-              color: "#3399cc",
-            },
-          };
-          var rzp1 = new Razorpay(options);
-          rzp1.open();
-        } else if (selectedPaymentOption == "cod") {
-          const orderResponse = await fetch(`/placeOrder/?address=${selectedAddrerssOption}&&payment=${selectedPaymentOption}`,
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({ data }),
-            }
-          );
-          const orderData = await orderResponse.json();
-          Swal.fire({
-            title: "Order Placed!",
-            text: "Good job!",
-            icon: "success",
-          }).then(() => {
-            window.location.href = "/orderSuccess";
-          });
         } else {
-          console.log("Wallet");
+            showToast("Insufficient stock for product", "error");
         }
-      } else {
-        showToast("Insufficient stock for product", "error");
-      }
     } catch (error) {
-      console.error("Error:", error);
+        console.error("Error:", error);
     }
-  }
+}
 </script>
 
 
 <script>
-
 async function applyCoupen() {
     const coupenCode = document.getElementById("coupen").value;
     try {
@@ -416,22 +435,21 @@ async function applyCoupen() {
         });
         if (response.status === 400) {
             await showToast('Coupon Already Used!', 'error');
-        }else{
-          const data  =await response.json()
-          if (data.success) {
-            console.log(data);
-            const discountField = document.getElementById("discount");
-            const grandTotal=document.getElementById("grandTotal");
-            discountField.innerHTML = `-${data.discount}`;
-            grandTotal.innerHTML= `${data.total}`
-            showToast("Coupon Applied!", 'success');
         } else {
-            showToast('Coupen is Expired', 'error');
+            const data = await response.json()
+            if (data.success) {
+                console.log(data);
+                const discountField = document.getElementById("discount");
+                const grandTotal = document.getElementById("grandTotal");
+                discountField.innerHTML = `-${data.discount}`;
+                grandTotal.innerHTML = `${data.total}`
+                showToast("Coupon Applied!", 'success');
+            } else {
+                showToast('Coupen is Expired', 'error');
+            }
         }
-      }
-      } catch (error) {
+    } catch (error) {
         console.error('Error during fetch:', error);
     }
 }
-
 </script>

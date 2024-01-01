@@ -15,7 +15,7 @@ const loadCheckout = async (req, res) => {
             const cartData = user.cart;
             const totalAmount = cartData.reduce((accumulator, item) => accumulator + item.totalAmount, 0);
             const address = await AddressDB.find({ userId: userId })
-            res.render('User/pages/checkout', { address, cartData, user,totalAmount })
+            res.render('User/pages/checkout', { address, cartData, user, totalAmount })
         } else {
             res.redirect('/login');
         }
@@ -29,7 +29,7 @@ const loadCheckout = async (req, res) => {
 // place order
 const saveOrder = async (req, res) => {
     const { address, payment, } = req.query
-    const totalPrice=req.body.data.totalPrice
+    const totalPrice = req.body.data.totalPrice
     try {
         const user = await UserDB.findById(req.session.user).populate('cart')
         const addres = await AddressDB.find({ userId: req.session.user })
@@ -41,6 +41,21 @@ const saveOrder = async (req, res) => {
         } else {
             paymentstatus = 'Pending'
         }
+        if (payment == 'wallet') {
+            if (user.wallet > user.grandTotal) {
+                user.wallet -= user.grandTotal
+                user.walletHistory.push({
+                    date: Date.now(),
+                    amount: user.grandTotal,
+                    message: `Buy a product`,
+                    paymentMethod: 'wallet'
+                });
+                await user.save();
+            }
+            else {
+                return res.status(400).json({ success: false, message: "Wallet Amount Exeeds" })
+            }
+        }
         const order = new OrderDB({
             orderId: orderId,
             user: req.session.user,
@@ -48,9 +63,9 @@ const saveOrder = async (req, res) => {
             totalPrice: user.grandTotal,
             deliveryAddress: [currentAddress],
             paymentMethod: payment,
-            totalPrice:totalPrice,
+            totalPrice: totalPrice,
             grandTotal: user.grandTotal,
-            discountAmount:totalPrice-user.grandTotal,
+            discountAmount: totalPrice - user.grandTotal,
             orderDate: Date.now(),
             paymentStatus: paymentstatus,
 
@@ -89,14 +104,14 @@ const cancelOrder = async (req, res) => {
     const { reason } = req.body;
     try {
         const order = await OrderDB.findOne({ orderId: id });
-        if (order.paymentMethod == 'razorpay'|| order.paymentMethod == 'wallet') {
+        if (order.paymentMethod == 'razorpay' || order.paymentMethod == 'wallet') {
             const user = await UserDB.findById(req.session.user)
             user.wallet += order.grandTotal
             user.walletHistory.push({
                 date: Date.now(),
                 amount: order.grandTotal,
-                message: `${reason} orderId:-${order.orderId}`,
-                paymentMethod:order.paymentMethod
+                message: `Cancellation Of product!`,
+                paymentMethod: order.paymentMethod
             });
             await user.save();
         }
@@ -140,7 +155,7 @@ const cancelItem = async (req, res) => {
         const originalProduct = await ProductDB.findById(product.product);
         originalProduct.quantity += canceledQuantity;
 
-        if (order.paymentMethod == 'razorpay'|| order.paymentMethod == 'wallet') {
+        if (order.paymentMethod == 'razorpay' || order.paymentMethod == 'wallet') {
             const user = await UserDB.findById(req.session.user)
             user.wallet += originalProduct.price
             await user.save();
