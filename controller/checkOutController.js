@@ -13,8 +13,9 @@ const loadCheckout = async (req, res) => {
             const userId = req.session.user
             const user = await UserDB.findById(userId).populate('cart.product');
             const cartData = user.cart;
+            const totalAmount = cartData.reduce((accumulator, item) => accumulator + item.totalAmount, 0);
             const address = await AddressDB.find({ userId: userId })
-            res.render('User/pages/checkout', { address, cartData, user })
+            res.render('User/pages/checkout', { address, cartData, user,totalAmount })
         } else {
             res.redirect('/login');
         }
@@ -268,25 +269,26 @@ const applyCoupen = async (req, res) => {
                 const user = await UserDB.findById(req.session.user).populate('cart')
                 user.grandTotal -= coupen.discountAmountOrPercentage
                 const total = user.grandTotal
+                const discount = coupen.discountAmountOrPercentage
                 await user.save()
-                res.json({ success: true, total })
-                console.log("cartAmount")
+                res.json({ success: true, total, discount })
             } else {
-                console.log("total", total)
                 const user = await UserDB.findById(req.session.user).populate('cart')
-                user.grandTotal = (user.grandTotal * coupen.discountAmountOrPercentage) / 100;
+                const discount = (user.grandTotal * coupen.discountAmountOrPercentage) / 100;
+                user.grandTotal -= discount
                 const total = user.grandTotal;
                 await user.save()
-                res.json({ success: true, total })
+                res.json({ success: true, total, discount })
             }
 
         }
-        await CoupenDB.findByIdAndUpdate(coupen._id,{couponDone:true})
+        await CoupenDB.findByIdAndUpdate(coupen._id, { couponDone: true })
         console.log(coupen)
     } catch (error) {
         console.log(error)
     }
 }
+
 
 
 
