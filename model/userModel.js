@@ -61,6 +61,9 @@ const userSchema = new mongoose.Schema({
         },
         message: {
             type: String
+        },
+        paymentMethod:{
+            type : String
         }
     }],
 })

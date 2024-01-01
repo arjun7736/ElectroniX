@@ -89,14 +89,14 @@ const cancelOrder = async (req, res) => {
     const { reason } = req.body;
     try {
         const order = await OrderDB.findOne({ orderId: id });
-
-        if (!order.paymentMethod == 'cod') {
+        if (order.paymentMethod == 'razorpay'|| order.paymentMethod == 'wallet') {
             const user = await UserDB.findById(req.session.user)
             user.wallet += order.grandTotal
             user.walletHistory.push({
                 date: Date.now(),
                 amount: order.grandTotal,
-                message: `${reason} orderId:-${order.orderId}`
+                message: `${reason} orderId:-${order.orderId}`,
+                paymentMethod:order.paymentMethod
             });
             await user.save();
         }
@@ -140,7 +140,7 @@ const cancelItem = async (req, res) => {
         const originalProduct = await ProductDB.findById(product.product);
         originalProduct.quantity += canceledQuantity;
 
-        if (!order.paymentMethod == 'cod') {
+        if (order.paymentMethod == 'razorpay'|| order.paymentMethod == 'wallet') {
             const user = await UserDB.findById(req.session.user)
             user.wallet += originalProduct.price
             await user.save();
