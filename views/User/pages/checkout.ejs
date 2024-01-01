@@ -289,16 +289,19 @@
       const data = {
         address: selectedAddrerssOption,
         payment: selectedPaymentOption,
+        totalPrice:totalAmount
       };
       const stockCheckResponse = await fetch("/checkStock", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ data }),
+        body: JSON.stringify(data),
       });
 
       const stockCheckResult = await stockCheckResponse.json();
+      const grandTotalElement = document.getElementById("grandTotal");
+      const grandTotalValue = grandTotalElement.textContent.trim();
 
       if (stockCheckResult.success) {
         if (selectedPaymentOption == "razorpay") {
@@ -313,7 +316,7 @@
                 "Content-Type": "application/json",
               },
               data: JSON.stringify({
-                amount: "<%=user.grandTotal%>",
+                amount: grandTotal,
               }),
             };
             $.ajax(settings).done(function (response) {
@@ -326,7 +329,7 @@
 
           var options = {
             key: "rzp_test_267SWOvtmQRkZI",
-            amount: "<%=user.grandTotal%>" * 100, 
+            amount: grandTotal * 100, 
             currency: "INR",
             name: "ElectroniX",
             description: "Test Transaction",

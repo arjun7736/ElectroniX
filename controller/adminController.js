@@ -681,7 +681,6 @@ const changeDeliveryStatus = async (req, res) => {
 const orderDetails = async (req, res) => {
     const { id } = req.params;
     try {
-        // get the order details
         const order = await OrderDB.findById(id).populate('user').populate('products.product');
         res.render("Admin/pages/orderDetails", { order });
     } catch (err) {

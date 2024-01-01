@@ -28,7 +28,8 @@ const loadCheckout = async (req, res) => {
 
 // place order
 const saveOrder = async (req, res) => {
-    const { address, payment } = req.query
+    const { address, payment, } = req.query
+    const totalPrice=req.body.data.totalPrice
     try {
         const user = await UserDB.findById(req.session.user).populate('cart')
         const addres = await AddressDB.find({ userId: req.session.user })
@@ -47,12 +48,14 @@ const saveOrder = async (req, res) => {
             totalPrice: user.grandTotal,
             deliveryAddress: [currentAddress],
             paymentMethod: payment,
+            totalPrice:totalPrice,
             grandTotal: user.grandTotal,
+            discountAmount:totalPrice-user.grandTotal,
             orderDate: Date.now(),
-            paymentStatus: paymentstatus
+            paymentStatus: paymentstatus,
+
         })
         const data = await order.save()
-
         for (const cartItem of user.cart) {
             const product = await ProductDB.findById(cartItem.product);
             product.quantity -= cartItem.quantity;
