@@ -65,100 +65,15 @@ const loadLanding = async (req, res) => {
 
 
 // load Products
-// const loadProducts = async (req, res) => {
-//     try {
-//         const search = req.query.search;
-//         const baseQuery = { isDelete: false };
-//         const selectedCategories = req.query.category || [];
-//         const selectedSubcategories = req.query.subcategory || [];
-//         const selectedBrands = req.query.brandname || [];
-
-        
-//         if (search) {
-//             baseQuery.$or = [
-//                 { brandname: { $regex: new RegExp(search, 'i') } },
-//                 { category: { $regex: new RegExp(search, 'i') } },
-//                 { subcategory: { $regex: new RegExp(search, 'i') } },
-//                 { varientname: { $regex: new RegExp(search, 'i') } }
-//             ];
-//         }
-
-//         if (selectedCategories.length > 0) {
-//             baseQuery.category = { $in: selectedCategories };
-//         }
-
-//         if (selectedSubcategories.length > 0) {
-//             baseQuery.subcategory = { $in: selectedSubcategories };
-//         }
-
-//         if (selectedBrands.length > 0) {
-//             baseQuery.brandname = { $in: selectedBrands };
-//         }
-
-//         const sortBy = req.query.sort || 'default';
-//         let sortOptions;
-//         if (sortBy === 'priceLowToHigh') {
-//             sortOptions = { price: 1 };
-//         } else if (sortBy === 'priceHighToLow') {
-//             sortOptions = { price: -1 };
-//         } else {
-//             sortOptions = {};
-//         }
-
-//         const products = await ProductDB.find(baseQuery).sort(sortOptions);
-//         const categoryCounts = await ProductDB.aggregate([
-//             { $match: baseQuery },
-//             {
-//                 $group: {
-//                     _id: "$category",
-//                     count: { $sum: 1 }
-//                 }
-//             }
-//         ]);
-//         const subcategoryCounts = await ProductDB.aggregate([
-//             { $match: baseQuery },
-//             {
-//                 $group: {
-//                     _id: "$subcategory",
-//                     count: { $sum: 1 }
-//                 }
-//             }
-//         ]);
-//         const brandCounts = await ProductDB.aggregate([
-//             { $match: baseQuery },
-//             {
-//                 $group: {
-//                     _id: "$brandname",
-//                     count: { $sum: 1 }
-//                 }
-//             }
-//         ]);
-
-//         res.render('User/pages/products', {
-//             products,
-//             subcategoryCounts,
-//             categoryCounts,
-//             brandCounts,
-//             sortBy,
-//             searchResults: [],
-//         });
-//     } catch (err) {
-//         console.error(err.message);
-//         res.status(500).send('Internal Server Error');
-//     }
-// };
-
 const loadProducts = async (req, res) => {
     try {
-        const ITEMS_PER_PAGE = 6; 
+        const ITEMS_PER_PAGE = 6;
         const page = parseInt(req.query.page) || 1;
 
         const search = req.query.search;
         const baseQuery = { isDelete: false };
-        const selectedCategories = req.query.category || [];
-        const selectedSubcategories = req.query.subcategory || [];
-        const selectedBrands = req.query.brandname || [];
 
+        const checked = req.query.Checked || []
         if (search) {
             baseQuery.$or = [
                 { brandname: { $regex: new RegExp(search, 'i') } },
@@ -168,16 +83,16 @@ const loadProducts = async (req, res) => {
             ];
         }
 
-        if (selectedCategories.length > 0) {
-            baseQuery.category = { $in: selectedCategories };
+        if (checked.length > 0) {
+            baseQuery.category = { $in: checked };
         }
 
-        if (selectedSubcategories.length > 0) {
-            baseQuery.subcategory = { $in: selectedSubcategories };
+        if (checked.length > 0) {
+            baseQuery.subcategory = { $in: checked };
         }
 
-        if (selectedBrands.length > 0) {
-            baseQuery.brandname = { $in: selectedBrands };
+        if (checked.length > 0) {
+            baseQuery.brandname = { $in: checked };
         }
 
         const sortBy = req.query.sort || 'default';
@@ -227,16 +142,28 @@ const loadProducts = async (req, res) => {
             }
         ]);
 
-        res.render('User/pages/products', {
-            products,
-            subcategoryCounts,
-            categoryCounts,
-            brandCounts,
-            sortBy,
-            searchResults: [],
-            currentPage: page,
-            totalPages,
-        });
+        if (checked.length > 0) {
+            const products = await ProductDB.find({
+                $or: [
+                    { brandname: { $regex: new RegExp(checked, 'i') } },
+                    { category: { $regex: new RegExp(checked, 'i') } },
+                    { subcategory: { $regex: new RegExp(checked, 'i') } },
+                ],
+            });
+            res.render('User/pages/products',{ products,searchResults: [],subcategoryCounts,categoryCounts,brandCounts, currentPage: page,totalPages,sortBy})
+        }
+        else {
+            res.render('User/pages/products', {
+                products,
+                subcategoryCounts,
+                categoryCounts,
+                brandCounts,
+                sortBy,
+                searchResults: [],
+                currentPage: page,
+                totalPages,
+            });
+         }
     } catch (err) {
         console.error(err.message);
         res.status(500).send('Internal Server Error');
@@ -330,7 +257,7 @@ const insertUser = async (req, res) => {
         return res.render('User/pages/register', { error: 'InvalidPassword', email, username, mobile })
     }
     if (existingMobile) {
-        return res.render('User/pages/register', { error: 'ExistingMobile', email, username, mobile:null })
+        return res.render('User/pages/register', { error: 'ExistingMobile', email, username, mobile: null })
     }
 
 
@@ -380,12 +307,12 @@ const verifyAndregister = async (req, res) => {
             if (userData) {
                 const user = await UserDB.findOne({ email: email });
                 req.session.user = user._id;
-                return res.json({success:true ,message:'Registration Successfull'})
+                return res.json({ success: true, message: 'Registration Successfull' })
             }
         } else {
             req.flash('error', 'Invalid OTP');
             console.log('Incorrect OTP');
-            return res.json({success:false ,message:'Incorrect OTP'})
+            return res.json({ success: false, message: 'Incorrect OTP' })
         }
     } catch (error) {
         console.error('Error verifying and registering:', error);

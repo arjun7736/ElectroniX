@@ -238,7 +238,7 @@
                 <label for="category" class="block text-sm font-medium text-white">Category</label>
               <select id="category" name="category" class="mt-1 p-2 rounded-md w-full">
                 <% category.forEach(category => { %>
-                  <option value="<%= category.categoryname %>" <% if (produtDetail.categoryname === category.categoryname) { %>selected<% } %>>
+                  <option value="<%= category.categoryname %>" <% if (produtDetail.category === category.categoryname) { %>selected<% } %>>
                     <%= category.categoryname %>                      
                   <% }); %>
             </select>
@@ -248,7 +248,7 @@
                 <label for="subcategory" class="block text-sm font-medium text-white">Sub Category</label>
               <select id="subcategory" name="subcategory" class="mt-1 p-2 rounded-md w-full">
                 <% subcategory.forEach(category => { %>
-                  <option value="<%= category.subcategoryname %>" <% if (produtDetail.subcategoryname === category.subcategoryname) { %>selected<% } %>>
+                  <option value="<%= category.subcategoryname %>" <% if (produtDetail.subcategory === category.subcategoryname) { %>selected<% } %>>
                     <%= category.subcategoryname %>                   
                  <% }); %>
             </select>
