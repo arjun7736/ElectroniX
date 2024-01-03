@@ -45,5 +45,32 @@
 </script>
 
 
+<script>
+   async function addToWishlist(productId){
+  await  fetch(`/addToWishlist/${productId}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ productId }),
+    }).then(response=>{
+        if(response.status===400){
+       return showToast('Please Login', 'error');
+    }
+    })
+    .then(response => {
+      showToast('Product added to wishlist', 'success');
+    })
+    .catch(error => {
+        console.error('Error adding to wishlist', error)
+        showToast('Error adding to wishlist', 'error');
+});
+  };
+    
+  </script>
+  
+
+
+
 </body>
 </html>

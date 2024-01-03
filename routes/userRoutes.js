@@ -6,23 +6,23 @@ const ProductDB = require('../model/productModel')
 const SubCategoryDB = require('../model/subcategoryModel');
 const adminController = require('../controller/adminController');
 const cartController = require('../controller/cartController');
-const accountController =require('../controller/profileController');
-const ckeckoutController= require('../controller/checkOutController');
+const accountController = require('../controller/profileController');
+const ckeckoutController = require('../controller/checkOutController');
 const multer = require('multer');
 const upload = multer();
 
 
-userRoute.get('/blocked',(req,res)=>res.render('User/pages/blocked'))
+userRoute.get('/blocked', (req, res) => res.render('User/pages/blocked'))
 
 userRoute.get('/register', Auth.isUserLoggedIn, userController.loadRegister)
 
-userRoute.post('/register',userController.setRegistrationDataMiddleware, userController.insertUser)
+userRoute.post('/register', userController.setRegistrationDataMiddleware, userController.insertUser)
 
 userRoute.post('/otp', userController.verifyAndregister)
 
-userRoute.post('/resentotp',userController.resendOtp)
+userRoute.post('/resentotp', userController.resendOtp)
 
-userRoute.get('/login',Auth.checkUserSession, Auth.isUserLoggedIn, userController.loadLogin)
+userRoute.get('/login', Auth.checkUserSession, Auth.isUserLoggedIn, userController.loadLogin)
 
 userRoute.post('/login', userController.userValid)
 
@@ -34,7 +34,7 @@ userRoute.get('/forgotPassword', userController.forgotPassword)    //reset passw
 
 userRoute.post('/forgotPassword', userController.verifyMailAndSentOTP) //senting otp and goto reset password page
 
-userRoute.post('/passwordresetotp',userController.setEmailMiddleware,userController.verifyOTPAndResetPassword) //otp confirm and redirect into password entering  page
+userRoute.post('/passwordresetotp', userController.setEmailMiddleware, userController.verifyOTPAndResetPassword) //otp confirm and redirect into password entering  page
 
 userRoute.get('/resetPassword', userController.loadResetPasswordPage) //loading reset password page
 
@@ -42,62 +42,68 @@ userRoute.post('/resetPassword', userController.saveAndResetPassword) //saving t
 
 userRoute.get('/products', userController.loadProducts)
 
-userRoute.get('/productDetails/:productid',userController.loadProductDetails)
+userRoute.get('/wishlist', Auth.isUserBlocked, accountController.loadWishlist)
 
-userRoute.get('/cart',Auth.isUserBlocked,cartController.loadCart)
+userRoute.post('/addToWishlist/:id', accountController.addToWishlist)
 
-userRoute.post('/addtocart',Auth.isUserBlocked,cartController.addToCart)
+userRoute.post('/removeFromWishlist/:id', accountController.removeFromWishlist)
 
-userRoute.post('/removeFromCart',cartController.deleteFromCart)
+userRoute.get('/productDetails/:productid', userController.loadProductDetails)
 
-userRoute.post('/updateQuantity',cartController.updateQuantityInCart)
+userRoute.get('/cart', Auth.isUserBlocked, cartController.loadCart)
 
-userRoute.get('/checkout',Auth.isUserBlocked,ckeckoutController.loadCheckout)
+userRoute.post('/addtocart', Auth.isUserBlocked, cartController.addToCart)
 
-userRoute.post('/placeOrder',Auth.isUserBlocked, ckeckoutController.saveOrder)
+userRoute.post('/removeFromCart', cartController.deleteFromCart)
 
-userRoute.get('/orderSuccess',Auth.isUserBlocked,ckeckoutController.loadSuccess)
+userRoute.post('/updateQuantity', cartController.updateQuantityInCart)
 
-userRoute.get('/orderdetails/:id',accountController.loadOrderDetails)
+userRoute.get('/checkout', Auth.isUserBlocked, ckeckoutController.loadCheckout)
 
-userRoute.get('/account',Auth.isUserBlocked,accountController.loadprofile)
+userRoute.post('/placeOrder', Auth.isUserBlocked, ckeckoutController.saveOrder)
 
-userRoute.post('/account',Auth.isUserBlocked,accountController.saveEditProfile)
+userRoute.get('/orderSuccess', Auth.isUserBlocked, ckeckoutController.loadSuccess)
 
-userRoute.post('/uploadProfileImage',upload.single('image'),accountController.uploadProfileImage)
+userRoute.get('/orderdetails/:id', accountController.loadOrderDetails)
 
-userRoute.get('/address',Auth.isUserBlocked,accountController.loadAddress)
+userRoute.get('/account', Auth.isUserBlocked, accountController.loadprofile)
 
-userRoute.get('/addaddress',Auth.isUserBlocked,accountController.loadAddAddress)
+userRoute.post('/account', Auth.isUserBlocked, accountController.saveEditProfile)
 
-userRoute.post('/addaddress',accountController.saveAddress)
+userRoute.post('/uploadProfileImage', upload.single('image'), accountController.uploadProfileImage)
 
-userRoute.get('/editaddress/:id',Auth.isUserBlocked,accountController.getEditAddress)
+userRoute.get('/address', Auth.isUserBlocked, accountController.loadAddress)
 
-userRoute.post('/editaddress/:id',accountController.updateAddress)
+userRoute.get('/addaddress', Auth.isUserBlocked, accountController.loadAddAddress)
 
-userRoute.post('/deleteAddress/:id',accountController.deleteAddress)
+userRoute.post('/addaddress', accountController.saveAddress)
 
-userRoute.get('/changepassword',Auth.isUserBlocked,accountController.loadChangePassword)
+userRoute.get('/editaddress/:id', Auth.isUserBlocked, accountController.getEditAddress)
 
-userRoute.post('/changepassword',accountController.saveChangePassword)
+userRoute.post('/editaddress/:id', accountController.updateAddress)
 
-userRoute.get('/orderlist',Auth.isUserBlocked,accountController.loadOrderList)
+userRoute.post('/deleteAddress/:id', accountController.deleteAddress)
 
-userRoute.post('/cancelOrder/:id',ckeckoutController.cancelOrder)
+userRoute.get('/changepassword', Auth.isUserBlocked, accountController.loadChangePassword)
 
-userRoute.post('/cancelItem/:id/:id',ckeckoutController.cancelItem)
+userRoute.post('/changepassword', accountController.saveChangePassword)
 
-userRoute.post('/returnOrder/:orderId',ckeckoutController.returnOrder)
+userRoute.get('/orderlist', Auth.isUserBlocked, accountController.loadOrderList)
 
-userRoute.post('/checkStock',ckeckoutController.checkStock)
+userRoute.post('/cancelOrder/:id', ckeckoutController.cancelOrder)
 
-userRoute.get('/wallet',Auth.isUserBlocked,accountController.loadWallet)
+userRoute.post('/cancelItem/:id/:id', ckeckoutController.cancelItem)
 
-userRoute.post('/razorPay',ckeckoutController.razorPay)
+userRoute.post('/returnOrder/:orderId', ckeckoutController.returnOrder)
 
-userRoute.get('/coupen',accountController.loadCoupen)
+userRoute.post('/checkStock', ckeckoutController.checkStock)
 
-userRoute.post('/applyCoupen',ckeckoutController.applyCoupen)
+userRoute.get('/wallet', Auth.isUserBlocked, accountController.loadWallet)
+
+userRoute.post('/razorPay', ckeckoutController.razorPay)
+
+userRoute.get('/coupen', accountController.loadCoupen)
+
+userRoute.post('/applyCoupen', ckeckoutController.applyCoupen)
 
 module.exports = userRoute

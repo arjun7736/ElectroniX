@@ -2,7 +2,7 @@ const UserDB = require("../model/userModel");
 const ProductDB = require("../model/productModel")
 const AddressDB = require('../model/addressModel')
 const bcrypt = require('bcrypt');
-const CoupenDB=require('../model/coupenModel')
+const CoupenDB = require('../model/coupenModel')
 const OrderDB = require('../model/orderModel')
 const multer = require('multer');
 const upload = multer();
@@ -294,13 +294,63 @@ const loadWallet = async (req, res) => {
 // load Coupens
 const loadCoupen = async (req, res) => {
     try {
-        const user=await UserDB.findById(req.session.user)
+        const user = await UserDB.findById(req.session.user)
         const coupen = await CoupenDB.find()
-        res.render('User/pages/coupen', { coupen,user })
+        res.render('User/pages/coupen', { coupen, user })
     } catch (error) {
         console.log(error)
     }
 }
+
+//  load Wishlist
+const loadWishlist = async (req, res) => {
+    try {
+        const user = await UserDB.findById(req.session.user).populate('wishlist.product')
+        res.render('User/pages/wishlist',{user})
+    } catch (err) {
+        return res.status(400).send({ msg: "Error in Sending Data" });
+    }
+}
+
+
+//addToWishlist
+const addToWishlist = async (req, res) => {
+    try {
+        if (!req.session.user) {
+            return res.status(400).json({ success: false });
+        }
+
+        const id = req.params.id;
+        const product = await ProductDB.findById(id);
+
+        await UserDB.updateOne(
+            { _id: req.session.user },
+            {
+                $addToSet: {
+                    wishlist: { product },
+                },
+            }
+        );
+        return res.json({ success: true });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ success: false, message: "Internal Server Error" });
+    }
+};
+
+
+// remove from whishlist
+const removeFromWishlist = async (req, res) => {
+    try {
+        const id= req.params.id;
+        await UserDB.updateOne({ _id: req.session.user }, { $pull: { wishlist: { product: id } } });
+        res.json({success:true})
+    } catch (error) {
+        res.json({success:false})
+        console.log(error)
+    }
+}
+
 
 
 
@@ -319,7 +369,9 @@ module.exports = {
     uploadProfileImage,
     deleteAddress,
     loadWallet,
-    loadCoupen
-
+    loadCoupen,
+    loadWishlist,
+    addToWishlist,
+    removeFromWishlist
 
 }

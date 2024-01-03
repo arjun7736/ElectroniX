@@ -1,0 +1,83 @@
+<%- include('../layout/header') %>
+ <%- include('../layout/navbar') %>
+
+
+<div class="container mx-auto mt-10">
+  <div class="flex flex-col lg:flex-row shadow-md my-10">
+    <div class="w-full  bg-white px-4 sm:px-8 md:px-10 py-10">
+      <div class="flex justify-between border-b pb-8">
+        <h1 class="font-semibold text-2xl">Wishlist</h1>
+      </div>
+      
+      
+      <%user.wishlist.forEach((value)=>{%>  
+              <div class="m-5" id="<%=value.product._id%>">
+        <div class="group mx-2 mt-10 grid max-w-screen-md grid-cols-12 space-x-8 overflow-hidden rounded-lg border py-8 text-gray-700 shadow transition hover:shadow-lg sm:mx-auto">
+          
+          <a href="#" class="order-2 col-span-1 mt-4 -ml-14 text-left text-gray-600 hover:text-gray-700 sm:-order-1 sm:ml-4">
+            <div class="group relative h-16 w-16 overflow-hidden rounded-lg">
+              <img src="data:image/jpg;base64, <%= value.product.images[0].data.toString('base64') %>" alt="" class="h-full w-full object-cover text-gray-700" />
+            </div>
+          </a>
+          
+          <div class="col-span-11 flex flex-col pr-8 text-left sm:pl-4">
+            
+            <h3 class="text-sm text-gray-600"><%=value.product.brandname%> <%=value.product.varientname%></h3>
+            
+            <div class="mt-5 flex justify-between flex-col space-y-3 text-sm font-medium text-gray-500 sm:flex-row sm:items-center sm:space-y-0 sm:space-x-2">
+              <div class="">Type:<span class="ml-2 mr-3 rounded-full bg-green-100 px-2 py-0.5 text-green-900"><%=value.product.subcategory%>    <%=value.product.category%>  </span>
+                <div class="mt-3 cursor-pointer w-4 hover:shadow-lg" onclick="removeFromWishlist('<%=value.product._id%>')">Remove</div>
+              </div>
+              <button onclick="addToCart('<%= value.product._id %>')" class="mt-4 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400">
+                Add to Cart
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <% })%>
+
+
+      <a href="/products" class="flex font-semibold text-indigo-600 text-sm mt-10">
+        <svg
+        class="fill-current mr-2 text-indigo-600 w-4"
+        viewBox="0 0 448 512"
+      >
+        <path
+          d="M134.059 296H436c6.627 0 12-5.373 12-12v-56c0-6.627-5.373-12-12-12H134.059v-46.059c0-21.382-25.851-32.09-40.971-16.971L7.029 239.029c-9.373 9.373-9.373 24.569 0 33.941l86.059 86.059c15.119 15.119 40.971 4.411 40.971-16.971V296z"
+        />
+      </svg>
+      Continue Shopping
+
+      </a>
+    </div>
+  </div>
+</div>
+<%- include('../layout/footer') %>
+
+
+<script>
+ 
+async function removeFromWishlist(productId) {
+    await fetch(`/removeFromWishlist/${productId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        })
+            .then((response => {
+                if (response.ok) {
+                    showToast('Successsfully Removed', 'success')
+                    const Whishlist =document.getElementById(productId)
+                    Whishlist.remove()
+                } else {
+                    showToast('Error Occured', 'error');
+                }
+
+            }))
+            .catch((err) => {
+                console.log(err);
+            })
+}
+</script>

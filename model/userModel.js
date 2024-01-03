@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 
 
 const userSchema = new mongoose.Schema({
-    profileImage:{
+    profileImage: {
         data: Buffer,
         contentType: String
     },
@@ -27,18 +27,18 @@ const userSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
-    isAdmin:{
-        type:Number,
-        default:0
+    isAdmin: {
+        type: Number,
+        default: 0
     },
     cart: [{
         product: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: 'Product' 
+            ref: 'Product'
         },
         quantity: {
             type: Number,
-            default: 1 
+            default: 1
         },
         totalAmount: {
             type: Number
@@ -62,10 +62,16 @@ const userSchema = new mongoose.Schema({
         message: {
             type: String
         },
-        paymentMethod:{
-            type : String
+        paymentMethod: {
+            type: String
         }
     }],
+    wishlist: [{
+        product: {
+            type: mongoose.Schema.Types.ObjectId, 
+            ref: 'Product'
+        }
+    }]
 })
 
 
