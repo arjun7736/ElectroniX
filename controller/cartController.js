@@ -8,6 +8,7 @@ const loadCart = async (req, res) => {
         if (!req.session.user) {
             res.redirect('/login');
         } else {
+           
             const user = await UserDB.findById(req.session.user).populate('cart.product');
             const cart = user.cart;
             res.render('User/pages/cart', { cart, user });
@@ -92,6 +93,12 @@ const deleteFromCart = async (req, res) => {
             const updatedGrandTotal = user.grandTotal - reductionAmount;
 
             await UserDB.updateOne({ _id: userId }, { grandTotal: updatedGrandTotal });
+
+            if (user.cart.length-1 === 0) {
+               const updatedGrandTotal=0
+                await UserDB.updateOne({ _id: userId }, { grandTotal: updatedGrandTotal });
+               return res.json({ message: `Item with ID=${product} removed`, grandTotal: updatedGrandTotal });
+              }
 
             res.json({ message: `Item with ID=${product} removed`, grandTotal: updatedGrandTotal });
         } else {

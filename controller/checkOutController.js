@@ -301,7 +301,6 @@ const applyCoupen = async (req, res) => {
 
         }
         await CoupenDB.findByIdAndUpdate(coupen._id, { couponDone: true })
-        console.log(coupen)
     } catch (error) {
         console.log(error)
     }

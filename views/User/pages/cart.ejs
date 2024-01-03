@@ -111,7 +111,9 @@
       .then((data) => {
         console.log("Success:", data);
         document.getElementById("grandTotal").innerHTML = `${data.grandTotal}`;
-
+// if(data.cart===0){
+//   document.getElementById("grandTotal").innerHTML = `0`;
+// }
         showToast("Product removed from cart!");
         delet.remove();
       })
