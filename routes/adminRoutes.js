@@ -26,8 +26,6 @@ adminRoute.get('/userlist',Auth.isAdminLoggedIn,adminController.loadUser);
 
 adminRoute.post("/userlist/block/:id",adminController.toggleBlockUser)
 
-adminRoute.get('/banner',Auth.isAdminLoggedIn,adminController.loadBanner)
-
 adminRoute.get('/category',Auth.isAdminLoggedIn,adminController.loadCategory)
 
 adminRoute.get('/addcategory',Auth.isAdminLoggedIn,adminController.loadAddCategory)

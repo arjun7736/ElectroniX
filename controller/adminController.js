@@ -124,12 +124,6 @@ const loadProducts = async (req, res) => {
 }
 
 
-// load banner
-const loadBanner = (req, res) => {
-    res.render("Admin/pages/banner")
-}
-
-
 // load addbrand
 const loadAddBrand = (req, res) => {
     res.render("Admin/pages/addbrands")
@@ -813,7 +807,6 @@ module.exports = {
     addProduct,
     toggleBlockUser,
     loadProducts,
-    loadBanner,
     loadCategory,
     loadAddproducts,
     addBrands,
