@@ -59,13 +59,11 @@
           >
 
               <%}%>
-
-              <a
-              href=""
-              class="inline-block px-4 py-2 rounded-md bg-gray-200 hover:bg-gray-300 text-gray-500"
-              >Get Invoice</a
-            >
-
+<%if(value.status=='Delivered'){%> 
+              <a href="" class="inline-block px-4 py-2 rounded-md bg-gray-200 hover:bg-gray-300 text-gray-500">Get Invoice</a>
+            <%}else{%> 
+              <a href="" class=" hidden inline-block px-4 py-2 rounded-md bg-gray-200 hover:bg-gray-300 text-gray-500">Get Invoice</a>
+              <% }%>
 
         </div>
       </li></a>
