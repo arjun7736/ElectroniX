@@ -14,7 +14,7 @@
         <p class="text-gray-600">Order : <%=order.orderId%></p>
       </div>
       <div class="mt-4 sm:mt-0">
-  <a href=" " class="px-4 py-2 rounded-md bg-gray-200 hover:bg-blue-500 hover:text-white">Invoice</a>
+  <a href="/invoice/<%=order.orderId%>" class="px-4 py-2 rounded-md bg-gray-200 hover:bg-blue-500 hover:text-white">Invoice</a>
    <% }else{%>
     <a href=" " class="hidden px-4 py-2 rounded-md bg-gray-200 hover:bg-blue-500 hover:text-white">Invoice</a>
     <%}%>

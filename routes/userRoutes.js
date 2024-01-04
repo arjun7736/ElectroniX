@@ -106,4 +106,6 @@ userRoute.get('/coupen', accountController.loadCoupen)
 
 userRoute.post('/applyCoupen', ckeckoutController.applyCoupen)
 
+userRoute.get('/invoice/:orderId',ckeckoutController.loadInvoice)
+
 module.exports = userRoute

@@ -1,0 +1,128 @@
+<%- include('../layout/header') %>
+
+    <div class="max-w-[85rem] px-4 sm:px-6 lg:px-8 mx-auto my-4 sm:my-10">
+      <div class="sm:w-11/12 lg:w-3/4 mx-auto">
+        <div class="flex flex-col p-4 sm:p-10 bg-white shadow-md rounded-xl dark:bg-blue-50">
+          <div class="flex justify-between">
+            <div>
+             <div>
+
+             </div>
+  
+              <h1 class="mt-2 text-lg md:text-xl font-semibold text-blue-600 text-black">ElectroniX</h1>
+            </div>
+  
+            <div class="text-end">
+              <h2 class="text-2xl md:text-3xl font-semibold text-black text-black">Invoice # 3</h2>
+
+              <address class="mt-4 not-italic text-black ">
+                here<br>
+                put<br>
+                my<br>
+                address<br>
+              </address>
+            </div>
+          </div>
+  
+          <div class="mt-8 grid sm:grid-cols-2 gap-3">
+            <div>
+              <h3 class="text-lg font-semibold text-black text-black">Bill to:</h3>
+              <h3 class="text-lg font-semibold text-black text-black"><%=order.deliveryAddress[0].username%></h3>
+              <address class="mt-2 not-italic text-black">
+                <%=order.deliveryAddress[0].address%><br>
+                <%=order.deliveryAddress[0].city%><br>
+                <%=order.deliveryAddress[0].district%> <br>
+                <%=order.deliveryAddress[0].state%> <br>
+              </address>
+            </div>
+            <!-- Col -->
+  
+            <div class="sm:text-end space-y-2">
+              <div class="grid grid-cols-2 sm:grid-cols-1 gap-3 sm:gap-2">
+                <dl class="grid sm:grid-cols-5 gap-x-3">
+                  <dt class="col-span-3 font-semibold text-black text-black">Invoice date:</dt>
+                  <dd class="col-span-2 text-black"> <%=order.orderDate.toLocaleDateString()%></dd>
+                </dl>
+              </div>
+            </div>
+          </div>
+  
+          <div class="mt-6">
+            <div class="border border-gray-200 p-4 rounded-lg space-y-4 dark:border-gray-700">
+              <div class="hidden sm:grid sm:grid-cols-5">
+                <div class="sm:col-span-2 text-xs font-medium text-black uppercase">Product</div>
+                <div class="text-start text-xs font-medium text-black uppercase">Qty</div>
+                <div class="text-start text-xs font-medium text-black uppercase">Price</div>
+                <div class="text-end text-xs font-medium text-black uppercase">Total Amount</div>
+              </div>
+  
+              <div class="hidden sm:block border-b border-gray-200 dark:border-gray-700"></div>
+
+<%order.products.forEach((value)=>{ %>   
+              <div class="grid grid-cols-3 sm:grid-cols-5 gap-2">
+                <div class="col-span-full sm:col-span-2">
+                  <p class="font-medium text-black text-black"><%=value.product.brandname%>  <%=value.product.varientname%></p>
+                </div>
+                <div>
+                  <p class="text-black text-black"><%=value.quantity%></p>
+                </div>
+                <div>
+                  <p class="text-black text-black">&#8377; <%=value.product.price%></p>
+                </div>
+                <div>
+                  <p class="sm:text-end text-black text-black">&#8377; <%=value.totalAmount%></p>
+                </div>
+              </div>
+              <%  })%>
+          </div>
+  
+          <div class="mt-8 flex sm:justify-end">
+            <div class="w-full max-w-2xl sm:text-end space-y-2">
+              <div class="grid grid-cols-2 sm:grid-cols-1 gap-3 sm:gap-2">
+  
+                <dl class="grid sm:grid-cols-5 gap-x-3">
+                  <dt class="col-span-3 font-semibold text-black text-black">Total:</dt>
+                  <dd class="col-span-2 text-black">&#8377; <%=order.totalPrice%></dd>
+                </dl>
+  
+                <dl class="grid sm:grid-cols-5 gap-x-3">
+                  <dt class="col-span-3 font-semibold text-black text-black">Discount:</dt>
+                  <dd class="col-span-2 text-black">&#8377; <%=order.discountAmount%></dd>
+                </dl>
+                <div class="border w-full  border-blue-500 "></div>
+
+                <dl class="grid sm:grid-cols-5 gap-x-3">
+                  <dt class="col-span-3 font-bold text-2xl text-black text-black">Amount paid:</dt>
+                  <dd class="col-span-2 text-black font-bold text-2xl">&#8377; <%=order.grandTotal%></dd>
+                </dl>
+              </div>
+            </div>
+          </div>
+  
+          <div class="mt-8 sm:mt-12">
+            <h4 class="text-lg font-semibold text-black text-black">Thank you!</h4>
+            <p class="text-black">If you have any questions concerning this invoice, use the following contact information:</p>
+            <div class="mt-2">
+              <p class="block text-sm font-medium text-black text-black">example@site.com</p>
+              <p class="block text-sm font-medium text-black text-black">+1 (062) 109-9222</p>
+            </div>
+          </div>
+  
+          <p class="mt-5 text-sm text-black">© 2022 Preline.</p>
+        </div>
+        <!-- End Card -->
+  
+        <!-- Buttons -->
+        <div class="mt-6 flex justify-end gap-x-3">
+          <a class="py-2 px-3 inline-flex justify-center items-center gap-2 rounded-lg border font-medium bg-white text-gray-700 shadow-sm align-middle hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-blue-600 transition-all text-sm dark:bg-gray-800 dark:hover:bg-slate-800 dark:border-gray-700 dark:text-gray-400 dark:hover:text-white dark:focus:ring-offset-gray-800" href="#">
+            <svg class="flex-shrink-0 w-4 h-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+            Invoice PDF
+          </a>
+          <a class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600" href="#">
+            <svg class="flex-shrink-0 w-4 h-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg>
+            Print
+          </a>
+        </div>
+      </div>
+    </div>
+  <%- include('../layout/footer') %> 

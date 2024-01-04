@@ -277,11 +277,11 @@ const razorPay = async (req, res) => {
 const applyCoupen = async (req, res) => {
     try {
         const { code } = req.body
-        const user =await UserDB.findById(req.session.user).populate("cart")
+        const user = await UserDB.findById(req.session.user).populate("cart")
         const coupen = await CoupenDB.findOne({ code: code })
-        console.log(coupen.minimumPurchaseAmount,user.grandTotal)
-        if(coupen.minimumPurchaseAmount>user.grandTotal){
-            return res.status(403).json({success:false,message:"Your cart value is less than the minimum purchase Amount"})
+        console.log(coupen.minimumPurchaseAmount, user.grandTotal)
+        if (coupen.minimumPurchaseAmount > user.grandTotal) {
+            return res.status(403).json({ success: false, message: "Your cart value is less than the minimum purchase Amount" })
         }
         if (coupen.couponDone) {
             console.log("This coupon has been used")
@@ -292,13 +292,13 @@ const applyCoupen = async (req, res) => {
                 const total = user.grandTotal
                 const discount = coupen.discountAmountOrPercentage
                 await user.save()
-                res.json({ success: true, total, discount,code })
+                res.json({ success: true, total, discount, code })
             } else {
                 const discount = (user.grandTotal * coupen.discountAmountOrPercentage) / 100;
                 user.grandTotal -= discount
                 const total = user.grandTotal;
                 await user.save()
-                res.json({ success: true, total, discount,code })
+                res.json({ success: true, total, discount, code })
             }
 
         }
@@ -308,8 +308,16 @@ const applyCoupen = async (req, res) => {
     }
 }
 
-
-
+// load invoice
+const loadInvoice = async (req, res) => {
+    try {
+        const { orderId } = req.params
+        const order =await OrderDB.findOne({ orderId: orderId }).populate('products.product')
+        res.render('User/pages/invoice',{order})
+    } catch (error) {
+        console.log(error)
+    }
+}
 
 
 
@@ -322,5 +330,6 @@ module.exports = {
     checkStock,
     returnOrder,
     razorPay,
-    applyCoupen
+    applyCoupen,
+    loadInvoice
 }
