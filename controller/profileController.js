@@ -281,15 +281,27 @@ const deleteAddress = async (req, res) => {
 // load Wallet
 const loadWallet = async (req, res) => {
     try {
+        const ITEMS_PER_PAGE = 4;
+        const page = req.query.page || 1;
+        const userId = req.session.user;
+
+        const user = await UserDB.findById(userId);
+        const count = user.walletHistory.length;
+
+        const startIndex = (page - 1) * ITEMS_PER_PAGE;
+
+        const walletHistorySubset = user.walletHistory.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+
+        const totalPages = Math.ceil(count / ITEMS_PER_PAGE);
+
         if (req.session.user) {
-            const user = await UserDB.findById(req.session.user)
-            res.render('User/pages/wallet', { user })
+            res.render('User/pages/wallet', { walletHistorySubset, user, currentPage: page, totalPages });
         }
+    } catch (error) {
+        console.log(error);
+        res.status(500).send('Internal Server Error');
     }
-    catch (error) {
-        console.log(error)
-    }
-}
+};
 
 // load Coupens
 const loadCoupen = async (req, res) => {
@@ -320,10 +332,14 @@ const addToWishlist = async (req, res) => {
         if (!req.session.user) {
             return res.status(400).json({ success: false });
         }
-
         const id = req.params.id;
         const product = await ProductDB.findById(id);
-
+        const user = await UserDB.findById(req.session.user).populate('wishlist.product')
+        const wishlist = user.wishlist
+        const existingProduct = wishlist.find(cartItem => cartItem.product.equals(id));
+        if (existingProduct) {
+            return res.status(403).json({ success: false });
+        }
         await UserDB.updateOne(
             { _id: req.session.user },
             {
