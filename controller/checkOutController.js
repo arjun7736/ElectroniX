@@ -277,26 +277,28 @@ const razorPay = async (req, res) => {
 const applyCoupen = async (req, res) => {
     try {
         const { code } = req.body
+        const user =await UserDB.findById(req.session.user).populate("cart")
         const coupen = await CoupenDB.findOne({ code: code })
-        // console.log(coupen)
+        console.log(coupen.minimumPurchaseAmount,user.grandTotal)
+        if(coupen.minimumPurchaseAmount>user.grandTotal){
+            return res.status(403).json({success:false,message:"Your cart value is less than the minimum purchase Amount"})
+        }
         if (coupen.couponDone) {
             console.log("This coupon has been used")
             return res.status(400).json({ success: false, message: "This coupon has been used." })
         } else {
             if (coupen.discountType == 'Amount') {
-                const user = await UserDB.findById(req.session.user).populate('cart')
                 user.grandTotal -= coupen.discountAmountOrPercentage
                 const total = user.grandTotal
                 const discount = coupen.discountAmountOrPercentage
                 await user.save()
-                res.json({ success: true, total, discount })
+                res.json({ success: true, total, discount,code })
             } else {
-                const user = await UserDB.findById(req.session.user).populate('cart')
                 const discount = (user.grandTotal * coupen.discountAmountOrPercentage) / 100;
                 user.grandTotal -= discount
                 const total = user.grandTotal;
                 await user.save()
-                res.json({ success: true, total, discount })
+                res.json({ success: true, total, discount,code })
             }
 
         }

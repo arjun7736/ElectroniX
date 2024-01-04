@@ -713,10 +713,15 @@ const loadaddCoupen = (req, res) => {
 // add coupen
 const addCoupon = async (req, res) => {
     try {
-        let { coupenname, discounttype, minpurchase, discountamountorpercentage, code, description, date } = req.body;
+        let { coupenname, discounttype, minpurchase, discountamountorpercentage, code, description, startdate,enddate } = req.body;
+        if(enddate<startdate){
+            req.flash('error', 'End Date Must Greater than The Start Date');
+            return res.render('Admin/pages/addcoupen')
+        }
         const existCode = await CoupenDB.findOne({ code: { $regex: new RegExp(code, 'i') } });
-        if (existCode && existCode.code == code) {
-            console.log("code already exist")
+        if (existCode) {
+            req.flash('error', 'code already exist');
+            return res.render('Admin/pages/addcoupen')
         } else {
             const coupen = new CoupenDB({
                 couponName: coupenname,
@@ -725,7 +730,9 @@ const addCoupon = async (req, res) => {
                 discountAmountOrPercentage: discountamountorpercentage,
                 code: code,
                 description: description,
-                expaireDate: date
+                expaireDate: enddate,
+                startDate:startdate
+
             })
             await coupen.save()
             res.redirect('/admin/coupens')

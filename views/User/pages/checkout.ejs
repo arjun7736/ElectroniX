@@ -198,7 +198,7 @@
         </div>
         <a href="/coupen"><button class="bg-red-500 hover:bg-red-600 px-5 py-2 text-sm text-white uppercase"> Show Coupens</button></a>
 
-        <button class="bg-red-500 hover:bg-red-600 px-5 py-2 text-sm text-white uppercase" onclick="applyCoupen()">Apply</button>
+        <button class="bg-red-500 hover:bg-red-600 px-5 py-2 text-sm text-white uppercase" id="applybtn" onclick="applyCoupen()">Apply</button>
         <div class="flex p-4 mt-4">
           <h2 class="text-xl font-bold">ITEMS <%=cartData.length%></h2>
         </div>
@@ -303,7 +303,8 @@ async function checkOut() {
         const stockCheckResult = await stockCheckResponse.json();
         const grandTotalElement = document.getElementById("grandTotal");
         const grandTotalValue = grandTotalElement.textContent.trim();
-
+const total =document.getElementById("grandTotal").value;
+console.log(total)
         if (stockCheckResult.success) {
             if (selectedPaymentOption == "razorpay") {
 
@@ -433,6 +434,9 @@ async function applyCoupen() {
             },
             body: JSON.stringify({ code: coupenCode }),
         });
+        if(response.status===403){
+       return   await showToast('Your cart value is less than the minimum purchase Amount!', 'error');
+        }
         if (response.status === 400) {
             await showToast('Coupon Already Used!', 'error');
         } else {
@@ -444,6 +448,7 @@ async function applyCoupen() {
                 discountField.innerHTML = `-${data.discount}`;
                 grandTotal.innerHTML = `${data.total}`
                 showToast("Coupon Applied!", 'success');
+                location.reload();
             } else {
                 showToast('Coupen is Expired', 'error');
             }

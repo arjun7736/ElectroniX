@@ -124,10 +124,9 @@ const saveAddress = async (req, res) => {
             district,
         })
         await newaddress.save();
-        showToast('Address Added!', 'success');
+        res.redirect('/address')
     } catch (error) {
         console.error(error);
-        showToast('Address Not Added!', 'error');
     }
 }
 
@@ -283,7 +282,7 @@ const deleteAddress = async (req, res) => {
 const loadWallet = async (req, res) => {
     try {
         if (req.session.user) {
-            const user = await UserDB.findById(req.session.user);
+            const user = await UserDB.findById(req.session.user)
             res.render('User/pages/wallet', { user })
         }
     }
@@ -291,11 +290,13 @@ const loadWallet = async (req, res) => {
         console.log(error)
     }
 }
+
 // load Coupens
 const loadCoupen = async (req, res) => {
     try {
         const user = await UserDB.findById(req.session.user)
-        const coupen = await CoupenDB.find()
+        const currentTimestamp = Date.now();
+        const coupen = await CoupenDB.find({ startDate: { $lte: currentTimestamp } });
         res.render('User/pages/coupen', { coupen, user })
     } catch (error) {
         console.log(error)
@@ -306,7 +307,7 @@ const loadCoupen = async (req, res) => {
 const loadWishlist = async (req, res) => {
     try {
         const user = await UserDB.findById(req.session.user).populate('wishlist.product')
-        res.render('User/pages/wishlist',{user})
+        res.render('User/pages/wishlist', { user })
     } catch (err) {
         return res.status(400).send({ msg: "Error in Sending Data" });
     }
@@ -342,11 +343,11 @@ const addToWishlist = async (req, res) => {
 // remove from whishlist
 const removeFromWishlist = async (req, res) => {
     try {
-        const id= req.params.id;
+        const id = req.params.id;
         await UserDB.updateOne({ _id: req.session.user }, { $pull: { wishlist: { product: id } } });
-        res.json({success:true})
+        res.json({ success: true })
     } catch (error) {
-        res.json({success:false})
+        res.json({ success: false })
         console.log(error)
     }
 }

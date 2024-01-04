@@ -19,22 +19,22 @@
             <table class="table-auto w-full">
               <thead>
                 <tr>
-                  <th class="px-4 py-2 ">Description</th>
-                  <th class="px-4 py-2 ">Amount</th>
+                  <th class="px-4 py-2 text-start ">Description</th>
+                  <th class="px-4 py-2">Amount</th>
                   <th class="px-4 py-2 ">Date</th>
-                  <th class="px-4 py-2">Payment Method</th>
+                  <th class="px-4 py-2 ">Payment Method</th>
                 </tr>
               </thead>
               <tbody>
                 <tr class="even:bg-gray-100">
-                  <td class="px-4 py-2 text-center"><%=value.message%></td>
+                  <td class="px-4 py-2 text-start"><%=value.message%></td>
                   <%if(value.message=='Buy a product'){%> 
-                    <td class="px-4 py-2 text-center text-red-500">₹ <%= value.amount %></td>                    
+                    <td class="px-4 py-2 text-center text-red-500 ">₹ <%= value.amount %></td>                    
                     <%} else{%>
-                      <td class="px-4 py-2 text-center text-green-500">₹ <%= value.amount %></td>                    
+                      <td class="px-4 py-2 text-center text-green-500 " >₹ <%= value.amount %></td>                    
                     <%}%>
                   <td class="px-4 py-2 text-center"><%= value.date.toLocaleDateString() %></td>
-                  <td class="px-4 py-2 text-center"><%= value.paymentMethod%></td>
+                  <td class="px-4 py-2 text-center "><%= value.paymentMethod%></td>
                 </tr>
               </tbody>
             </table>

@@ -19,6 +19,9 @@ const CouponSchema = new Schema({
         type: Number,
         min: 0,
     },
+    startDate:{
+        type : Date
+    },
     expaireDate: {
         type: Date,
     },

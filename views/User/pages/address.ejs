@@ -13,7 +13,7 @@
     </div>
    
 <% Address.forEach((value)=>{  %> 
-    <div class="col-span-4 shadow-lg">
+    <div class="col-span-4 shadow-lg " id="<%=value._id%>">
         <div class="shadow rounded bg-white p-6 relative">
             <div class="flex items-center justify-between mb-4">
                 <h3 class="font-medium text-gray-800 text-lg"></h3>
@@ -71,7 +71,8 @@
         })
         .then(response => {
             if (response.ok) {
-                console.log('Address deleted successfully');
+const addresstab=document.getElementById(addressId)
+addresstab.remove()
                 showToast('Address Deleted!','success');
 
             } else {

@@ -7,8 +7,7 @@ const loadCart = async (req, res) => {
     try {
         if (!req.session.user) {
             res.redirect('/login');
-        } else {
-           
+        } else {          
             const user = await UserDB.findById(req.session.user).populate('cart.product');
             const cart = user.cart;
             res.render('User/pages/cart', { cart, user });
@@ -77,6 +76,38 @@ const addToCart = async (req, res) => {
 
 
 // remove a iterm from cart
+// const deleteFromCart = async (req, res) => {
+//     const { product } = req.body;
+//     const userId = req.session.user;
+
+//     try {
+//         const user = await UserDB.findById(userId).populate('cart.product');
+//         const removedItem = user.cart.find(cartItem => cartItem.product.equals(product));
+
+//         if (removedItem) {
+//             const reductionAmount = removedItem.totalAmount;
+
+//             await UserDB.updateOne({ _id: userId }, { $pull: { cart: { product: product } } });
+
+//             const updatedGrandTotal = user.grandTotal - reductionAmount;
+
+//             await UserDB.updateOne({ _id: userId }, { grandTotal: updatedGrandTotal });
+
+//             if (user.cart.length-1 === 0) {
+//                const updatedGrandTotal=0
+//                 await UserDB.updateOne({ _id: userId }, { grandTotal: updatedGrandTotal });
+//                return res.json({ message: `Item with ID=${product} removed`, grandTotal: updatedGrandTotal });
+//               }
+
+//             res.json({ message: `Item with ID=${product} removed`, grandTotal: updatedGrandTotal });
+//         } else {
+//             return res.status(404).json({ message: 'Item not found in the cart' });
+//         }
+//     } catch (error) {
+//         console.error('Error removing product from cart:', error);
+//         res.status(500).json({ message: 'Failed to remove product from cart' });
+//     }
+// };
 const deleteFromCart = async (req, res) => {
     const { product } = req.body;
     const userId = req.session.user;
@@ -90,15 +121,16 @@ const deleteFromCart = async (req, res) => {
 
             await UserDB.updateOne({ _id: userId }, { $pull: { cart: { product: product } } });
 
-            const updatedGrandTotal = user.grandTotal - reductionAmount;
+            const remainingCart = await UserDB.findById(userId).populate('cart.product');
+            const updatedGrandTotal = remainingCart.cart.reduce((total, cartItem) => total + cartItem.totalAmount, 0);
 
             await UserDB.updateOne({ _id: userId }, { grandTotal: updatedGrandTotal });
 
-            if (user.cart.length-1 === 0) {
-               const updatedGrandTotal=0
+            if (remainingCart.cart.length === 0) {
+                const updatedGrandTotal = 0;
                 await UserDB.updateOne({ _id: userId }, { grandTotal: updatedGrandTotal });
-               return res.json({ message: `Item with ID=${product} removed`, grandTotal: updatedGrandTotal });
-              }
+                return res.json({ message: `Item with ID=${product} removed`, grandTotal: updatedGrandTotal });
+            }
 
             res.json({ message: `Item with ID=${product} removed`, grandTotal: updatedGrandTotal });
         } else {
@@ -109,6 +141,15 @@ const deleteFromCart = async (req, res) => {
         res.status(500).json({ message: 'Failed to remove product from cart' });
     }
 };
+
+
+
+
+
+
+
+
+
 
 
 // update Quantity 
