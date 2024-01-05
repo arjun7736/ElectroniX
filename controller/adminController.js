@@ -18,6 +18,8 @@ const { ObjectId } = require('mongoose').Types;
 const mongoose = require('mongoose');
 const sharp = require('sharp');
 const fileUpload = require('express-fileupload');
+const XLSX = require('xlsx');
+
 
 
 
@@ -707,8 +709,8 @@ const loadaddCoupen = (req, res) => {
 // add coupen
 const addCoupon = async (req, res) => {
     try {
-        let { coupenname, discounttype, minpurchase, discountamountorpercentage, code, description, startdate,enddate } = req.body;
-        if(enddate<startdate){
+        let { coupenname, discounttype, minpurchase, discountamountorpercentage, code, description, startdate, enddate } = req.body;
+        if (enddate < startdate) {
             req.flash('error', 'End Date Must Greater than The Start Date');
             return res.render('Admin/pages/addcoupen')
         }
@@ -725,7 +727,7 @@ const addCoupon = async (req, res) => {
                 code: code,
                 description: description,
                 expaireDate: enddate,
-                startDate:startdate
+                startDate: startdate
 
             })
             await coupen.save()
@@ -794,8 +796,30 @@ const deleteCoupon = async (req, res) => {
     }
 }
 
+// load sales report page
+const loadsalesReport = async (req, res) => {
+    try {
+        res.render('Admin/pages/salesReport')
+    } catch (error) {
+        console.log(error)
+    }
+}
 
-
+// sales Report data
+const salesReport = async (req, res) => {
+    try {
+        const {dateFrom,dateTo}=req.body
+        let salesData = await OrderDB.find({
+            orderDate: { $gte: dateFrom, $lte: dateTo },
+            status: { $in: ['Delivered', 'Return', 'Cancelled'] } 
+        })
+        .populate('products.product')
+        .populate('user');
+            res.json({salesData})
+    } catch (error) {
+        console.log(error)
+    }
+}
 
 
 
@@ -833,7 +857,9 @@ module.exports = {
     deleteCoupon,
     loadaddCoupen,
     loadeditCoupen,
-    saveEditCoupen
+    saveEditCoupen,
+    salesReport,
+    loadsalesReport
 
 
 }

@@ -89,6 +89,8 @@ adminRoute.post('/editcoupen/:id',adminController.saveEditCoupen)
 
 adminRoute.post('/deleteCoupen/:id',adminController.deleteCoupon)
 
+adminRoute.get('/salesReport',adminController.loadsalesReport)
 
+adminRoute.post('/salesReport',adminController.salesReport)
 
 module.exports = adminRoute
