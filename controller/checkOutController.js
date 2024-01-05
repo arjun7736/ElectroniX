@@ -5,6 +5,10 @@ const { v4: uuidv4 } = require("uuid");
 const CoupenDB = require('../model/coupenModel')
 const OrderDB = require("../model/orderModel")
 const Razorpay = require('razorpay');
+const easyinvoice = require('easyinvoice');
+const fs = require('fs');
+const path = require('path');
+
 
 
 const loadCheckout = async (req, res) => {
@@ -331,5 +335,5 @@ module.exports = {
     returnOrder,
     razorPay,
     applyCoupen,
-    loadInvoice
+    loadInvoice,
 }
