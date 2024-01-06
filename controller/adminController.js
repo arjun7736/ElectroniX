@@ -808,14 +808,17 @@ const loadsalesReport = async (req, res) => {
 // sales Report data
 const salesReport = async (req, res) => {
     try {
-        const {dateFrom,dateTo}=req.body
+        const { dateFrom, dateTo } = req.body
         let salesData = await OrderDB.find({
             orderDate: { $gte: dateFrom, $lte: dateTo },
-            status: { $in: ['Delivered', 'Return', 'Cancelled'] } 
+            status: { $in: ['Delivered', 'Return', 'Cancelled'] }
         })
-        .populate('products.product')
-        .populate('user');
-            res.json({salesData})
+            .populate('products.product')
+            .populate('user');
+        const deliveredProducts = salesData.filter(order => order.status === 'Delivered');
+        const deliveredGrandTotalSum = deliveredProducts.reduce((sum, order) => sum + order.grandTotal, 0);
+
+        res.json({ salesData,deliveredGrandTotalSum })
     } catch (error) {
         console.log(error)
     }
