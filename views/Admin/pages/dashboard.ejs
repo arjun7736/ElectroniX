@@ -377,7 +377,6 @@
   fetch('/admin/getBarChartData')
     .then(response => response.json())
     .then(data => {
-      console.log(data)
       const ctx = document.getElementById('chart-bar').getContext('2d');
       const barChart = new Chart(ctx, {
         type: 'bar',
@@ -444,3 +443,80 @@
         .catch(error => console.error('Error fetching data:', error));
     });
 </script>
+
+<script>
+  document.getElementById('salesDropdown').addEventListener('change', function() {
+    const selectedValue = this.value;
+    if (selectedValue === 'monthly') {
+      fetch('/admin/getBarChartData')
+        .then(response => response.json())
+        .then(data => {
+          const ctx = document.getElementById('chart-bar').getContext('2d');
+      const barChart = new Chart(ctx, {
+        type: 'bar',
+        data: data,
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          aspectRatio: 2, 
+          plugins: {
+            legend: {
+              display: true,
+              position: 'top',
+            },
+            title: {
+              display: true,
+              text: 'Bar Chart',
+            },
+          },
+          scales: {
+            x: {
+              type: 'category',
+              labels: data.labels,
+            },
+            y: {
+              beginAtZero: true,
+            },
+          },
+        },
+      });
+        })
+        .catch(error => console.error('Error fetching data:', error));
+    } else if (selectedValue === 'yearly') {
+      fetch('/admin/getYearChartData')
+        .then(response => response.json())
+        .then(data => {
+          const ctx = document.getElementById('chart-bar').getContext('2d');
+      const barChart = new Chart(ctx, {
+        type: 'bar',
+        data: data,
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          aspectRatio: 2, 
+          plugins: {
+            legend: {
+              display: true,
+              position: 'top',
+            },
+            title: {
+              display: true,
+              text: 'Bar Chart',
+            },
+          },
+          scales: {
+            x: {
+              type: 'category',
+              labels: data.labels,
+            },
+            y: {
+              beginAtZero: true,
+            },
+          },
+        },
+      });
+        })
+        .catch(error => console.error('Error fetching data:', error));
+    }
+  });
+</script>  

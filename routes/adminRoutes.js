@@ -97,4 +97,6 @@ adminRoute.get('/getBarChartData',adminController.getChartData)
 
 adminRoute.get('/getPieChartData',adminController.getPieChartData)
 
+adminRoute.get('/getYearChartData',adminController.getYearChartData)
+
 module.exports = adminRoute

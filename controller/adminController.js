@@ -892,20 +892,18 @@ const getChartData = async (req, res) => {
         deliveredOrders.forEach(order => {
             const month = new Date(order.deliverdAt).getMonth();
             if (!monthDeliveries[month]) {
-              monthDeliveries[month] = 1;
+                monthDeliveries[month] = 1;
             } else {
-              monthDeliveries[month]++;
+                monthDeliveries[month]++;
             }
-          });
-          console.log(monthDeliveries[0]);
-          
+        });
         const barData = {
             labels: ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'july', 'aug', 'sep', 'oct', 'nov', 'dec'],
             datasets: [
                 {
                     label: 'Total Sales',
                     data: [monthDeliveries[0], monthDeliveries[1], monthDeliveries[2], monthDeliveries[3], monthDeliveries[4]
-                    ,monthDeliveries[5], monthDeliveries[6], monthDeliveries[7], monthDeliveries[8], monthDeliveries[9], monthDeliveries[10], monthDeliveries[11]],
+                        , monthDeliveries[5], monthDeliveries[6], monthDeliveries[7], monthDeliveries[8], monthDeliveries[9], monthDeliveries[10], monthDeliveries[11]],
                     backgroundColor: 'rgba(75, 192, 192, 0.2)',
                     borderColor: 'rgba(75, 192, 192, 1)',
                     borderWidth: 1,
@@ -980,6 +978,44 @@ const getPieChartData = async (req, res) => {
     }
 }
 
+// getYearChartData
+const getYearChartData = async (req, res) => {
+    try {
+        const orders = await OrderDB.find();
+        const deliveredOrders = orders.filter(order => order.status === 'Delivered');
+        
+        const yearSales = {};
+        
+        deliveredOrders.forEach(order => {
+            const year = new Date(order.deliverdAt).getFullYear(); 
+            if (!yearSales[year]) {
+                yearSales[year] = 1;
+            } else {
+                yearSales[year]++;
+            }
+        });          
+
+        const barData = {
+            labels: [],
+            datasets: [
+                {
+                    label: 'Total Sales',
+                    data: [],
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1,
+                },
+            ],
+        };
+        Object.keys(yearSales).forEach(year => {
+            barData.labels.push(year);
+            barData.datasets[0].data.push(yearSales[year]);
+          });
+        res.json(barData)        
+    } catch (error) {
+        console.log(error)
+    }
+}
 
 
 
@@ -1021,7 +1057,8 @@ module.exports = {
     salesReport,
     loadsalesReport,
     getChartData,
-    getPieChartData
+    getPieChartData,
+    getYearChartData
 
 
 }
