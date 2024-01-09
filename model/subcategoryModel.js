@@ -4,6 +4,10 @@ const subCategorySchema =new mongoose.Schema({
     subcategoryname:{
         type:String,
         require: true,
+    },
+    offer:{
+        type: Number,
+        default:0
     }    
 })
 

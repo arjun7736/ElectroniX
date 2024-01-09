@@ -63,8 +63,16 @@
                 <% if (searchResults.length > 0) { %>
                     <% searchResults.forEach((value) => { %>
 
+                        <% const subOffer = offerSubCategory.find((offer)=>(offer.subcategoryname==value.subcategory))%>
+                        <% const catOff = offerCategory.find((offer)=>(offer.categoryname==value.category))%>
+
                         <div class="bg-white hover:shadow-2xl rounded dataContainer  overflow-hidden group">
-                            <div class="relative hover:scale-110 ">
+                            <div class="relative ">
+                                <%if(value.offer||subOffer||catOff){%>
+                                <span class="absolute top-0 left-0 m-2 rounded-full bg-black px-2 text-center text-sm font-medium text-white"><%=subOffer ? subOffer.offer : catOffer ? catOffer.offer : 0%>% OFF</span>
+                                <%}else{%>
+                                    <span class="hidden absolute top-0 left-0 m-2 rounded-full bg-black px-2 text-center text-sm font-medium text-white">0% OFF</span> 
+                                <%}%>
                                 <img src="data:image/jpg;base64, <%= value.images[0].data.toString('base64') %>" alt="product 1" class="w-full">
                                 <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center 
                                 justify-center gap-2 opacity-0 group-hover:opacity-100 transition">
@@ -113,9 +121,17 @@
                 <% } else { %>
                     <% products.forEach((value) => { %>
 
+
+                        <% const subOffer = offerSubCategory.find((offer)=>(offer.subcategoryname==value.subcategory))%>
+                        <% const catOff = offerCategory.find((offer)=>(offer.categoryname==value.category))%>
                         <div class="bg-white hover:shadow-2xl rounded dataContainer  overflow-hidden group " id="products">
-                            <div class="relative hover:scale-110 ">
-                                <img src="data:image/jpg;base64, <%= value.images[0].data.toString('base64') %>" alt="product 1" class="w-full">
+                            <div class="relative">
+                                <%if(value.offer||subOffer||catOff){%>
+                                    <span class="absolute top-0 left-0 m-2 rounded-full bg-black px-2 text-center text-sm font-medium text-white"><%=subOffer ? subOffer.offer : catOffer ? catOffer.offer : 0%>% OFF</span>
+                                    <%}else{%>
+                                        <span class="hidden absolute top-0 left-0 m-2 rounded-full bg-black px-2 text-center text-sm font-medium text-white">10% OFF</span> 
+                                    <%}%>
+                                <img src="data:image/jpg;base64, <%= value.images[0].data.toString('base64') %>" alt="product 1" class="w-full ">
                                 <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center 
                                 justify-center gap-2 opacity-0 group-hover:opacity-100 transition">
                             <a onclick=" addToWishlist('<%=value._id%>')" 
@@ -129,7 +145,7 @@
                             <div class="pt-4 pb-3 px-4">
                                 <a href="/productDetails/<%= value._id %>" class="singleProduct" data-productID="<%= value._id %>">
                                     <h2 class="uppercase font-medium text-xl mb-2 text-gray-800 hover:text-primary transition">
-                                        <%= value.brandname %>  <%= value.varientname %>   </h2>
+                                        <%= value.brandname %>  <%= value.varientname %></h2>
                                 </a>
                                 <div class="flex items-baseline mb-1 space-x-2">
                                     <p class="text-xl text-primary font-semibold">&#8377; <%= value.price %></p>

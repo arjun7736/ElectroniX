@@ -162,7 +162,7 @@ const loadProductDetails = async (req, res) => {
 
 // save edit product
 const saveEditProduct = async (req, res) => {
-    const { brandname, category, subcategory, varientname, price, quantity, description } = req.body;
+    const { brandname, category, subcategory, varientname, price, quantity, description,offer } = req.body;
     const { productid } = req.params;
 
     try {
@@ -175,6 +175,7 @@ const saveEditProduct = async (req, res) => {
             price: price,
             quantity: quantity,
             description: description,
+            offer:offer
         };
 
         const updatedProduct = await ProductDB.findByIdAndUpdate(
@@ -290,7 +291,7 @@ const loadAddproducts = async (req, res) => {
 
 // save products
 const addProduct = async (req, res) => {
-    const { brandname, category, subcategory, varientname, price, quantity, description } = req.body;
+    const { brandname, category, subcategory, varientname, price, quantity, description,offer } = req.body;
 
     try {
         const existingProduct = await ProductDB.findOne({ brandname, varientname });
@@ -310,7 +311,8 @@ const addProduct = async (req, res) => {
                 varientname,
                 price,
                 quantity,
-                description
+                description,
+                offer
             });
 
             for (const file of req.files) {
@@ -397,12 +399,13 @@ const loadAddCategory = (req, res) => {
 
 // add category
 const addCategory = async (req, res) => {
-    const { categoryname } = req.body
+    const { categoryname,offer } = req.body
     try {
         const category = await CategoryDB.findOne({ categoryname: { $regex: new RegExp(categoryname, 'i') } })
         if (!category) {
             const Category = new CategoryDB({
-                categoryname
+                categoryname,
+                offer
             })
             const newCategory = await Category.save()
             if (newCategory) {
@@ -420,12 +423,12 @@ const addCategory = async (req, res) => {
 
 // add sub category
 const addSubCategory = async (req, res) => {
-    const { subcategoryname } = req.body
+    const { subcategoryname,offer } = req.body
     try {
         const subcategory = await SubCategoryDB.findOne({ subcategoryname: { $regex: new RegExp(subcategoryname, 'i') } })
         if (!subcategory) {
             const SubCategory = new SubCategoryDB({
-                subcategoryname
+                subcategoryname,offer
             })
             const newCategory = await SubCategory.save()
             if (newCategory) {
@@ -475,7 +478,7 @@ const getEditCategory = async (req, res) => {
 }
 // save updated category
 const saveUpdateCategory = async (req, res) => {
-    let category = req.body.categoryname;
+    let {category,offer} = req.body;
     const productid = req.params.productid;
     try {
         const existingCategory = await CategoryDB.findOne({
@@ -484,7 +487,8 @@ const saveUpdateCategory = async (req, res) => {
         console.log(existingCategory)
         if (!existingCategory || existingCategory._id.equals(productid)) {
             const updateFields = {
-                categoryname: category
+                categoryname: category,
+                offer:offer
             };
 
             const updatedProduct = await CategoryDB.findByIdAndUpdate(
@@ -578,18 +582,20 @@ const getEditSubCategory = async (req, res) => {
 
 // save edit subcategory
 const saveUpdateSubCategory = async (req, res) => {
-    let subcategory = req.body.subcategoryname;
+    let {subcategoryname,offer} = req.body;
     const productid = req.params.productid;
     try {
 
         const existingsubcategory = await SubCategoryDB.findOne({
-            subcategoryname: { $regex: new RegExp(subcategory, 'i') }
+            subcategoryname: { $regex: new RegExp(subcategoryname, 'i') }
         });
+        console.log(existingsubcategory)
         if (!existingsubcategory || existingsubcategory._id.equals(productid)) {
 
             const updateFields =
             {
-                subcategoryname: subcategory
+                subcategoryname: subcategoryname,
+                offer:offer
             }
             const updatedProduct = await SubCategoryDB.findByIdAndUpdate(
                 productid,

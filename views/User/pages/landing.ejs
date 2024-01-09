@@ -124,8 +124,16 @@
     class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-7"
   >
     <% Products.forEach((value)=>{ %>
+      <% const subOffer = offerSubCategory.find((offer)=>(offer.subcategoryname==value.subcategory))%>
+      <% const catOff = offerCategory.find((offer)=>(offer.categoryname==value.category))%>
+
     <div class="bg-white hover:shadow-2xl rounded overflow-hidden group">
-      <div class="relative hover:scale-110">
+      <div class="relative ">
+        <%if(value.offer||subOffer||catOff  ){%>
+          <span class="absolute top-0 left-0 m-2 rounded-full bg-black px-2 text-center text-sm font-medium text-white"><%=subOffer ? subOffer.offer : catOffer ? catOffer.offer : 0%>% OFF</span>
+          <%}else{%>
+              <span class="hidden absolute top-0 left-0 m-2 rounded-full bg-black px-2 text-center text-sm font-medium text-white">10% OFF</span> 
+          <%}%>
         <img
           src="data:image/jpg;base64, <%= value.images[0].data.toString('base64') %>"
           alt="product 1"

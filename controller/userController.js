@@ -56,7 +56,11 @@ const loadLanding = async (req, res) => {
     try {
         const Products = await ProductDB.find({ isDelete: false })
         const SubCategory = await SubCategoryDB.find()
-        res.render("User/pages/landing", { SubCategory, Products });
+        const Category = await CategoryDB.find()
+        const offerCategory = Category.filter((value) => value.offer > 0)
+        const offerSubCategory = SubCategory.filter((value) => value.offer > 0)
+
+        res.render("User/pages/landing", { SubCategory, Products, Category, offerSubCategory, offerCategory });
     }
     catch (error) {
         console.log(error.message)
@@ -67,6 +71,13 @@ const loadLanding = async (req, res) => {
 // load Products
 const loadProducts = async (req, res) => {
     try {
+        const Product = await ProductDB.find()
+        const SubCategory = await SubCategoryDB.find()
+        const Category = await CategoryDB.find()
+
+        const offerCategory = Category.filter((value) => value.offer > 0)
+        const offerSubCategory = SubCategory.filter((value) => value.offer > 0)
+
         const ITEMS_PER_PAGE = 6;
         const page = parseInt(req.query.page) || 1;
 
@@ -150,7 +161,7 @@ const loadProducts = async (req, res) => {
                     { subcategory: { $regex: new RegExp(checked, 'i') } },
                 ],
             });
-            res.render('User/pages/products',{ products,searchResults: [],subcategoryCounts,categoryCounts,brandCounts, currentPage: page,totalPages,sortBy})
+            res.render('User/pages/products', { products, searchResults: [], subcategoryCounts, categoryCounts, brandCounts, currentPage: page, totalPages, sortBy, offerSubCategory, offerCategory })
         }
         else {
             res.render('User/pages/products', {
@@ -162,8 +173,10 @@ const loadProducts = async (req, res) => {
                 searchResults: [],
                 currentPage: page,
                 totalPages,
+                offerCategory,
+                offerSubCategory
             });
-         }
+        }
     } catch (err) {
         console.error(err.message);
         res.status(500).send('Internal Server Error');
