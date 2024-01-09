@@ -109,6 +109,7 @@ const loadAddAddress = async (req, res) => {
 
 // save address
 const saveAddress = async (req, res) => {
+    console.log(req.body)
     const { username, mobile, email, address, city, state, postcode, district } = req.body
     try {
         const user = await UserDB.findById(req.session.user);

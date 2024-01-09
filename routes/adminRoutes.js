@@ -93,4 +93,8 @@ adminRoute.get('/salesReport',adminController.loadsalesReport)
 
 adminRoute.post('/salesReport',adminController.salesReport)
 
+adminRoute.get('/getBarChartData',adminController.getChartData)
+
+adminRoute.get('/getPieChartData',adminController.getPieChartData)
+
 module.exports = adminRoute

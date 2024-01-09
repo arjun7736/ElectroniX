@@ -101,11 +101,6 @@ const loadUser = async (req, res) => {
 }
 
 
-// load Dashboard
-const loadDash = (req, res) => {
-    res.render("Admin/pages/dashboard")
-}
-
 // load products
 const loadProducts = async (req, res) => {
     const ITEMS_PER_PAGE = 7;
@@ -796,6 +791,135 @@ const deleteCoupon = async (req, res) => {
     }
 }
 
+
+// load Dashboard
+const loadDash = async (req, res) => {
+    try {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const startOfDay = today;
+        const endOfDay = new Date(today);
+        endOfDay.setHours(23, 59, 59, 999);
+        const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+        const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+        endOfMonth.setHours(23, 59, 59, 999);
+        const deliveredOrdersSummary = await OrderDB.aggregate([
+            {
+                $match: {
+                    deliverdAt: { $gte: startOfDay, $lt: endOfDay },
+                    status: 'Delivered',
+                },
+            },
+            {
+                $group: {
+                    _id: null,
+                    totalDeliveredOrders: { $sum: 1 },
+                    totalGrandTotal: { $sum: '$grandTotal' },
+                },
+            },
+            {
+                $project: {
+                    _id: 0,
+                    totalDeliveredOrders: 1,
+                    totalGrandTotal: 1,
+                },
+            },
+        ]);
+
+
+        const deliveredOrdersSummaryMonthly = await OrderDB.aggregate([
+            {
+                $match: {
+                    deliverdAt: { $gte: startOfMonth, $lt: endOfMonth },
+                    status: 'Delivered',
+                },
+            },
+            {
+                $group: {
+                    _id: null,
+                    totalGrandTotal: { $sum: '$grandTotal' },
+                },
+            },
+            {
+                $project: {
+                    _id: 0,
+                    totalGrandTotal: 1,
+                },
+            },
+        ]);
+
+        const lastOrders = await OrderDB.find({})
+            .sort({ orderDate: -1 })
+            .limit(5)
+            .populate('user')
+            .populate('products.product')
+
+
+        const productWithCount = await ProductDB.aggregate([
+            {
+                $group: {
+                    _id: {
+                        brand: "$brandname",
+                        variant: "$varientname"
+                    },
+                    totalQuantity: { $sum: "$quantity" }
+                }
+            },
+            {
+                $sort: {
+                    totalQuantity: 1
+                }
+            },
+            {
+                $limit: 5
+            }
+        ]);
+
+
+        const totalUsers = await UserDB.countDocuments()
+        res.render("Admin/pages/dashboard", { deliveredOrdersSummary, deliveredOrdersSummaryMonthly, totalUsers, lastOrders, productWithCount })
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+// load line chart data
+const getChartData = async (req, res) => {
+    try {
+        const orders = await OrderDB.find()
+        const deliveredOrders = orders.filter(order => order.status === 'Delivered');
+        const monthDeliveries = {};
+        deliveredOrders.forEach(order => {
+            const month = new Date(order.deliverdAt).getMonth();
+            if (!monthDeliveries[month]) {
+              monthDeliveries[month] = 1;
+            } else {
+              monthDeliveries[month]++;
+            }
+          });
+          console.log(monthDeliveries[0]);
+          
+        const barData = {
+            labels: ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'july', 'aug', 'sep', 'oct', 'nov', 'dec'],
+            datasets: [
+                {
+                    label: 'Total Sales',
+                    data: [monthDeliveries[0], monthDeliveries[1], monthDeliveries[2], monthDeliveries[3], monthDeliveries[4]
+                    ,monthDeliveries[5], monthDeliveries[6], monthDeliveries[7], monthDeliveries[8], monthDeliveries[9], monthDeliveries[10], monthDeliveries[11]],
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1,
+                },
+            ],
+        };
+        res.json(barData);
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+
+
 // load sales report page
 const loadsalesReport = async (req, res) => {
     try {
@@ -818,11 +942,44 @@ const salesReport = async (req, res) => {
         const deliveredProducts = salesData.filter(order => order.status === 'Delivered');
         const deliveredGrandTotalSum = deliveredProducts.reduce((sum, order) => sum + order.grandTotal, 0);
 
-        res.json({ salesData,deliveredGrandTotalSum })
+        res.json({ salesData, deliveredGrandTotalSum })
     } catch (error) {
         console.log(error)
     }
 }
+
+// getPieChartData
+const getPieChartData = async (req, res) => {
+    try {
+        const orders = await OrderDB.find()
+        const totalOrders = orders.length;
+        const deliveredOrders = orders.filter(order => order.status === 'Delivered').length;
+        const cancelledOrders = orders.filter(order => order.status === 'Cancelled').length;
+        const returnOrders = orders.filter(order => order.status === 'Return').length;
+
+        const processingOrders = orders.filter(order => ['Pending', 'Processing', 'Shipped'].includes(order.status)).length;
+
+        const deliveredPercentage = Math.floor((deliveredOrders / totalOrders) * 100);
+        const cancelledPercentage = Math.floor((cancelledOrders / totalOrders) * 100);
+        const processingPercentage = Math.floor((processingOrders / totalOrders) * 100);
+        const returnPercentage = Math.floor((returnOrders / totalOrders) * 100);
+
+
+        const pieData = {
+            labels: ['Delivered', 'Cancelled', 'Return', 'Processing'],
+            datasets: [
+                {
+                    data: [deliveredPercentage, cancelledPercentage, returnPercentage, processingPercentage],
+                    backgroundColor: ['rgba(255, 99, 132, 0.8)', 'rgba(54, 162, 235, 0.8)', 'rgba(255, 205, 86, 0.8)', 'rgba(100, 110, 80, .5)'],
+                },
+            ],
+        };
+        res.json(pieData)
+    } catch (error) {
+        console.log(error)
+    }
+}
+
 
 
 
@@ -862,7 +1019,9 @@ module.exports = {
     loadeditCoupen,
     saveEditCoupen,
     salesReport,
-    loadsalesReport
+    loadsalesReport,
+    getChartData,
+    getPieChartData
 
 
 }

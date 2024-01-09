@@ -160,17 +160,287 @@
     <main class="h-full overflow-y-auto">
       <div class="container px-6 mx-auto" id="dataContainer">
         <div class="flex justify-end">
-          <a href="/admin/salesReport"><button  class="bg-blue-500 px-4 py-2 rounded-lg text-white mt-5 " > Download Sales Report</button></a>  
+          <a href="/admin/salesReport">
+            <button class="bg-blue-500 px-4 py-2 rounded-lg text-white mt-5">Download Sales Report</button>
+          </a>
         </div>
-
-        
-
+  <!-- temp data starts -->
+  <div class="w-full px-6 py-6 mx-auto">
+    <!-- row 1 -->
+    <div class="flex flex-wrap -mx-3">
+      <!-- card1 -->
+      <div class="w-full max-w-full px-3 mb-6 sm:w-1/2 sm:flex-none xl:mb-0 xl:w-1/4">
+        <div class="relative flex flex-col min-w-0 break-words bg-white shadow-xl dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl bg-clip-border">
+          <div class="flex-auto p-4">
+            <div class="flex flex-row -mx-3">
+              <div class="flex-none w-2/3 max-w-full px-3">
+                <div>
+                  <p class="mb-0 font-sans text-sm font-semibold leading-normal uppercase dark:text-black dark:opacity-60">Today's Revenue</p>
+                  <%if(deliveredOrdersSummary.length>0){%> 
+                  <h5 class="mb-2 font-bold dark:text-black">&#8377; <%=deliveredOrdersSummary[0].totalGrandTotal%></h5>
+                  <%}else{%> 
+                    <h5 class="mb-2 font-bold dark:text-black">&#8377; 0</h5>
+                    <% }%>
+                 
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-    </main>    
+
+
+
+      <div class="w-full max-w-full px-3 mb-6 sm:w-1/2 sm:flex-none xl:mb-0 xl:w-1/4">
+        <div class="relative flex flex-col min-w-0 break-words bg-white shadow-xl dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl bg-clip-border">
+          <div class="flex-auto p-4">
+            <div class="flex flex-row -mx-3">
+              <div class="flex-none w-2/3 max-w-full px-3">
+                <div>
+                  <p class="mb-0 font-sans text-sm font-semibold leading-normal uppercase dark:text-black dark:opacity-60">Today's Delivery</p>
+                  <%if(deliveredOrdersSummary.length>0){%>
+                    <h5 class="mb-2 font-bold dark:text-black"><%=deliveredOrdersSummary[0].totalDeliveredOrders%></h5>
+                 <%} else{%>
+                  <h5 class="mb-2 font-bold dark:text-black">0</h5>
+                 <%}%>
+                  
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="w-full max-w-full px-3 mb-6 sm:w-1/2 sm:flex-none xl:mb-0 xl:w-1/4">
+        <div class="relative flex flex-col min-w-0 break-words bg-white shadow-xl dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl bg-clip-border">
+          <div class="flex-auto p-4">
+            <div class="flex flex-row -mx-3">
+              <div class="flex-none w-2/3 max-w-full px-3">
+                <div>
+                  <p class="mb-0 font-sans text-sm font-semibold leading-normal uppercase dark:text-black dark:opacity-60">Total Users</p>
+                  <h5 class="mb-2 font-bold dark:text-black"><%=totalUsers%></h5>
+                
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+
+      <div class="w-full max-w-full px-3 mb-6 sm:w-1/2 sm:flex-none xl:mb-0 xl:w-1/4">
+        <div class="relative flex flex-col min-w-0 break-words bg-white shadow-xl dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl bg-clip-border">
+          <div class="flex-auto p-4">
+            <div class="flex flex-row -mx-3">
+              <div class="flex-none w-2/3 max-w-full px-3">
+                <div>
+                  <p class="mb-0 font-sans text-sm font-semibold leading-normal uppercase dark:text-black dark:opacity-60">This Month Revenue</p>
+                  <h5 class="mb-2 font-bold dark:text-black">&#8377; <%=deliveredOrdersSummaryMonthly[0].totalGrandTotal%></h5>
+                 
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+    <!-- cards row 2 -->
+    <div class="flex flex-wrap mt-6 -mx-3">
+      <div class="w-full max-w-full px-3 mt-0 lg:w-7/12 lg:flex-none">
+        <div class="border-black/12.5 dark:bg-slate-850 dark:shadow-dark-xl shadow-xl relative z-20 flex min-w-0 flex-col break-words rounded-2xl border-0 border-solid bg-white bg-clip-border">
+          <div class="border-black/12.5 mb-0 rounded-t-2xl border-b-0 border-solid p-6 pt-4 pb-0">
+            <h6 class="capitalize dark:text-black">Sales overview</h6>
+            
+          </div>
+
+          <div class="flex-auto p-4">
+            <select id="salesDropdown">
+              <option value="monthly">Monthly Sales</option>
+              <option value="yearly">Yearly Sales</option>
+            </select>
+            <div>
+              <canvas id="chart-bar" height="300" width="568" style="display: block; box-sizing: border-box; height: 300px; width: 568.2px;"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+
+      <div class="w-full max-w-full px-3 lg:w-5/12 lg:flex-none">
+        <div id="pieChartContainer" class="relative w-full h-full overflow-hidden rounded-2xl">
+          <canvas id="pieChart" style="display: block; box-sizing: border-box; height: 100%; width: 100%;"></canvas>
+        </div>
+      </div>
+
+
+
+
+
+    </div>
+
+    <!-- cards row 3 -->
+
+    <div class="flex flex-wrap mt-6 -mx-3">
+      <div class="w-full max-w-full px-3 mt-0 mb-6 lg:mb-0 lg:w-7/12 lg:flex-none">
+        <div class="relative flex flex-col min-w-0 break-words bg-white border-0 border-solid shadow-xl dark:bg-slate-850 dark:shadow-dark-xl dark:bg-gray-950 border-black-125 rounded-2xl bg-clip-border">
+          <div class="p-4 pb-0 mb-0 rounded-t-4">
+            <div class="flex justify-between">
+              <h6 class="mb-2 dark:text-white">Recent Orders</h6>
+            </div>
+          </div>
+          <div class="overflow-x-auto ps">
+            <table class="items-center w-full mb-4 align-top border-collapse border-gray-200 dark:border-white/40">
+              <tbody>
+                <tr>
+<%lastOrders.forEach((value)=>{ %> 
+                  <td class="p-2 align-middle bg-transparent border-b w-3/10 whitespace-nowrap dark:border-white/40">
+                    <div class="flex items-center px-2 py-1">
+                      <div class="ml-6">
+                        <p class="mb-0 text-xs font-semibold leading-tight dark:text-white dark:opacity-60">User</p>
+                        <h6 class="mb-0 text-sm leading-normal dark:text-white"><%=value.user.username %></h6>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                    <div class="text-center">
+                      <p class="mb-0 text-xs font-semibold leading-tight dark:text-white dark:opacity-60">Products</p>
+                      <%value.products.forEach((product)=>{%>
+                      <h6 class="mb-0 text-sm leading-normal dark:text-white"><%=product.product.brandname%> <%=product.product.varientname%></h6>
+                      <% })%>
+                    </div>
+                  </td>
+                  <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                    <div class="text-center">
+                      <p class="mb-0 text-xs font-semibold leading-tight dark:text-white dark:opacity-60">Grand Total</p>
+                      <h6 class="mb-0 text-sm leading-normal dark:text-white">&#8377; <%=value.grandTotal%> </h6>
+                    </div>
+                  </td>
+                  <td class="p-2 text-sm leading-normal align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                    <div class="flex-1 text-center">
+                      <p class="mb-0 text-xs font-semibold leading-tight dark:text-white dark:opacity-60">Delivery Status</p>
+                      <h6 class="mb-0 text-sm leading-normal dark:text-white"><%=value.status%> </h6>
+                    </div>
+                  </td>
+                </tr>
+                <%})%>
+
+              </tbody>
+            </table>
+          <div class="ps__rail-x" style="left: 0px; bottom: 0px;"><div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;"></div></div><div class="ps__rail-y" style="top: 0px; right: 0px;"><div class="ps__thumb-y" tabindex="0" style="top: 0px; height: 0px;"></div></div></div>
+        </div>
+      </div>
+      <div class="w-full max-w-full px-3 mt-0 lg:w-5/12 lg:flex-none">
+        <div class="border-black/12.5 shadow-xl dark:bg-slate-850 dark:shadow-dark-xl relative flex min-w-0 flex-col break-words rounded-2xl border-0 border-solid bg-white bg-clip-border">
+          <div class="p-4 pb-0 rounded-t-4">
+            <h6 class="mb-0 dark:text-black text-lg font-bold">Products With Least Stock</h6>
+          </div>
+
+          <div class="flex-auto p-4">
+            <ul class="flex flex-col pl-0 mb-0 rounded-lg">
+
+<%productWithCount.forEach((value)=>{%>
+              <li class="relative flex justify-between py-2 pr-4 mb-2 border-0 rounded-t-lg rounded-xl text-inherit">
+                <div class="flex items-center">
+                  <div class="inline-block w-8 h-8 mr-4 text-center text-black bg-center shadow-sm fill-current stroke-none bg-gradient-to-tl from-zinc-800 to-zinc-700 dark:bg-gradient-to-tl dark:from-slate-750 dark:to-gray-850 rounded-xl">
+                    <i class="text-white ni ni-mobile-button relative top-0.75 text-xxs"></i>
+                  </div>
+                  <div class="flex flex-col">
+                    <h6 class="mb-1 text-lg leading-normal text-slate-700 dark:text-black"><%=value._id.brand%> <%=value._id.variant%></h6>
+                    <span class="text-sm leading-tight dark:text-black/80"><%=value.totalQuantity%> in stock</span>
+                  </div>
+                </div>
+              </li>
+              <%})%>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<!-- temp data ends -->
+      </div>
+    </main>
   </div>
 </div>
 
 <%- include('../componants/footer') %>
-  <script>
-     
+<script>
+
+  document.addEventListener('DOMContentLoaded', function () {
+  fetch('/admin/getBarChartData')
+    .then(response => response.json())
+    .then(data => {
+      console.log(data)
+      const ctx = document.getElementById('chart-bar').getContext('2d');
+      const barChart = new Chart(ctx, {
+        type: 'bar',
+        data: data,
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          aspectRatio: 2, 
+          plugins: {
+            legend: {
+              display: true,
+              position: 'top',
+            },
+            title: {
+              display: true,
+              text: 'Bar Chart',
+            },
+          },
+          scales: {
+            x: {
+              type: 'category',
+              labels: data.labels,
+            },
+            y: {
+              beginAtZero: true,
+            },
+          },
+        },
+      });
+    })
+    .catch(error => console.error('Error fetching data:', error));
+});
+</script>
+
+
+<script>  
+
+  document.addEventListener('DOMContentLoaded', function () {
+      fetch('/admin/getPieChartData')
+        .then(response => response.json())
+        .then(data => {
+          const ctx = document.getElementById('pieChart').getContext('2d');
+
+          const pieChart = new Chart(ctx, {
+            type: 'pie',
+            data: data,
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              aspectRatio: 1,
+              plugins: {
+                legend: {
+                  display: true,
+                  position: 'top',
+                },
+                title: {
+                  display: true,
+                  text: 'Pie Chart',
+                },
+              },
+            },
+          });
+        })
+        .catch(error => console.error('Error fetching data:', error));
+    });
 </script>

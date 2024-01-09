@@ -2,18 +2,18 @@
 <div
   class="bg-cover bg-no-repeat bg-center py-36"
   style="
-    background-image: url('https://media.wired.com/photos/5d39dc7c039d660008515e2e/master/w_320,c_limit/Gear-Logitech-G-PRO-X-Gaming-Headset.jpg');
+    background-image: url('https://www.cnet.com/a/img/resize/ac99f9bace2d77788872dc0ee962242027ef7b0a/hub/2023/05/12/a7b425d3-3947-4927-9731-cdfda17a5151/02-bg-3-1.jpg?auto=webp&fit=crop&height=675&width=1200');
   "
 >
   <div class="container">
     <h1 class="text-6xl sm:text-5xl text-gray-800 font-medium mb-4 capitalize">
-      best collection for <br />
+      best collection for <br/>
       Sounds
     </h1>
     <div class="mt-12">
       <a
-        href="#"
-        class="bg-blue-600 border border-primary text-white px-8 py-3 font-medium rounded-md hover:bg-transparent hover:text-primary"
+        href=" "
+        class="bg-blue-600 border border-primary text-white px-8 py-3 font-medium rounded-md  hover:text-primary"
         >Shop Now</a
       >
     </div>
@@ -73,11 +73,37 @@
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
     <% SubCategory.forEach((value)=>{ %>
     <div class="relative rounded-sm overflow-hidden group">
-      <img
-        src="https://media.wired.com/photos/5d39dc7c039d660008515e2e/master/w_320,c_limit/Gear-Logitech-G-PRO-X-Gaming-Headset.jpg"
+      <%if(value.subcategoryname=='In-Ear'){%> 
+        <img
+        src="https://bgr.com/wp-content/uploads/2021/10/hyper-x-earbuds-for-gaming.jpg?quality=82&strip=all"
         alt="category 1"
         class="w-full"
       />
+        <%}else if(value.subcategoryname=='Over-Ear'){%>
+          <img
+          src="https://nypost.com/wp-content/uploads/sites/2/2022/03/shynth.jpg?w=1024"
+          alt="category 1"
+          class="w-full"
+        />
+        <%}else if(value.subcategoryname=='On-Ear'){%>
+        <img
+          src="https://images-na.ssl-images-amazon.com/images/I/71mTfSKhhTL.jpg"
+          alt="category 1"
+          class="w-full"
+        />
+      <%}else if(value.subcategoryname=='TWS'){%>
+        <img
+        src="https://media.gettyimages.com/id/1226031849/photo/a-pair-of-apple-airpods-pro-wireless-headphones-and-charging-case-taken-on-november-5-2019.jpg?s=612x612&w=0&k=20&c=_JDLqNNN9qIDnwFpnL_bkXp87ogvDRly6K_x0ATkEJ8="
+        alt="category 1"
+        class="w-full"
+      />
+        <%}else{%>
+          <img
+        src="https://www.guidingtech.com/wp-content/uploads/Best-Neckband-Headphones-for-Running-LG-Tone.jpg"
+        alt="category 1"
+        class="w-full"
+      />
+          <%}%>
       <a
         href="/products?Checked=<%= value.subcategoryname %>"
         class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center text-xl text-white font-roboto font-medium group-hover:bg-opacity-60 transition"
