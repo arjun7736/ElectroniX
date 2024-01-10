@@ -9,7 +9,7 @@
     <div class="flex ml-10 mb-6">
       <div class="relative">
         <label for="profileImage" class="cursor-pointer">
-          <%if(user.profileImage){%>
+          <%if(user.profileImage && user.profileImage.data){%>
             <img
             id="profileImagePreview"
             src="data:image/jpg;base64, <%= user.profileImage.data.toString('base64') %>"
@@ -73,6 +73,17 @@
           name="mobile"
           value="<%=user.mobile %>"
           id="mobile"
+          class="input-box ml-1"
+          readonly
+        />
+      </div>
+      <div class="my-10">
+        <label for="mobile">referalCode</label>
+        <input
+          type="text"
+          name="referalCode"
+          value="<%=user.referalCode %>"
+          id="referalCode"
           class="input-box ml-1"
           readonly
         />

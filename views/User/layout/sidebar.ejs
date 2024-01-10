@@ -4,7 +4,7 @@
 <div class="col-span-3 shadow-lg">
   <div class="px-4 py-3 shadow flex md:flex-col md:items-center h-48 items-center gap-4">
     <div class="flex-shrink-0 mb-4 md:mb-0">
-      <%if(user.profileImage){%>
+      <%if(user.profileImage && user.profileImage.data){%>
         <img
         id="profileImagePreview"
         src="data:image/jpg;base64, <%= user.profileImage.data.toString('base64') %>"

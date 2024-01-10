@@ -14,6 +14,18 @@ const registrationData = require('../util/temp')
 
 
 
+function generateCode() {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let code = '';
+    for (let i = 0; i < 6; i++) {
+      const randomIndex = Math.floor(Math.random() * characters.length);
+      code += characters[randomIndex];
+    }
+    return code;
+  }
+  
+
+
 
 
 
@@ -237,9 +249,9 @@ const sendOTP = async (email) => {
 
 
 const setRegistrationDataMiddleware = (req, res, next) => {
-    const { username, email, password, mobile } = req.body;
+    const { username, email, password, mobile, referalCode } = req.body;
 
-    registrationData.setRegistrationData({ username, email, password, mobile });
+    registrationData.setRegistrationData({ username, email, password, mobile, referalCode });
 
     console.log(registrationData.getRegistrationData());
 
@@ -250,7 +262,7 @@ const setRegistrationDataMiddleware = (req, res, next) => {
 
 //validate and create new user data
 const insertUser = async (req, res) => {
-    const { username, email, password, confirmpassword, mobile } = req.body;
+    const { username, email, password, confirmpassword, mobile, referalCode } = req.body;
 
     const existingMail = await UserDB.findOne({ email: { $regex: new RegExp(email, 'i') } })
     const existingMobile = await UserDB.findOne({ mobile })
@@ -304,15 +316,25 @@ const verifyAndregister = async (req, res) => {
 
         if (OTP == otp) {
             const data = registrationData.getRegistrationData();
-            const { username, email, password, mobile } = data;
+            const { username, email, password, mobile, referalCode } = data;
             registrationData.clearRegistrationData();
 
+            const users =await UserDB.find()
+            let reward = 0
+            users.forEach((useres) => {
+                if (referalCode == useres.referalCode) {
+                    reward = 50;
+                }
+            })
+            const newCode = generateCode();
             const spassword = await securepassword(password);
             const user = new UserDB({
                 username,
                 email,
                 password: spassword,
                 mobile,
+                referalCode: newCode,
+                wallet:reward,
             });
 
             const userData = await user.save();
