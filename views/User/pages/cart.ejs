@@ -59,7 +59,7 @@
           <% const catOff = offerCategory.find((offer)=>(offer.categoryname==value.product.category))%>
           <%const ProductOff=value.product.offer%>
           <%if(ProductOff||catOff||subOffer){%>
-  <div class="text-end  font-semibold text-sm">10%OFF</div>
+  <div class="text-end  font-semibold text-sm"><%=subOffer ? subOffer.offer : catOffer ? catOffer.offer : ProductOff?value.product.offer:0%>% OFF</div>
   <% }else{%>
     <div class="text-end hidden font-semibold text-sm">10%OFF</div>
     <%}%>
@@ -104,7 +104,6 @@
 
 
 <%- include('../layout/footer') %>
-<%- include('../layout/footerui') %>
 
 
 <script>
