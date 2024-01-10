@@ -324,6 +324,13 @@ const verifyAndregister = async (req, res) => {
             users.forEach((useres) => {
                 if (referalCode == useres.referalCode) {
                     reward = 50;
+                    useres.wallet+=50
+                    useres.walletHistory.push({
+                        date: Date.now(),
+                        amount:reward ,
+                        message: `By Refferal`,
+                        paymentMethod: 'Refferal'
+                    });
                 }
             })
             const newCode = generateCode();

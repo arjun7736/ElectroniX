@@ -14,33 +14,25 @@
       </div>
       <% walletHistorySubset.forEach((value)=>{  %>
 
-        <div class="container mx-auto p-4 shadow-lg">
-          <div class="overflow-x-auto">
-            <table class="table-auto w-full">
-              <thead>
-                <tr>
-                  <th class="px-4 py-2 text-start ">Description</th>
-                  <th class="px-4 py-2">Amount</th>
-                  <th class="px-4 py-2 ">Date</th>
-                  <th class="px-4 py-2 ">Payment Method</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr class="even:bg-gray-100">
-                  <td class="px-4 py-2 text-start"><%=value.message%></td>
-                  <%if(value.message=='Buy a product'){%> 
-                    <td class="px-4 py-2 text-center text-red-500 ">₹ <%= value.amount %></td>                    
-                    <%} else{%>
-                      <td class="px-4 py-2 text-center text-green-500 " >₹ <%= value.amount %></td>                    
-                    <%}%>
-                  <td class="px-4 py-2 text-center"><%= value.date.toLocaleDateString() %></td>
-                  <td class="px-4 py-2 text-center "><%= value.paymentMethod%></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-        
+<div class="container mx-auto p-4 shadow-lg">
+  <div class="overflow-x-auto">
+    <table class="table-auto w-full">
+      <thead>
+        <tr>
+          <th class="px-4 py-2 text-start w-1/4">Description</th> <th class="px-4 py-2 text-start w-1/5">Amount</th>   <th class="px-4 py-2 text-start w-1/5">Date</th>     <th class="px-4 py-2 text-start w-1/5">Payment Method</th> </tr>
+      </thead>
+      <tbody>
+        <tr class="even:bg-gray-100">
+          <td class="px-4 py-2 text-start"><%= value.message %></td>
+          <% if (value.message === 'Buy a product') { %>
+            <td class="px-4 py-2 text-start text-red-500">₹ <%= value.amount %></td> <% } else { %>
+            <td class="px-4 py-2 text-start text-green-500">₹ <%= value.amount %></td> <% } %>
+          <td class="px-4 py-2 text-start"><%= value.date.toLocaleDateString() %></td> <td class="px-4 py-2 text-start"><%= value.paymentMethod %></td> </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
         
       <% })%>
     </div>
