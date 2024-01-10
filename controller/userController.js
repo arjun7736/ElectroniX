@@ -204,7 +204,9 @@ const loadProductDetails = async (req, res) => {
     const productId = req.params.productid;
     try {
         const produtDetail = await ProductDB.findOne({ _id: productId }, {})
-        res.render('User/pages/productdetails', { produtDetail })
+        const sub= produtDetail.subcategory
+       const relatedProducts =await ProductDB.find({subcategory:sub}).limit(4)
+        res.render('User/pages/productdetails', { produtDetail,relatedProducts })
     }
     catch (error) {
         console.log(error.message)
