@@ -41,6 +41,9 @@ const CouponSchema = new Schema({
     user: [{
         type: String
     }]
+    
 })
+CouponSchema.index({ "expiryDate": 1 }, { expireAfterSeconds: 0 });
+
 const coupon = mongoose.model("coupon", CouponSchema)
 module.exports = coupon;
