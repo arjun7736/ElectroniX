@@ -9,9 +9,15 @@ const loadCart = async (req, res) => {
         if (!req.session.user) {
             res.redirect('/login');
         } else {
+            const SubCategory = await SubCategoryDB.find()
+            const Category = await CategoryDB.find()
+
+            const offerCategory = Category.filter((value) => value.offer > 0)
+            const offerSubCategory = SubCategory.filter((value) => value.offer > 0)
+
             const user = await UserDB.findById(req.session.user).populate('cart.product');
             const cart = user.cart;
-            res.render('User/pages/cart', { cart, user });
+            res.render('User/pages/cart', { cart, user ,offerCategory,offerSubCategory});
         }
     } catch (error) {
         console.log(error);
@@ -33,30 +39,31 @@ const addToCart = async (req, res) => {
 
         const offerCategory = Category.filter((value) => value.offer > 0)
         const offerSubCategory = SubCategory.filter((value) => value.offer > 0)
+        const offerProduct = pro.offer
 
         const subOffer = offerSubCategory.find((offer) => (offer.subcategoryname == pro.subcategory))
         const catOff = offerCategory.find((offer) => (offer.categoryname == pro.category))
         let total = 0
         if (subOffer || catOff || offerProduct) {
-            if (subOffer ) {
-                total =pro.price- (pro.price * subOffer.offer / 100)
-            } else if(catOff) {
-                total = pro.price- (pro.price * catOff.offer / 100)
+            if (subOffer) {
+                total = pro.price - (pro.price * subOffer.offer / 100)
+            } else if (catOff) {
+                total = pro.price - (pro.price * catOff.offer / 100)
             }
-            else{
-                total = pro.price- (pro.price * pro.offer / 100)
+            else {
+                total = pro.price - (pro.price * pro.offer / 100)
             }
         }
 
 
         const user = await UserDB.findById(userId).populate('cart.product');
         const cart = user.cart;
-       let incrementAmount =0
+        let incrementAmount = pro.price * quantity
         if (subOffer || catOff) {
-             incrementAmount = total * quantity
+            incrementAmount = total * quantity
         }
         else {
-             incrementAmount = pro.price * quantity;
+            incrementAmount = pro.price * quantity;
         }
 
         const productInTheCart = cart.find(cartItem => cartItem.product.equals(product));

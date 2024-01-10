@@ -55,8 +55,16 @@
             <span class="text-center w-full lg:w-1/5 font-semibold text-sm">&#8377; <%=value.product.price %></span>
             <span class="text-center w-full lg:w-1/5 font-semibold text-sm" id="totalAmount_<%=value.product._id%>">&#8377; <%=value.totalAmount %></span>
           </div>
+          <% const subOffer = offerSubCategory.find((offer)=>(offer.subcategoryname==value.product.subcategory))%>
+          <% const catOff = offerCategory.find((offer)=>(offer.categoryname==value.product.category))%>
+          <%const ProductOff=value.product.offer%>
+          <%if(ProductOff||catOff||subOffer){%>
+  <div class="text-end  font-semibold text-sm">10%OFF</div>
+  <% }else{%>
+    <div class="text-end hidden font-semibold text-sm">10%OFF</div>
+    <%}%>
+
         </div>
-        <span class="text-center lg:w-1/5 font-semibold text-sm">10%OFF</span>
 
       <% }) %>
 
