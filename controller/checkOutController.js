@@ -25,7 +25,7 @@ const loadCheckout = async (req, res) => {
         }
     }
     catch (error) {
-        console.log(error)
+        return res.redirect('/500')
     }
 }
 
@@ -86,7 +86,7 @@ const saveOrder = async (req, res) => {
 
         return res.json(data);
     } catch (error) {
-        console.log(error)
+        return res.redirect('/500')
     }
 }
 
@@ -141,7 +141,7 @@ const cancelOrder = async (req, res) => {
         return res.json({ success: true, message: 'Order cancelled successfully.', result });
     } catch (err) {
         console.error('Error cancelling order:', err);
-        return res.status(500).json({ success: false, message: 'Failed to cancel order. Please try again.' });
+        return res.redirect('/500')
     }
 };
 
@@ -188,7 +188,7 @@ const cancelItem = async (req, res) => {
         return res.json({ success: true, message: 'Item canceled successfully.', updatedOrder });
     } catch (error) {
         console.error('Error canceling item:', error);
-        return res.status(500).json({ success: false, message: 'Failed to cancel item. Please try again.' });
+        return res.redirect('/500')
     }
 };
 
@@ -217,7 +217,7 @@ const checkStock = async (req, res) => {
         return res.json({ success: true });
     } catch (error) {
         console.error('Error checking stock:', error);
-        return res.status(500).json({ success: false, message: 'Internal Server Error' });
+        return res.redirect('/500')
     }
 };
 
@@ -249,7 +249,7 @@ const returnOrder = async (req, res) => {
         res.json({ success: true, order })
     }
     catch (error) {
-        console.log(error);
+        return res.redirect('/500')
     }
 }
 
@@ -273,7 +273,7 @@ const razorPay = async (req, res) => {
         });
     }
     catch (error) {
-        console.log(error)
+        return res.redirect('/500')
     }
 }
 
@@ -309,6 +309,8 @@ const applyCoupen = async (req, res) => {
         await CoupenDB.findByIdAndUpdate(coupen._id, { couponDone: true })
     } catch (error) {
         console.log(error)
+        return res.redirect('/500')
+
     }
 }
 
@@ -320,6 +322,8 @@ const loadInvoice = async (req, res) => {
         res.render('User/pages/invoice',{order})
     } catch (error) {
         console.log(error)
+        return res.redirect('/500')
+
     }
 }
 

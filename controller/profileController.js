@@ -15,6 +15,8 @@ const securepassword = async (password) => {
         return passwordHash;
     } catch (error) {
         console.log(error.message)
+        return res.redirect('/500')
+
     }
 }
 
@@ -52,6 +54,8 @@ const loadAddress = async (req, res) => {
     }
     catch (err) {
         console.log(err)
+        return res.redirect('/500')
+
     }
 }
 
@@ -69,6 +73,8 @@ const loadChangePassword = async (req, res) => {
         }
     } catch (error) {
         console.log(error)
+        return res.redirect('/500')
+
     }
 }
 
@@ -87,7 +93,7 @@ const saveEditProfile = async (req, res) => {
         res.status(200).json({ message: 'Profile updated successfully' });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: 'Internal Server Error' });
+        return res.redirect('/500')
     }
 
 }
@@ -104,6 +110,8 @@ const loadAddAddress = async (req, res) => {
         }
     } catch (err) {
         console.log(err)
+        return res.redirect('/500')
+
     }
 }
 
@@ -128,6 +136,8 @@ const saveAddress = async (req, res) => {
         res.redirect('/address')
     } catch (error) {
         console.error(error);
+        return res.redirect('/500')
+
     }
 }
 
@@ -165,7 +175,7 @@ const saveChangePassword = async (req, res) => {
             res.render('User/pages/changepassword')
         }
     } catch (err) {
-        console.log(err)
+        return res.redirect('/500')
     }
 }
 
@@ -178,7 +188,7 @@ const getEditAddress = async (req, res) => {
         res.render('User/pages/editaddress', { address, user })
     }
     catch (error) {
-        console.log(error)
+        return res.redirect('/500')
     }
 }
 
@@ -196,7 +206,7 @@ const updateAddress = async (req, res) => {
     await AddressDB.findByIdAndUpdate(id, data).then(() => {
         res.redirect("/address");
     }).catch((err) => {
-        console.log(err);
+        return res.redirect('/500')
     })
 }
 // show order list
@@ -222,7 +232,7 @@ const loadOrderList = async (req, res) => {
         res.render('User/pages/orderlist', { order, currentPage: page, totalPages, user });
     } catch (error) {
         console.error('Error fetching orders:', error);
-        res.status(500).send('Internal Server Error');
+        return res.redirect('/500')
     }
 };
 
@@ -240,7 +250,7 @@ const loadOrderDetails = async (req, res) => {
 
         res.render("User/pages/orderdetails", { order });
     } catch (error) {
-        console.log(error);
+        return res.redirect('/500')
     }
 };
 
@@ -257,7 +267,7 @@ const uploadProfileImage = async (req, res) => {
         res.json({ success: true });
     } catch (error) {
         console.error('Error uploading profile image:', error);
-        res.status(500).json({ success: false, message: 'Internal Server Error' });
+        return res.redirect('/500')
     }
 }
 
@@ -274,7 +284,7 @@ const deleteAddress = async (req, res) => {
         }
     }
     catch (error) {
-        console.log(error)
+        return res.redirect('/500')
     }
 }
 
@@ -300,7 +310,7 @@ const loadWallet = async (req, res) => {
         }
     } catch (error) {
         console.log(error);
-        res.status(500).send('Internal Server Error');
+        return res.redirect('/500')
     }
 };
 
@@ -312,7 +322,7 @@ const loadCoupen = async (req, res) => {
         const coupen = await CoupenDB.find({ startDate: { $lte: currentTimestamp } });
         res.render('User/pages/coupen', { coupen, user })
     } catch (error) {
-        console.log(error)
+        return res.redirect('/500')
     }
 }
 
@@ -352,7 +362,7 @@ const addToWishlist = async (req, res) => {
         return res.json({ success: true });
     } catch (error) {
         console.error(error);
-        return res.status(500).json({ success: false, message: "Internal Server Error" });
+        return res.redirect('/500')
     }
 };
 
@@ -365,7 +375,7 @@ const removeFromWishlist = async (req, res) => {
         res.json({ success: true })
     } catch (error) {
         res.json({ success: false })
-        console.log(error)
+         res.redirect('/500')
     }
 }
 

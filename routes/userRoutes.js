@@ -14,6 +14,8 @@ const upload = multer();
 
 userRoute.get('/blocked', (req, res) => res.render('User/pages/blocked'))
 
+userRoute.get('/500',(req,res)=>res.render('User/pages/500'))
+
 userRoute.get('/register', Auth.isUserLoggedIn, userController.loadRegister)
 
 userRoute.post('/register', userController.setRegistrationDataMiddleware, userController.insertUser)

@@ -66,7 +66,7 @@ const adminCheck = async (req, res) => {
         }
     } catch (error) {
         console.error("Error:", error);
-        return res.status(500).send("Internal Server Error");
+        return res.redirect('/admin/500')
     }
 };
 
@@ -96,7 +96,7 @@ const loadUser = async (req, res) => {
         res.render('Admin/pages/userlist', { userList, totalPages, currentPage: page });
     } catch (error) {
         console.error("Error fetching user list:", error);
-        res.status(500).send('Internal Server Error');
+        return res.redirect('/admin/500')
     }
 }
 
@@ -116,7 +116,7 @@ const loadProducts = async (req, res) => {
         res.render('Admin/pages/products', { productList, totalPages, currentPage: page });
     } catch (error) {
         console.error("Error fetching user list:", error);
-        res.status(500).send('Internal Server Error');
+        return res.redirect('/admin/500')
     }
 }
 
@@ -138,7 +138,7 @@ const loadCategory = async (req, res) => {
         res.render('Admin/pages/category', { brandList, categoryList, subcategoryList, })
     } catch (error) {
         console.error("Error fetching user list:", error);
-        res.status(500).send('Internal Server Error');
+        return res.redirect('/admin/500')
     }
 }
 
@@ -156,7 +156,7 @@ const loadProductDetails = async (req, res) => {
         res.render('Admin/pages/editproducts', { produtDetail, brand, category, subcategory })
     }
     catch (error) {
-        console.log(error.message)
+        return res.redirect('/admin/500')
     }
 }
 
@@ -213,7 +213,7 @@ const saveEditProduct = async (req, res) => {
 
     } catch (error) {
         console.log(error.message);
-        return res.status(500).json({ error: "Internal Server Error" });
+        return res.redirect('/admin/500')
     }
 };
 
@@ -241,7 +241,7 @@ const softDeleteProduct = async (req, res) => {
         return res.json("ok")
     } catch (err) {
         console.error(err);
-        return res.status(500).json({ msg: 'Server error' });
+        return res.redirect('/admin/500')
     }
 };
 
@@ -261,7 +261,7 @@ const deleteImage = async (req, res) => {
         res.status(200).json({ msg: 'Server ok' })
     } catch (err) {
         console.error(err);
-        return res.status(500).json({ msg: 'Server error' });
+        return res.redirect('/admin/500')
     }
 }
 
@@ -280,7 +280,7 @@ const loadAddproducts = async (req, res) => {
     }
     catch (error) {
         console.error("Error fetching user list:", error);
-        res.status(500).send('Internal Server Error');
+        return res.redirect('/admin/500')
     }
 
 }
@@ -341,12 +341,12 @@ const addProduct = async (req, res) => {
                 return res.redirect('/admin/products');
             } else {
                 console.log("Error: Product not saved");
-                return res.status(500).json({ error: "Internal Server Error" });
+                return res.redirect('/admin/500')
             }
         }
     } catch (error) {
         console.log("Error Occurred:", error.message);
-        return res.status(500).json({ error: "Catch Server Error" });
+        return res.redirect('/admin/500')
     }
 };
 
@@ -379,7 +379,7 @@ const addBrands = async (req, res) => {
             res.render('Admin/pages/addbrands')
         }
     } catch {
-        console.log("Error Occured")
+        return res.redirect('/admin/500')
     }
 }
 
@@ -416,7 +416,7 @@ const addCategory = async (req, res) => {
             return res.render('Admin/pages/addcategory');
         }
     } catch {
-        console.log("Error Occured")
+        return res.redirect('/admin/500')
     }
 }
 
@@ -440,7 +440,7 @@ const addSubCategory = async (req, res) => {
             return res.render('Admin/pages/addsubcategory');
         }
     } catch {
-        console.log("Error Occured")
+        return res.redirect('/admin/500')
     }
 }
 
@@ -460,7 +460,7 @@ const toggleBlockUser = async (req, res) => {
 
     } catch (error) {
         console.error('Error toggling user block:', error);
-        res.status(500).json({ error: 'Error toggling user block' });
+        return res.redirect('/admin/500')
     }
 };
 
@@ -474,6 +474,8 @@ const getEditCategory = async (req, res) => {
     }
     catch {
         console.log('getEditCategory Error')
+        return res.redirect('/admin/500')
+
     }
 }
 // save updated category
@@ -508,7 +510,7 @@ const saveUpdateCategory = async (req, res) => {
         }
     } catch (error) {
         console.log(error);
-        return res.status(500).send("Internal Server Error");
+        return res.redirect('/admin/500')
     }
 };
 
@@ -524,7 +526,7 @@ const getEditBrand = async (req, res) => {
         res.render('Admin/pages/editbrand', { BrandDetails })
     }
     catch {
-        console.log('Error in getting brand Details');
+        return res.redirect('/admin/500')
     }
 }
 
@@ -561,7 +563,7 @@ const saveUpdateBrand = async (req, res) => {
         }
     }
     catch (error) {
-        console.log(error)
+        return res.redirect('/admin/500')
     }
 }
 
@@ -575,7 +577,7 @@ const getEditSubCategory = async (req, res) => {
         res.render('Admin/pages/editsubcategory', { SubCategoryDetails });
     }
     catch {
-        console.log('getEditCategory Error')
+        return res.redirect('/admin/500')
     }
 }
 
@@ -615,7 +617,7 @@ const saveUpdateSubCategory = async (req, res) => {
         }
     }
     catch (error) {
-        console.log(error)
+        return res.redirect('/admin/500')
     }
 }
 
@@ -643,7 +645,7 @@ const loadOrderList = async (req, res) => {
             res.render('Admin/pages/orderlist', { OrderData, totalPages, currentPage: page });
         }
     } catch (error) {
-        console.log(error)
+        return res.redirect('/admin/500')
     }
 }
 
@@ -669,7 +671,7 @@ const changeDeliveryStatus = async (req, res) => {
 
     } catch (error) {
         console.error('Error updating user status:', error);
-        res.status(500).json({ error: 'Internal Server Error' });
+        return res.redirect('/admin/500')
     }
 };
 
@@ -694,7 +696,7 @@ const loadCoupens = async (req, res) => {
         res.render('Admin/pages/coupens', { coupen })
     }
     catch (error) {
-        console.log(error)
+        return res.redirect('/admin/500')
     }
 }
 // loadaddCoupen
@@ -703,7 +705,7 @@ const loadaddCoupen = (req, res) => {
         res.render('Admin/pages/addcoupen')
     }
     catch (error) {
-        console.log(error)
+        return res.redirect('/admin/500')
     }
 }
 
@@ -736,7 +738,7 @@ const addCoupon = async (req, res) => {
         }
     }
     catch (error) {
-        console.log(error)
+        return res.redirect('/admin/500')
     }
 }
 
@@ -749,7 +751,7 @@ const loadeditCoupen = async (req, res) => {
         res.render('Admin/pages/editcoupen', { data })
     }
     catch (error) {
-        console.log(error)
+        return res.redirect('/admin/500')
     }
 }
 
@@ -776,7 +778,7 @@ const saveEditCoupen = async (req, res) => {
         }
     } catch (error) {
         console.error(error);
-        res.status(500).json({ success: false, message: 'Internal Server Error' });
+        return res.redirect('/admin/500')
     }
 };
 
@@ -885,7 +887,7 @@ const loadDash = async (req, res) => {
         const totalUsers = await UserDB.countDocuments()
         res.render("Admin/pages/dashboard", { deliveredOrdersSummary, deliveredOrdersSummaryMonthly, totalUsers, lastOrders, productWithCount })
     } catch (error) {
-        console.log(error)
+        return res.redirect('/admin/500')
     }
 }
 
@@ -918,7 +920,7 @@ const getChartData = async (req, res) => {
         };
         res.json(barData);
     } catch (error) {
-        console.log(error)
+        return res.redirect('/admin/500')
     }
 }
 
@@ -929,7 +931,7 @@ const loadsalesReport = async (req, res) => {
     try {
         res.render('Admin/pages/salesReport')
     } catch (error) {
-        console.log(error)
+        return res.redirect('/admin/500')
     }
 }
 
@@ -980,7 +982,7 @@ const getPieChartData = async (req, res) => {
         };
         res.json(pieData)
     } catch (error) {
-        console.log(error)
+        return res.redirect('/admin/500')
     }
 }
 
@@ -1019,7 +1021,7 @@ const getYearChartData = async (req, res) => {
           });
         res.json(barData)        
     } catch (error) {
-        console.log(error)
+        return res.redirect('/admin/500')
     }
 }
 

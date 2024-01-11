@@ -39,6 +39,8 @@ const securepassword = async (password) => {
         return passwordHash;
     } catch (error) {
         console.log(error.message)
+        return res.redirect('/500')
+
     }
 }
 
@@ -76,6 +78,8 @@ const loadLanding = async (req, res) => {
     }
     catch (error) {
         console.log(error.message)
+        return res.redirect('/500')
+
     }
 }
 
@@ -191,7 +195,7 @@ const loadProducts = async (req, res) => {
         }
     } catch (err) {
         console.error(err.message);
-        res.status(500).send('Internal Server Error');
+        return res.redirect('/500')
     }
 };
 
@@ -209,7 +213,7 @@ const loadProductDetails = async (req, res) => {
         res.render('User/pages/productdetails', { produtDetail,relatedProducts })
     }
     catch (error) {
-        console.log(error.message)
+        return res.redirect('/500')
     }
 }
 
@@ -244,7 +248,7 @@ const sendOTP = async (email) => {
         return otp; // Return the generated OTP for verification
     } catch (error) {
         console.error('Error sending OTP:', error);
-        throw error;
+        return res.redirect('/500')
     }
 };
 
@@ -301,7 +305,7 @@ const insertUser = async (req, res) => {
             res.render('User/pages/otp', { email })
 
         } catch (error) {
-            console.log(error.message);
+            return res.redirect('/500')
         }
     } else {
         return res.render('User/pages/register', { error: 'UnmatchingPassword', email, username, mobile })
@@ -426,7 +430,7 @@ const userValid = async (req, res,) => {
         }
     } catch (error) {
         console.log("Error validating user:", error.message);
-        res.status(500).send('Internal Server Error');
+        return res.redirect('/500')
     }
 };
 
@@ -464,7 +468,7 @@ const verifyMailAndSentOTP = async (req, res) => {
         console.log("rendering into otp page")
         res.render('User/pages/passwordresetotp', { email })
     } catch (err) {
-        console.log(err);
+        return res.redirect('/500')
     }
 }
 
@@ -517,7 +521,7 @@ const verifyOTPAndResetPassword = async (req, res) => {
         }
     } catch (err) {
         console.log(err);
-        res.status(500).json({ error: "Internal Server Error" });
+        return res.redirect('/500')
     }
 };
 

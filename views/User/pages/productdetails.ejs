@@ -59,13 +59,13 @@
 
             <!-- Responsive Quantity Counter -->
             <div class="sm:flex items-baseline mb-1 space-x-2 font-roboto mt-4">
-                <p class="text-xl text-primary font-semibold">&#8377; <%=produtDetail.price%></p>
+                <p class="text-xl text-primary font-semibold">&#8377; <%=produtDetail.price%></p><br>
     
                 <div class="flex flex-row h-10 w-28 rounded-lg relative bg-transparent mt-1">
 
 
                     <form class="max-w-xs mx-auto">
-                        <label for="counter-input" class="block mb-1 text-sm font-medium text-gray-900 dark:text-black ">Choose quantity:</label>
+                        <label for="counter-input" class="block mb-1 text-sm font-medium  text-gray-900 dark:text-black "><br>Choose quantity:</label>
                         <div class="relative flex items-center">
                             <button type="button"  onclick="decreaseQuantity('<%=produtDetail._id%>')" id="decrement-button" data-input-counter-decrement="counter-input" class="flex-shrink-0 bg-gray-100 dark:bg-gray-700 dark:border-gray-600 border border-gray-300 rounded-md h-5 w-5 focus:outline-none">
                                 <svg class="w-2.5 h-2.5 text-gray-900 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 2">
@@ -94,28 +94,26 @@
                     <i class="fa-solid fa-heart"></i> Wishlist
                 </a>
             </div>
+
+            <div class="container pt-5 px-4 sm:px-6 lg:px-8 pb-16">
+
+                <h3 class="border-b  font-roboto text-black pb-3 font-medium">Product details</h3>
+                <div class="w-3/5 pt-6">
+                    <div class="text-black">
+                        <p><%=produtDetail.description%></p>
+                    </div>
                 </div>
             </div>
+
+
+
+          </div>
+        </div>
         </form>
-
         </div>
     </div>
-    <!-- ./product-detail -->
     
-    <!-- description -->
-    <div class="container pt-5 px-4 sm:px-6 lg:px-8 pb-16">
-
-        <h3 class="border-b border-gray-200 font-roboto text-black pb-3 font-medium">Product details</h3>
-        <div class="w-3/5 pt-6">
-            <div class="text-black">
-                <p><%=produtDetail.description%></p>
-            </div>
-        </div>
-    </div>
-    <!-- ./description -->
-    
-    <!-- related product -->
-    <div class="container pb-16 px-4 sm:px-6 lg:px-8">
+    <div class="container mt-20 pb-16 px-4 sm:px-6 lg:px-8">
 
         <h2 class="text-2xl font-medium text-gray-800 uppercase mb-6">Related products</h2>
         <div class="ml-20 grid grid-cols-4 gap-8">
