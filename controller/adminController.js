@@ -162,7 +162,7 @@ const loadProductDetails = async (req, res) => {
 
 // save edit product
 const saveEditProduct = async (req, res) => {
-    const { brandname, category, subcategory, varientname, price, quantity, description,offer } = req.body;
+    const { brandname, category, subcategory, varientname, price, quantity, description, offer } = req.body;
     const { productid } = req.params;
 
     try {
@@ -175,7 +175,7 @@ const saveEditProduct = async (req, res) => {
             price: price,
             quantity: quantity,
             description: description,
-            offer:offer
+            offer: offer
         };
 
         const updatedProduct = await ProductDB.findByIdAndUpdate(
@@ -291,7 +291,7 @@ const loadAddproducts = async (req, res) => {
 
 // save products
 const addProduct = async (req, res) => {
-    const { brandname, category, subcategory, varientname, price, quantity, description,offer } = req.body;
+    const { brandname, category, subcategory, varientname, price, quantity, description, offer } = req.body;
 
     try {
         const existingProduct = await ProductDB.findOne({ brandname, varientname });
@@ -399,7 +399,7 @@ const loadAddCategory = (req, res) => {
 
 // add category
 const addCategory = async (req, res) => {
-    const { categoryname,offer } = req.body
+    const { categoryname, offer } = req.body
     try {
         const category = await CategoryDB.findOne({ categoryname: { $regex: new RegExp(categoryname, 'i') } })
         if (!category) {
@@ -423,12 +423,12 @@ const addCategory = async (req, res) => {
 
 // add sub category
 const addSubCategory = async (req, res) => {
-    const { subcategoryname,offer } = req.body
+    const { subcategoryname, offer } = req.body
     try {
         const subcategory = await SubCategoryDB.findOne({ subcategoryname: { $regex: new RegExp(subcategoryname, 'i') } })
         if (!subcategory) {
             const SubCategory = new SubCategoryDB({
-                subcategoryname,offer
+                subcategoryname, offer
             })
             const newCategory = await SubCategory.save()
             if (newCategory) {
@@ -480,7 +480,7 @@ const getEditCategory = async (req, res) => {
 }
 // save updated category
 const saveUpdateCategory = async (req, res) => {
-    let {category,offer} = req.body;
+    let { category, offer } = req.body;
     const productid = req.params.productid;
     try {
         const existingCategory = await CategoryDB.findOne({
@@ -490,7 +490,7 @@ const saveUpdateCategory = async (req, res) => {
         if (!existingCategory || existingCategory._id.equals(productid)) {
             const updateFields = {
                 categoryname: category,
-                offer:offer
+                offer: offer
             };
 
             const updatedProduct = await CategoryDB.findByIdAndUpdate(
@@ -584,7 +584,7 @@ const getEditSubCategory = async (req, res) => {
 
 // save edit subcategory
 const saveUpdateSubCategory = async (req, res) => {
-    let {subcategoryname,offer} = req.body;
+    let { subcategoryname, offer } = req.body;
     const productid = req.params.productid;
     try {
 
@@ -597,7 +597,7 @@ const saveUpdateSubCategory = async (req, res) => {
             const updateFields =
             {
                 subcategoryname: subcategoryname,
-                offer:offer
+                offer: offer
             }
             const updatedProduct = await SubCategoryDB.findByIdAndUpdate(
                 productid,
@@ -905,15 +905,51 @@ const getChartData = async (req, res) => {
                 monthDeliveries[month]++;
             }
         });
+        const cancelledOrders = orders.filter(order => order.status === 'Cancelled');
+        let monthCancellations = {}
+        cancelledOrders.forEach(order => {
+            const month = new Date(order.orderDate).getMonth();
+            if (!monthCancellations[month]) {
+                monthCancellations[month] = 1;
+            } else {
+                monthCancellations[month]++;
+            }
+        })
+        const returnedOrders = orders.filter(order => order.status === 'Return')
+        let monthReturns = {};
+        returnedOrders.forEach(order => {
+            const month = new Date(order.deliverdAt).getMonth();
+            if (!monthReturns[month]) {
+                monthReturns[month] = 1;
+            } else {
+                monthReturns[month]++;
+            }
+        })
         const barData = {
             labels: ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'july', 'aug', 'sep', 'oct', 'nov', 'dec'],
             datasets: [
                 {
-                    label: 'Total Sales',
+                    label: 'Delivered Orders',
                     data: [monthDeliveries[0], monthDeliveries[1], monthDeliveries[2], monthDeliveries[3], monthDeliveries[4]
                         , monthDeliveries[5], monthDeliveries[6], monthDeliveries[7], monthDeliveries[8], monthDeliveries[9], monthDeliveries[10], monthDeliveries[11]],
                     backgroundColor: 'rgba(75, 192, 192, 0.2)',
                     borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1,
+                },
+                {
+                    label: 'Cancelled Orders',
+                    data: [monthCancellations[0], monthCancellations[1], monthCancellations[2], monthCancellations[3], monthCancellations[4]
+                        , monthCancellations[5], monthCancellations[6], monthCancellations[7], monthCancellations[8], monthCancellations[9], monthCancellations[10], monthCancellations[11]],
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderWidth: 1,
+                },
+                {
+                    label: 'Retuned Orders',
+                    data: [monthReturns[0], monthReturns[1], monthReturns[2], monthReturns[3], monthReturns[4]
+                        , monthReturns[5], monthReturns[6], monthReturns[7], monthReturns[8], monthReturns[9], monthReturns[10], monthReturns[11]],
+                    backgroundColor: 'rgba(255, 205, 86, 0.2)',
+                    borderColor: 'rgba(255, 205, 86, 1)',
                     borderWidth: 1,
                 },
             ],
@@ -991,35 +1027,88 @@ const getYearChartData = async (req, res) => {
     try {
         const orders = await OrderDB.find();
         const deliveredOrders = orders.filter(order => order.status === 'Delivered');
-        
+
         const yearSales = {};
-        
+
         deliveredOrders.forEach(order => {
-            const year = new Date(order.deliverdAt).getFullYear(); 
+            const year = new Date(order.deliverdAt).getFullYear();
             if (!yearSales[year]) {
                 yearSales[year] = 1;
             } else {
                 yearSales[year]++;
             }
-        });          
+        });
+
+
+        const cancelledOrders = orders.filter(order => order.status === 'Cancelled');
+        const yearCancelled = {};
+
+        cancelledOrders.forEach(order => {
+            const year = new Date(order.orderDate).getFullYear();
+            if (!yearCancelled[year]) {
+                yearCancelled[year] = 1;
+            } else {
+                yearCancelled[year]++;
+            }
+        });
+
+        const returnedOrders = orders.filter(order => order.status === 'Return');
+        const yearReturned = {};
+
+        returnedOrders.forEach(order => {
+            const year = new Date(order.deliverdAt).getFullYear();
+            if (!yearReturned[year]) {
+                yearReturned[year] = 1;
+            } else {
+                yearReturned[year]++;
+            }
+        });
+
+
 
         const barData = {
             labels: [],
             datasets: [
                 {
-                    label: 'Total Sales',
+                    label: 'Delivered Orders',
                     data: [],
                     backgroundColor: 'rgba(75, 192, 192, 0.2)',
                     borderColor: 'rgba(75, 192, 192, 1)',
                     borderWidth: 1,
                 },
+                {
+                    label: 'Cancelled Orders',
+                    data: [],
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderWidth: 1,
+                },
+                {
+                    label: 'Returned Orders',
+                    data: [],
+                    backgroundColor: 'rgba(255, 205, 86, 0.2)',
+                    borderColor: 'rgba(255, 205, 86, 1)',
+                    borderWidth: 1,
+                },
             ],
         };
+
         Object.keys(yearSales).forEach(year => {
             barData.labels.push(year);
             barData.datasets[0].data.push(yearSales[year]);
-          });
-        res.json(barData)        
+        });
+
+        Object.keys(yearCancelled).forEach(year => {
+            barData.labels.push(year);
+            barData.datasets[1].data.push(yearCancelled[year]);
+        });
+
+        Object.keys(yearReturned).forEach(year => {
+            barData.labels.push(year);
+            barData.datasets[2].data.push(yearReturned[year]);
+        });
+
+        res.json(barData)
     } catch (error) {
         return res.redirect('/admin/500')
     }
