@@ -319,7 +319,7 @@ const loadCoupen = async (req, res) => {
     try {
         const user = await UserDB.findById(req.session.user)
         const currentTimestamp = Date.now();
-        const coupen = await CoupenDB.find({ startDate: { $lte: currentTimestamp } });
+        const coupen = await CoupenDB.find({ startDate: { $lte: currentTimestamp },  expaireDate: { $gte: currentTimestamp } });
         res.render('User/pages/coupen', { coupen, user })
     } catch (error) {
         return res.redirect('/500')
