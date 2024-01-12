@@ -895,7 +895,11 @@ const loadDash = async (req, res) => {
 const getChartData = async (req, res) => {
     try {
         const orders = await OrderDB.find()
-        const deliveredOrders = orders.filter(order => order.status === 'Delivered');
+
+        const currentYear = new Date().getFullYear();
+
+        const deliveredOrders = orders.filter(order => order.status === 'Delivered' && new Date(order.deliverdAt).getFullYear() === currentYear);
+
         const monthDeliveries = {};
         deliveredOrders.forEach(order => {
             const month = new Date(order.deliverdAt).getMonth();
@@ -905,7 +909,7 @@ const getChartData = async (req, res) => {
                 monthDeliveries[month]++;
             }
         });
-        const cancelledOrders = orders.filter(order => order.status === 'Cancelled');
+        const cancelledOrders = orders.filter(order => order.status === 'Cancelled' && new Date(order.orderDate).getFullYear() === currentYear);
         let monthCancellations = {}
         cancelledOrders.forEach(order => {
             const month = new Date(order.orderDate).getMonth();
@@ -915,7 +919,7 @@ const getChartData = async (req, res) => {
                 monthCancellations[month]++;
             }
         })
-        const returnedOrders = orders.filter(order => order.status === 'Return')
+        const returnedOrders = orders.filter(order => order.status === 'Return' && new Date(order.deliverdAt).getFullYear() === currentYear);
         let monthReturns = {};
         returnedOrders.forEach(order => {
             const month = new Date(order.deliverdAt).getMonth();
