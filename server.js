@@ -35,8 +35,8 @@ app.use(session({
 app.use(checkUserSession)
 app.use(flash());
 app.use('/',userRoute)
-app.all("/*",(req,res)=>res.render("404"))
 app.use('/admin',adminRoute)
+app.all("/*",(req,res)=>res.render("404"))
 
 
 
