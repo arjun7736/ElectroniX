@@ -327,7 +327,7 @@ const verifyAndregister = async (req, res) => {
 
             const users =await UserDB.find()
             let reward = 0
-            users.forEach((useres) => {
+             users.forEach(async(useres) => {
                 if (referalCode == useres.referalCode) {
                     reward = 50;
                     useres.wallet+=50
@@ -337,6 +337,7 @@ const verifyAndregister = async (req, res) => {
                         message: `By Refferal`,
                         paymentMethod: 'Refferal'
                     });
+                    await useres.save()
                 }
             })
             const newCode = generateCode();

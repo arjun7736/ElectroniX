@@ -258,7 +258,9 @@
                         <p class="font-semibold text-green-500">Delivered</p>
                         <%}else if(value.status === 'Return'){%>
                           <p class="font-semibold text-red-500">Return</p>
-                      <% } else { %>
+                      <% } else if(value.status === 'Cancelled') { %>
+                        <p class="font-semibold text-red-500">Cancelled</p>
+                        <% } else { %>
                         <select class="status-dropdown text-black" data-order-id="<%= value._id %>" id="statusDropdown_<%= value._id %>">
                           <option value="Pending" <%= value.status === 'Pending' ? 'selected' : '' %>>Pending</option>
                           <option value="Processing" <%= value.status === 'Processing' ? 'selected' : '' %>>Processing</option>
