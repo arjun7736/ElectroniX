@@ -25,7 +25,7 @@ const loadCheckout = async (req, res) => {
         }
     }
     catch (error) {
-        return res.redirect('/500')
+        res.redirect('/500')
     }
 }
 
@@ -86,7 +86,7 @@ const saveOrder = async (req, res) => {
 
         return res.json(data);
     } catch (error) {
-        return res.redirect('/500')
+        res.redirect('/500')
     }
 }
 
@@ -141,7 +141,7 @@ const cancelOrder = async (req, res) => {
         return res.json({ success: true, message: 'Order cancelled successfully.', result });
     } catch (err) {
         console.error('Error cancelling order:', err);
-        return res.redirect('/500')
+        res.redirect('/500')
     }
 };
 
@@ -188,7 +188,7 @@ const cancelItem = async (req, res) => {
         return res.json({ success: true, message: 'Item canceled successfully.', updatedOrder });
     } catch (error) {
         console.error('Error canceling item:', error);
-        return res.redirect('/500')
+        res.redirect('/500')
     }
 };
 
@@ -217,7 +217,7 @@ const checkStock = async (req, res) => {
         return res.json({ success: true });
     } catch (error) {
         console.error('Error checking stock:', error);
-        return res.redirect('/500')
+        res.redirect('/500')
     }
 };
 
@@ -249,7 +249,7 @@ const returnOrder = async (req, res) => {
         res.json({ success: true, order })
     }
     catch (error) {
-        return res.redirect('/500')
+        res.redirect('/500')
     }
 }
 
@@ -260,22 +260,34 @@ const razorPay = async (req, res) => {
             key_id: process.env.RAZORKEY,
             key_secret: process.env.RAZORSECRET,
         });
-        var instance = new Razorpay({ key_id: process.env.RAZORKEY, key_secret: process.env.RAZORSECRET })
-        const user = await UserDB.findById(req.session.user)
-
+        const user = await UserDB.findById(req.session.user);
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
         var options = {
             amount: user.grandTotal,
             currency: "INR",
             receipt: "order_rcptid_11"
         };
         instance.orders.create(options, function (err, order) {
+            if (err) {
+                console.error(err);
+                return res.status(500).json({ error: 'Error creating order' });
+            }
             res.json({ orderId: order.id });
         });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal Server Error' });
     }
-    catch (error) {
-        return res.redirect('/500')
-    }
-}
+};
+
+
+
+
+
+
+
 
 // applyCoupen
 const applyCoupen = async (req, res) => {
@@ -298,7 +310,7 @@ const applyCoupen = async (req, res) => {
                 await user.save()
                 res.json({ success: true, total, discount, code })
             } else {
-                const discount = (user.grandTotal * coupen.discountAmountOrPercentage) / 100;
+                const discount =Math.floor((user.grandTotal * coupen.discountAmountOrPercentage) / 100);
                 user.grandTotal -= discount
                 const total = user.grandTotal;
                 await user.save()
@@ -309,7 +321,7 @@ const applyCoupen = async (req, res) => {
         await CoupenDB.findByIdAndUpdate(coupen._id, { couponDone: true })
     } catch (error) {
         console.log(error)
-        return res.redirect('/500')
+        res.redirect('/500')
 
     }
 }
@@ -318,11 +330,11 @@ const applyCoupen = async (req, res) => {
 const loadInvoice = async (req, res) => {
     try {
         const { orderId } = req.params
-        const order =await OrderDB.findOne({ orderId: orderId }).populate('products.product')
-        res.render('User/pages/invoice',{order})
+        const order = await OrderDB.findOne({ orderId: orderId }).populate('products.product')
+        res.render('User/pages/invoice', { order })
     } catch (error) {
         console.log(error)
-        return res.redirect('/500')
+        res.redirect('/500')
 
     }
 }

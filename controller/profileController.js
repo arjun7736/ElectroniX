@@ -15,7 +15,7 @@ const securepassword = async (password) => {
         return passwordHash;
     } catch (error) {
         console.log(error.message)
-        return res.redirect('/500')
+         res.redirect('/500')
 
     }
 }
@@ -54,7 +54,7 @@ const loadAddress = async (req, res) => {
     }
     catch (err) {
         console.log(err)
-        return res.redirect('/500')
+         res.redirect('/500')
 
     }
 }
@@ -73,7 +73,7 @@ const loadChangePassword = async (req, res) => {
         }
     } catch (error) {
         console.log(error)
-        return res.redirect('/500')
+         res.redirect('/500')
 
     }
 }
@@ -93,7 +93,7 @@ const saveEditProfile = async (req, res) => {
         res.status(200).json({ message: 'Profile updated successfully' });
     } catch (error) {
         console.error(error);
-        return res.redirect('/500')
+         res.redirect('/500')
     }
 
 }
@@ -110,7 +110,7 @@ const loadAddAddress = async (req, res) => {
         }
     } catch (err) {
         console.log(err)
-        return res.redirect('/500')
+         res.redirect('/500')
 
     }
 }
@@ -136,7 +136,7 @@ const saveAddress = async (req, res) => {
         res.redirect('/address')
     } catch (error) {
         console.error(error);
-        return res.redirect('/500')
+         res.redirect('/500')
 
     }
 }
@@ -175,7 +175,7 @@ const saveChangePassword = async (req, res) => {
             res.render('User/pages/changepassword')
         }
     } catch (err) {
-        return res.redirect('/500')
+         res.redirect('/500')
     }
 }
 
@@ -188,7 +188,7 @@ const getEditAddress = async (req, res) => {
         res.render('User/pages/editaddress', { address, user })
     }
     catch (error) {
-        return res.redirect('/500')
+         res.redirect('/500')
     }
 }
 
@@ -206,7 +206,7 @@ const updateAddress = async (req, res) => {
     await AddressDB.findByIdAndUpdate(id, data).then(() => {
         res.redirect("/address");
     }).catch((err) => {
-        return res.redirect('/500')
+         res.redirect('/500')
     })
 }
 // show order list
@@ -232,7 +232,7 @@ const loadOrderList = async (req, res) => {
         res.render('User/pages/orderlist', { order, currentPage: page, totalPages, user });
     } catch (error) {
         console.error('Error fetching orders:', error);
-        return res.redirect('/500')
+         res.redirect('/500')
     }
 };
 
@@ -250,7 +250,7 @@ const loadOrderDetails = async (req, res) => {
 
         res.render("User/pages/orderdetails", { order });
     } catch (error) {
-        return res.redirect('/500')
+         res.redirect('/500')
     }
 };
 
@@ -267,7 +267,7 @@ const uploadProfileImage = async (req, res) => {
         res.json({ success: true });
     } catch (error) {
         console.error('Error uploading profile image:', error);
-        return res.redirect('/500')
+         res.redirect('/500')
     }
 }
 
@@ -284,7 +284,7 @@ const deleteAddress = async (req, res) => {
         }
     }
     catch (error) {
-        return res.redirect('/500')
+         res.redirect('/500')
     }
 }
 
@@ -296,7 +296,9 @@ const loadWallet = async (req, res) => {
         const page = req.query.page || 1;
         const userId = req.session.user;
 
-        const user = await UserDB.findById(userId);
+        const user = await UserDB.findById(userId)
+        user.walletHistory.sort((a, b) => b.date - a.date);
+
         const count = user.walletHistory.length;
 
         const startIndex = (page - 1) * ITEMS_PER_PAGE;
@@ -310,7 +312,7 @@ const loadWallet = async (req, res) => {
         }
     } catch (error) {
         console.log(error);
-        return res.redirect('/500')
+         res.redirect('/500')
     }
 };
 
@@ -322,7 +324,7 @@ const loadCoupen = async (req, res) => {
         const coupen = await CoupenDB.find({ startDate: { $lte: currentTimestamp },  expaireDate: { $gte: currentTimestamp } });
         res.render('User/pages/coupen', { coupen, user })
     } catch (error) {
-        return res.redirect('/500')
+         res.redirect('/500')
     }
 }
 
@@ -362,7 +364,7 @@ const addToWishlist = async (req, res) => {
         return res.json({ success: true });
     } catch (error) {
         console.error(error);
-        return res.redirect('/500')
+         res.redirect('/500')
     }
 };
 

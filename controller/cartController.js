@@ -21,7 +21,7 @@ const loadCart = async (req, res) => {
         }
     } catch (error) {
         console.log(error);
-        return res.redirect('/500')
+         res.redirect('/500')
     }
 };
 
@@ -98,7 +98,7 @@ const addToCart = async (req, res) => {
         }
     } catch (error) {
         console.error('Error adding product to cart:', error);
-        return res.redirect('/500')
+         res.redirect('/500')
     }
 };
 
@@ -140,7 +140,7 @@ const deleteFromCart = async (req, res) => {
         }
     } catch (error) {
         console.error('Error removing product from cart:', error);
-        return res.redirect('/500')
+         res.redirect('/500')
     }
 };
 
@@ -193,7 +193,7 @@ const updateQuantityInCart = async (req, res) => {
         });
     } catch (error) {
         console.error('Error updating quantity:', error);
-        return res.redirect('/500')
+         res.redirect('/500')
     }
 };
 
