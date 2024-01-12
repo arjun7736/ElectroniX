@@ -96,12 +96,6 @@ function updateTable(data, deliveredGrandTotalSum) {
             const cell = row.insertCell();
             cell.textContent = value;
             cell.classList.add('px-4', 'py-2');
-
-            if (item.status === 'Delivered') {
-                cell.classList.add('text-green-600');
-            } else if (item.status === 'Return' || item.status === 'Cancelled') {
-                cell.classList.add('text-red-600');
-            }
         });
     });
 

@@ -977,7 +977,7 @@ const salesReport = async (req, res) => {
         const { dateFrom, dateTo } = req.body
         let salesData = await OrderDB.find({
             orderDate: { $gte: dateFrom, $lte: dateTo },
-            status: { $in: ['Delivered', 'Return', 'Cancelled'] }
+            status: 'Delivered'
         })
             .populate('products.product')
             .populate('user');
