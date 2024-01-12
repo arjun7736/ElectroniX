@@ -35,60 +35,79 @@
     </div>
     
 
-
-
-
     <div class="space-y-4">
-      <div class="grid grid-cols-2 my-6">
-        <div>
+      <div class="grid grid-cols-2 gap-4">
+        <div class="flex items-center">
           <label for="username">Username</label>
+        </div>
+        <div class="flex items-center">
+          <label for="email">Email Address</label>
+        </div>
+      </div>
+    
+      <div class="grid grid-cols-2 gap-4">
+        <div class="flex items-center">
           <input
             type="text"
             name="username"
             id="username"
             value="<%=user.username%>"
-            class="input-box ml-8"
+            class="input-box"
             readonly
           />
         </div>
-      </div>
-
-      <div class="grid grid-cols-2 gap-4 my-10">
-        <div>
-          <label for="email">Email Address</label>
+        <div class="flex items-center">
           <input
             type="email"
             name="email"
             id="email"
             value="<%=user.email%>"
-            class="input-box ml-2"
+            class="input-box"
             readonly
           />
         </div>
       </div>
-      <div class="my-10">
-        <label for="mobile">Phone Number</label>
-        <input
-          type="number"
-          name="mobile"
-          value="<%=user.mobile %>"
-          id="mobile"
-          class="input-box ml-1"
-          readonly
-        />
+    
+      <div class="grid grid-cols-2 gap-4">
+        <div class="flex items-center">
+          <label for="mobile">Phone Number</label>
+        </div>
+        <div class="flex items-center">
+          <label for="referalCode">Referral Code</label>
+        </div>
       </div>
-      <div class="my-10">
-        <label for="mobile">referalCode</label>
-        <input
-          type="text"
-          name="referalCode"
-          value="<%=user.referalCode %>"
-          id="referalCode"
-          class="input-box ml-1"
-          readonly
-        />
+    
+      <div class="grid grid-cols-2 gap-4">
+        <div class="flex items-center">
+          <input
+            type="number"
+            name="mobile"
+            value="<%=user.mobile %>"
+            id="mobile"
+            class="input-box"
+            readonly
+          />
+        </div>
+        <div class="flex items-center">
+          <input
+            type="text"
+            name="referalCode"
+            value="<%=user.referalCode %>"
+            id="referalCode"
+            class="input-box"
+            readonly
+          />
+        </div>
       </div>
-    </div>
+    
+      </div>
+    
+
+
+
+
+
+
 
     <div class="mt-4">
       <button
