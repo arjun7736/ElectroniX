@@ -36,6 +36,10 @@ const userSchema = new mongoose.Schema({
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Product'
         },
+        price:{
+            type :Number,
+            required:true
+        },
         quantity: {
             type: Number,
             default: 1

@@ -391,8 +391,7 @@ async function checkOut() {
         const stockCheckResult = await stockCheckResponse.json();
         const grandTotalElement = document.getElementById("grandTotal");
         const grandTotalValue = grandTotalElement.textContent.trim();
-const total =document.getElementById("grandTotal").value;
-console.log(total)
+
         if (stockCheckResult.success) {
             if (selectedPaymentOption == "razorpay") {
                 var orderId;

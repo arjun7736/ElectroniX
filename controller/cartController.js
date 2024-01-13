@@ -46,12 +46,12 @@ const addToCart = async (req, res) => {
         let total = 0
         if (subOffer || catOff || offerProduct) {
             if (subOffer) {
-                total = pro.price - (pro.price * subOffer.offer / 100)
+                total =Math.floor (pro.price - (pro.price * subOffer.offer / 100))
             } else if (catOff) {
-                total = pro.price - (pro.price * catOff.offer / 100)
+                total =Math.floor( pro.price - (pro.price * catOff.offer / 100))
             }
             else {
-                total = pro.price - (pro.price * pro.offer / 100)
+                total =Math.floor( pro.price - (pro.price * pro.offer / 100))
             }
         }
 
@@ -86,14 +86,13 @@ const addToCart = async (req, res) => {
                 { _id: userId },
                 {
                     $addToSet: {
-                        cart: { product, quantity, totalAmount: incrementAmount },
+                        cart: { product, quantity, totalAmount: incrementAmount,price:pro.price},
                     },
                     $inc: {
                         "grandTotal": incrementAmount
                     }
                 }
             );
-
             return res.json({ message: 'Product added to cart' });
         }
     } catch (error) {
