@@ -121,9 +121,7 @@
       .then((data) => {
         console.log("Success:", data);
         document.getElementById("grandTotal").innerHTML = `${data.grandTotal}`;
-// if(data.cart===0){
-//   document.getElementById("grandTotal").innerHTML = `0`;
-// }
+
         showToast("Product removed from cart!");
         delet.remove();
       })
@@ -159,14 +157,17 @@ async function updateQuantity(productId, newQuantity) {
       },
       body: JSON.stringify(data),
     });
-
-    const result = await response.json();
-
-    console.log("Success:", result);
-
+    
     const quantityElement = document.getElementById(`quantity_${productId}`);
     const totalAmountElement = document.getElementById(`totalAmount_${productId}`);
     const grandTotalElement = document.getElementById('grandTotal');
+    
+    if(response.status===409){
+      return showToast('Not Enough Quantity ','error')
+    }
+    const result = await response.json();
+    console.log("Success:", result);
+
 
     if (quantityElement && totalAmountElement && grandTotalElement) {
       quantityElement.value = result.quantity;

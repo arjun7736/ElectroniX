@@ -164,6 +164,11 @@ const updateQuantityInCart = async (req, res) => {
 
         const userBeforeUpdate = await UserDB.findOne({ _id: userId, 'cart.product': product });
 
+        if(pro.quantity<quantity){
+            const max =pro.quantity
+            return res.status(409).json({success:false,max})
+        }
+
         if (!userBeforeUpdate) {
             return res.status(404).json({ message: 'User not found or product not in cart' });
         }
