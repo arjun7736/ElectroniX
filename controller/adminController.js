@@ -1103,12 +1103,10 @@ const getYearChartData = async (req, res) => {
         });
 
         Object.keys(yearCancelled).forEach(year => {
-            barData.labels.push(year);
             barData.datasets[1].data.push(yearCancelled[year]);
         });
 
         Object.keys(yearReturned).forEach(year => {
-            barData.labels.push(year);
             barData.datasets[2].data.push(yearReturned[year]);
         });
 

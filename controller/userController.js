@@ -281,7 +281,7 @@ const insertUser = async (req, res) => {
     if (username.trim() === '') {
         return res.render('User/pages/register', { error: 'UsernameRequired', email, username: null, mobile });
     }
-    if (mobile.trim() === '' || mobile.length < 10) {
+    if (mobile.trim() === '' || mobile.length < 10 || mobile.length > 10) {
         return res.render('User/pages/register', { error: 'MobileRequired', email, username, mobile: null });
     }
     if (!isValidPassword(password)) {

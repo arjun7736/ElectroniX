@@ -242,7 +242,8 @@ const returnOrder = async (req, res) => {
         user.walletHistory.push({
             date: Date.now(),
             amount: order.grandTotal,
-            message: `${order.returnReason} orderId:-${order.orderId}`
+            message: `${order.returnReason} orderId:-${order.orderId}`,
+            paymentMethod:order.paymentMethod
         });
         await user.save()
         order.save()
