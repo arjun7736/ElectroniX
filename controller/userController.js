@@ -68,7 +68,7 @@ const forgotPassword = (req, res) => {
 // load landing
 const loadLanding = async (req, res) => {
     try {
-        const Products = await ProductDB.find({ isDelete: false })
+        const Products = await ProductDB.find({ isDelete: false }).limit(4)
         const SubCategory = await SubCategoryDB.find()
         const Category = await CategoryDB.find()
         const offerCategory = Category.filter((value) => value.offer > 0)
