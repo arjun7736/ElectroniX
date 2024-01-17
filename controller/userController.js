@@ -18,12 +18,12 @@ function generateCode() {
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     let code = '';
     for (let i = 0; i < 6; i++) {
-      const randomIndex = Math.floor(Math.random() * characters.length);
-      code += characters[randomIndex];
+        const randomIndex = Math.floor(Math.random() * characters.length);
+        code += characters[randomIndex];
     }
     return code;
-  }
-  
+}
+
 
 
 
@@ -39,7 +39,7 @@ const securepassword = async (password) => {
         return passwordHash;
     } catch (error) {
         console.log(error.message)
-         res.redirect('/500')
+        res.redirect('/500')
 
     }
 }
@@ -78,7 +78,7 @@ const loadLanding = async (req, res) => {
     }
     catch (error) {
         console.log(error.message)
-         res.redirect('/500')
+        res.redirect('/500')
 
     }
 }
@@ -195,7 +195,7 @@ const loadProducts = async (req, res) => {
         }
     } catch (err) {
         console.error(err.message);
-         res.redirect('/500')
+        res.redirect('/500')
     }
 };
 
@@ -208,12 +208,12 @@ const loadProductDetails = async (req, res) => {
     const productId = req.params.productid;
     try {
         const produtDetail = await ProductDB.findOne({ _id: productId }, {})
-        const sub= produtDetail.subcategory
-       const relatedProducts =await ProductDB.find({subcategory:sub}).limit(4)
-        res.render('User/pages/productdetails', { produtDetail,relatedProducts })
+        const sub = produtDetail.subcategory
+        const relatedProducts = await ProductDB.find({ subcategory: sub }).limit(4)
+        res.render('User/pages/productdetails', { produtDetail, relatedProducts })
     }
     catch (error) {
-         res.redirect('/500')
+        res.redirect('/500')
     }
 }
 
@@ -248,7 +248,7 @@ const sendOTP = async (email) => {
         return otp; // Return the generated OTP for verification
     } catch (error) {
         console.error('Error sending OTP:', error);
-         res.redirect('/500')
+        res.redirect('/500')
     }
 };
 
@@ -265,32 +265,23 @@ const setRegistrationDataMiddleware = (req, res, next) => {
 };
 
 
-
 //validate and create new user data
 const insertUser = async (req, res) => {
     const { username, email, password, confirmpassword, mobile, referalCode } = req.body;
 
     const existingMail = await UserDB.findOne({ email: { $regex: new RegExp(email, 'i') } })
     const existingMobile = await UserDB.findOne({ mobile })
-    if (existingMail) {
-        return res.render('User/pages/register', { error: 'ExistingEmail', email: null, username, mobile })
+    if (existingMail) return renderError('ExistingEmail');
+    if (!isValidEmail(email)) return renderError('InvalidEmail');
+    if (!email.trim()) return renderError('EmailRequired');
+    if (!username.trim()) return renderError('UsernameRequired');
+    if (!isValidMobile(mobile)) return renderError('InvalidMobile');
+    if (!isValidPassword(password)) return renderError('InvalidPassword');
+    if (!password.trim()) return renderError('PasswordRequired');
+    if (existingMobile) return renderError('ExistingMobile');
+    function renderError(error) {
+        return res.render('User/pages/register', { error, email: null, username: error === 'UsernameRequired' ? null : username, mobile: error === 'MobileRequired' ? null : mobile })
     }
-    if (email.trim() === '') {
-        return res.render('User/pages/register', { error: 'EmailRequired', email: null, username, mobile });
-    }
-    if (username.trim() === '') {
-        return res.render('User/pages/register', { error: 'UsernameRequired', email, username: null, mobile });
-    }
-    if (mobile.trim() === '' || mobile.length < 10 || mobile.length > 10) {
-        return res.render('User/pages/register', { error: 'MobileRequired', email, username, mobile: null });
-    }
-    if (!isValidPassword(password)) {
-        return res.render('User/pages/register', { error: 'InvalidPassword', email, username, mobile })
-    }
-    if (existingMobile) {
-        return res.render('User/pages/register', { error: 'ExistingMobile', email, username, mobile: null })
-    }
-
 
     if (password === confirmpassword) {
         try {
@@ -305,7 +296,7 @@ const insertUser = async (req, res) => {
             res.render('User/pages/otp', { email })
 
         } catch (error) {
-             res.redirect('/500')
+            res.redirect('/500')
         }
     } else {
         return res.render('User/pages/register', { error: 'UnmatchingPassword', email, username, mobile })
@@ -325,15 +316,15 @@ const verifyAndregister = async (req, res) => {
             const { username, email, password, mobile, referalCode } = data;
             registrationData.clearRegistrationData();
 
-            const users =await UserDB.find()
+            const users = await UserDB.find()
             let reward = 0
-             users.forEach(async(useres) => {
+            users.forEach(async (useres) => {
                 if (referalCode == useres.referalCode) {
                     reward = 50;
-                    useres.wallet+=50
+                    useres.wallet += 50
                     useres.walletHistory.push({
                         date: Date.now(),
-                        amount:reward ,
+                        amount: reward,
                         message: `By Refferal`,
                         paymentMethod: 'Refferal'
                     });
@@ -348,7 +339,7 @@ const verifyAndregister = async (req, res) => {
                 password: spassword,
                 mobile,
                 referalCode: newCode,
-                wallet:reward,
+                wallet: reward,
             });
 
             const userData = await user.save();
@@ -431,7 +422,7 @@ const userValid = async (req, res,) => {
         }
     } catch (error) {
         console.log("Error validating user:", error.message);
-         res.redirect('/500')
+        res.redirect('/500')
     }
 };
 
@@ -447,6 +438,11 @@ function isValidEmail(email) {
 function isValidPassword(password) {
     const passwordRegex = /^(?=.*[!@#$%^&*(),.?":{}|<>])(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
     return passwordRegex.test(password);
+}
+
+
+function isValidMobile(mobile) {
+    return mobile.length === 10;
 }
 
 // load resetpassword
@@ -469,7 +465,7 @@ const verifyMailAndSentOTP = async (req, res) => {
         console.log("rendering into otp page")
         res.render('User/pages/passwordresetotp', { email })
     } catch (err) {
-         res.redirect('/500')
+        res.redirect('/500')
     }
 }
 
@@ -522,7 +518,7 @@ const verifyOTPAndResetPassword = async (req, res) => {
         }
     } catch (err) {
         console.log(err);
-         res.redirect('/500')
+        res.redirect('/500')
     }
 };
 
