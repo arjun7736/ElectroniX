@@ -179,14 +179,15 @@
                         <% }) %>
                 <% } %>
             </div>
+            <div class="pagination mt-4">
+                <% for (let i = 1; i <= totalPages; i++) { %>
+                    <a href="/products?page=<%= i %>" class="px-3 py-1 mx-1 rounded-md <%= currentPage == i ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700' %>">
+                        <%= i %>
+                    </a>
+                <% } %>
+              </div>
         </div>
-        <div class="pagination mt-4">
-            <% for (let i = 1; i <= totalPages; i++) { %>
-                <a href="/products?page=<%= i %>" class="px-3 py-1 mx-1 rounded-md <%= currentPage == i ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700' %>">
-                    <%= i %>
-                </a>
-            <% } %>
-          </div>
+        
     </div>
     
 
