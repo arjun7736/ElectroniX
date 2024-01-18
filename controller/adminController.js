@@ -755,32 +755,41 @@ const loadeditCoupen = async (req, res) => {
     }
 }
 
-// save edit couepen
 const saveEditCoupen = async (req, res) => {
     try {
         const id = req.params.id;
-        const { couponName, description, discountType, minimumPurchaseAmount, discountAmountOrPercentage, code, expaireDate } = req.body;
+        const { couponName, description, discountType, minimumPurchaseAmount, discountAmountOrPercentage, code, expaireDate, startDate } = req.body;
         const upadateCoupen = await CoupenDB.findById(id);
-        const existCode = await CoupenDB.findOne({ code: { $regex: new RegExp(code, 'i') } });
-        if (existCode && existCode.code == code) {
-            console.log("exist code")
-            return res.status(400).json({ success: false, message: 'Code already exists' });
-        } else {
-            upadateCoupen.couponName = couponName;
-            upadateCoupen.description = description;
-            upadateCoupen.discountType = discountType;
-            upadateCoupen.minimumPurchaseAmount = minimumPurchaseAmount;
-            upadateCoupen.discountAmountOrPercentage = discountAmountOrPercentage;
-            upadateCoupen.code = code;
-            upadateCoupen.expaireDate = expaireDate;
-            await upadateCoupen.save();
-            return res.json({ success: true });
+
+        if (code !== upadateCoupen.code) {
+            const existCode = await CoupenDB.findOne({ code: { $regex: new RegExp(code, 'i') } });
+            if (existCode) {
+                console.log("exist code")
+                return res.status(400).json({ success: false, message: 'Code already exists' });
+            }
         }
+
+        upadateCoupen.couponName = couponName;
+        upadateCoupen.description = description;
+        upadateCoupen.discountType = discountType;
+        upadateCoupen.minimumPurchaseAmount = minimumPurchaseAmount;
+        upadateCoupen.discountAmountOrPercentage = discountAmountOrPercentage;
+        upadateCoupen.code = code;
+        upadateCoupen.expaireDate = expaireDate;
+        upadateCoupen.startDate = startDate;
+        await upadateCoupen.save();
+        return res.json({ success: true });
     } catch (error) {
         console.error(error);
-        return res.redirect('/admin/500')
+        return res.redirect('/admin/500');
     }
 };
+
+
+
+
+
+
 
 
 // delete cuopen
