@@ -271,9 +271,9 @@ const insertUser = async (req, res) => {
 
     const existingMail = await UserDB.findOne({ email: { $regex: new RegExp(email, 'i') } })
     const existingMobile = await UserDB.findOne({ mobile })
-    if (existingMail) return renderError('ExistingEmail');
-    if (!isValidEmail(email)) return renderError('InvalidEmail');
     if (!email.trim()) return renderError('EmailRequired');
+    if (!isValidEmail(email)) return renderError('InvalidEmail');
+    if (existingMail) return renderError('ExistingEmail');
     if (!username.trim()) return renderError('UsernameRequired');
     if (!isValidMobile(mobile)) return renderError('InvalidMobile');
     if (!isValidPassword(password)) return renderError('InvalidPassword');
