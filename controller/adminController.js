@@ -104,7 +104,6 @@ const loadUser = async (req, res) => {
 // load products
 const loadProducts = async (req, res) => {
     const ITEMS_PER_PAGE = 7;
-
     try {
         const page = req.query.page || 1;
         const totalProducts = await ProductDB.countDocuments();
@@ -223,7 +222,6 @@ const saveEditProduct = async (req, res) => {
 
 const softDeleteProduct = async (req, res) => {
     const { productid } = req.params;
-
     try {
         const filter = { _id: productid };
         const existingProduct = await ProductDB.findOne(filter);
@@ -249,10 +247,10 @@ const softDeleteProduct = async (req, res) => {
 
 // delete Image
 const deleteImage = async (req, res) => {
-    let imageId = req.params.imageid
-    const productId = req.params.productid
-    console.log(req.params.productid);
     try {
+        let imageId = req.params.imageid
+        const productId = req.params.productid
+        console.log(req.params.productid);
         const deleteimg = await ProductDB.findByIdAndUpdate(
             { _id: productId },
             { $pull: { "images": { _id: imageId } } },
@@ -291,9 +289,9 @@ const loadAddproducts = async (req, res) => {
 
 // save products
 const addProduct = async (req, res) => {
-    const { brandname, category, subcategory, varientname, price, quantity, description, offer } = req.body;
-
+    
     try {
+        const { brandname, category, subcategory, varientname, price, quantity, description, offer } = req.body;
         const existingProduct = await ProductDB.findOne({ brandname, varientname });
 
         if (existingProduct) {
@@ -354,8 +352,6 @@ function isValidImage(file) {
     const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml'];
     return allowedTypes.includes(file.mimetype);
 }
-
-
 
 
 
@@ -591,7 +587,6 @@ const saveUpdateSubCategory = async (req, res) => {
         const existingsubcategory = await SubCategoryDB.findOne({
             subcategoryname: { $regex: new RegExp(subcategoryname, 'i') }
         });
-        console.log(existingsubcategory)
         if (!existingsubcategory || existingsubcategory._id.equals(productid)) {
 
             const updateFields =
@@ -768,7 +763,6 @@ const saveEditCoupen = async (req, res) => {
                 return res.status(400).json({ success: false, message: 'Code already exists' });
             }
         }
-
         upadateCoupen.couponName = couponName;
         upadateCoupen.description = description;
         upadateCoupen.discountType = discountType;
@@ -784,12 +778,6 @@ const saveEditCoupen = async (req, res) => {
         return res.redirect('/admin/500');
     }
 };
-
-
-
-
-
-
 
 
 // delete cuopen
@@ -1167,6 +1155,4 @@ module.exports = {
     getChartData,
     getPieChartData,
     getYearChartData
-
-
 }
