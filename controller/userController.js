@@ -235,7 +235,7 @@ const sendOTP = async (email) => {
     });
 
     const mailOptions = {
-        from: process.env.MAIL, 
+        from: process.env.MAIL,
         to: email,
         subject: 'OTP Verification',
         text: `Your OTP is: ${otp}. Use this OTP to verify your account.`
@@ -245,7 +245,7 @@ const sendOTP = async (email) => {
         await transporter.sendMail(mailOptions);
         console.log('OTP sent successfully.');
 
-        return otp; 
+        return otp;
     } catch (error) {
         console.error('Error sending OTP:', error);
         res.redirect('/500')
@@ -286,13 +286,21 @@ const insertUser = async (req, res) => {
     if (password === confirmpassword) {
         try {
             const OTP = await sendOTP(email)
-
-            const otp = new OTPDB({
-                otp: OTP,
-                email: email
-            })
-
-            const newotp = await otp.save()
+            const otpExist = await OTPDB.find({ email: email })
+            if (otpExist.length > 0) {
+                const user = await OTPDB.findOneAndUpdate(
+                    { email: email },
+                    { $set: { otp: OTP } },
+                    { new: true }
+                );
+            }
+            else {
+                const otp = new OTPDB({
+                    otp: OTP,
+                    email: email
+                })
+                const newotp = await otp.save()
+            }
             res.render('User/pages/otp', { email })
 
         } catch (error) {
@@ -309,6 +317,9 @@ const verifyAndregister = async (req, res) => {
     try {
         const { OTP, email } = req.body;
         const user = await OTPDB.find({ email: email });
+        if (user.length == 0) {
+            return res.status(401).json({ message: "Otp Expired" })
+        }
         const otp = user[0].otp;
 
         if (OTP == otp) {
@@ -374,8 +385,7 @@ const resendOtp = async (req, res) => {
         const { email } = req.body
         const otp = await sendOTP(email);
         const otpExist = await OTPDB.find({ email: email })
-        console.log(otpExist)
-        if (otpExist.length>0) {
+        if (otpExist.length > 0) {
             const user = await OTPDB.findOneAndUpdate(
                 { email: email },
                 { $set: { otp: otp } },

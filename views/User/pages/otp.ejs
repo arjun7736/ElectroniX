@@ -43,49 +43,6 @@
   
 <%- include('../layout/footer') %>
 
-<!-- <script>
-function verifyOTP() {
-  const first = document.getElementById('first').value;
-  const second = document.getElementById('second').value;
-  const third = document.getElementById('third').value;
-  const fourth = document.getElementById('fourth').value;
-  const OTP = first + second + third + fourth;
-  const email = document.getElementById('demo1').value;
-  const verifyOTPEndpoint = '/otp';
-
-  fetch(verifyOTPEndpoint, {
-      method: 'POST',
-      headers: {
-          'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ OTP, email }),
-  })
-      .then(response => response.json())
-      .then(data => {
-          if (data.success) {
-              // Show a success toast using Tippy.js
-              tippy('#btn', {
-                  content: 'Logged in!',
-                  placement: 'bottom',
-                  theme: 'light',
-                  trigger: 'manual',
-              }).show();
-                  location.href = '/';
-          } else {
-              // Show a SweetAlert for incorrect OTP
-              Swal.fire({
-                  icon: 'error',
-                  title: 'Incorrect OTP',
-                  text: 'Please try again.',
-              });
-          }
-      })
-      .catch(error => {
-          console.error('Error:', error);
-      });
-}
-
-</script> -->
 <script>
   function verifyOTP() {
     const first = document.getElementById('first').value;
@@ -103,27 +60,32 @@ function verifyOTP() {
         },
         body: JSON.stringify({ OTP, email }),
     })
-        .then(response => response.json())
+        .then(response =>{
+if(response.status ===401){
+  return showToast("Otp Expired","error")
+}else{
+ return response.json()
+
+}
+        })
         .then(data => {
             if (data.success) {
-                // Show a success toast using Toastify
                 Toastify({
                     text: 'Logged in!',
                     backgroundColor: 'green',
-                    duration: 2000,  // Duration in milliseconds
+                    duration: 2000,  
                     close: false,
-                    gravity: 'bottom', // Available: 'top', 'bottom', 'left', 'right'
-                    position: 'center', // Available: 'left', 'center', 'right'
+                    gravity: 'bottom',
+                    position: 'center',
                     offset: { x: 0, y: 10 },
                     className: 'toastify-success',
                 }).showToast();
   
-                // Redirect to the landing page after a short delay
+                
                 setTimeout(() => {
                     location.href = '/';
                 }, 1000);
             } else {
-                // Show a SweetAlert for incorrect OTP
                 Swal.fire({
                     icon: 'error',
                     title: 'Incorrect OTP',
