@@ -235,7 +235,7 @@ const sendOTP = async (email) => {
     });
 
     const mailOptions = {
-        from: process.env.MAIL, // Replace with your Gmail email address
+        from: process.env.MAIL, 
         to: email,
         subject: 'OTP Verification',
         text: `Your OTP is: ${otp}. Use this OTP to verify your account.`
@@ -245,7 +245,7 @@ const sendOTP = async (email) => {
         await transporter.sendMail(mailOptions);
         console.log('OTP sent successfully.');
 
-        return otp; // Return the generated OTP for verification
+        return otp; 
     } catch (error) {
         console.error('Error sending OTP:', error);
         res.redirect('/500')
@@ -373,11 +373,23 @@ const resendOtp = async (req, res) => {
     try {
         const { email } = req.body
         const otp = await sendOTP(email);
-        const user = await OTPDB.findOneAndUpdate(
-            { email: email },
-            { $set: { otp: otp } },
-            { new: true }
-        );
+        const otpExist = await OTPDB.find({ email: email })
+        console.log(otpExist)
+        if (otpExist.length>0) {
+            const user = await OTPDB.findOneAndUpdate(
+                { email: email },
+                { $set: { otp: otp } },
+                { new: true }
+            );
+        } else {
+            const OTP = await sendOTP(email)
+            const otp = new OTPDB({
+                otp: OTP,
+                email: email
+            })
+            otp.save()
+        }
+
         return res.json({ success: true, message: 'OTP has been resent successfully.' });
     } catch (error) {
         console.log(error)
