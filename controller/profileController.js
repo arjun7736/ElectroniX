@@ -15,7 +15,7 @@ const securepassword = async (password) => {
         return passwordHash;
     } catch (error) {
         console.log(error.message)
-         res.redirect('/500')
+        res.redirect('/500')
 
     }
 }
@@ -54,7 +54,7 @@ const loadAddress = async (req, res) => {
     }
     catch (err) {
         console.log(err)
-         res.redirect('/500')
+        res.redirect('/500')
 
     }
 }
@@ -73,7 +73,7 @@ const loadChangePassword = async (req, res) => {
         }
     } catch (error) {
         console.log(error)
-         res.redirect('/500')
+        res.redirect('/500')
 
     }
 }
@@ -93,7 +93,7 @@ const saveEditProfile = async (req, res) => {
         res.status(200).json({ message: 'Profile updated successfully' });
     } catch (error) {
         console.error(error);
-         res.redirect('/500')
+        res.redirect('/500')
     }
 
 }
@@ -110,15 +110,63 @@ const loadAddAddress = async (req, res) => {
         }
     } catch (err) {
         console.log(err)
-         res.redirect('/500')
+        res.redirect('/500')
 
     }
 }
 
 // save address
+
+function isValidMobile(mobile) {
+    return mobile.length === 10;
+}
+
 const saveAddress = async (req, res) => {
-    console.log(req.body)
-    const { username, mobile, email, address, city, state, postcode, district } = req.body
+    const { username, mobile, email, address, city, state, postcode, district } = req.body;
+    const errors = [];
+    const sourcePage = req.headers.referer;
+    console.log(sourcePage)
+
+    if (!username) {
+        errors.push('Username is required');
+    }
+    if (!mobile) {
+        errors.push('Phone Number is required');
+    }
+    if (!isValidMobile(mobile)) {
+        errors.push('Phone Number is required');
+    }
+    if (!email) {
+        errors.push('Email is required');
+    }
+    if (!address) {
+        errors.push('Address is required');
+    }
+    if (!city) {
+        errors.push('City is required');
+    }
+    if (!state) {
+        errors.push('State is required');
+    }
+    if (!postcode) {
+        errors.push('Postcode is required');
+    }
+    if (!district) {
+        errors.push('District is required');
+    }
+
+    if (errors.length > 0) {
+        const data = { errors, formData: req.body };
+        if(sourcePage.includes('addaddress')){
+            return res.render('User/pages/addaddress', data);
+        }else if(sourcePage.includes('checkout')){
+            const user = await UserDB.findById(req.session.user).populate('cart.product');
+            const cartData = user.cart;
+            const totalAmount = cartData.reduce((accumulator, item) => accumulator + item.totalAmount, 0);
+            const address = await AddressDB.find({ userId: req.session.user })
+            return res.render('User/pages/checkout', {data,address,cartData,user,totalAmount});
+        }
+    }
     try {
         const user = await UserDB.findById(req.session.user);
         const newaddress = new AddressDB({
@@ -131,16 +179,14 @@ const saveAddress = async (req, res) => {
             state,
             postcode,
             district,
-        })
+        });
         await newaddress.save();
-        res.redirect('/address')
+        res.redirect('/address');
     } catch (error) {
         console.error(error);
-         res.redirect('/500')
-
+        res.redirect('/500');
     }
-}
-
+};
 
 
 
@@ -175,7 +221,7 @@ const saveChangePassword = async (req, res) => {
             res.render('User/pages/changepassword')
         }
     } catch (err) {
-         res.redirect('/500')
+        res.redirect('/500')
     }
 }
 
@@ -188,7 +234,7 @@ const getEditAddress = async (req, res) => {
         res.render('User/pages/editaddress', { address, user })
     }
     catch (error) {
-         res.redirect('/500')
+        res.redirect('/500')
     }
 }
 
@@ -206,7 +252,7 @@ const updateAddress = async (req, res) => {
     await AddressDB.findByIdAndUpdate(id, data).then(() => {
         res.redirect("/address");
     }).catch((err) => {
-         res.redirect('/500')
+        res.redirect('/500')
     })
 }
 // show order list
@@ -232,7 +278,7 @@ const loadOrderList = async (req, res) => {
         res.render('User/pages/orderlist', { order, currentPage: page, totalPages, user });
     } catch (error) {
         console.error('Error fetching orders:', error);
-         res.redirect('/500')
+        res.redirect('/500')
     }
 };
 
@@ -250,7 +296,7 @@ const loadOrderDetails = async (req, res) => {
 
         res.render("User/pages/orderdetails", { order });
     } catch (error) {
-         res.redirect('/500')
+        res.redirect('/500')
     }
 };
 
@@ -267,7 +313,7 @@ const uploadProfileImage = async (req, res) => {
         res.json({ success: true });
     } catch (error) {
         console.error('Error uploading profile image:', error);
-         res.redirect('/500')
+        res.redirect('/500')
     }
 }
 
@@ -284,7 +330,7 @@ const deleteAddress = async (req, res) => {
         }
     }
     catch (error) {
-         res.redirect('/500')
+        res.redirect('/500')
     }
 }
 
@@ -312,7 +358,7 @@ const loadWallet = async (req, res) => {
         }
     } catch (error) {
         console.log(error);
-         res.redirect('/500')
+        res.redirect('/500')
     }
 };
 
@@ -321,10 +367,10 @@ const loadCoupen = async (req, res) => {
     try {
         const user = await UserDB.findById(req.session.user)
         const currentTimestamp = Date.now();
-        const coupen = await CoupenDB.find({ startDate: { $lte: currentTimestamp },  expaireDate: { $gte: currentTimestamp } });
+        const coupen = await CoupenDB.find({ startDate: { $lte: currentTimestamp }, expaireDate: { $gte: currentTimestamp } });
         res.render('User/pages/coupen', { coupen, user })
     } catch (error) {
-         res.redirect('/500')
+        res.redirect('/500')
     }
 }
 
@@ -364,7 +410,7 @@ const addToWishlist = async (req, res) => {
         return res.json({ success: true });
     } catch (error) {
         console.error(error);
-         res.redirect('/500')
+        res.redirect('/500')
     }
 };
 
@@ -377,7 +423,7 @@ const removeFromWishlist = async (req, res) => {
         res.json({ success: true })
     } catch (error) {
         res.json({ success: false })
-         res.redirect('/500')
+        res.redirect('/500')
     }
 }
 

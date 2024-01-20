@@ -39,6 +39,9 @@
                 placeholder="Username"
                 class="w-full px-4 py-3 text-sm border border-gray-300 rounded lg:text-sm focus:outline-none focus:ring-1 focus:ring-blue-600"
               />
+              <% if (typeof errors !== 'undefined' && errors.includes('Username is required')) { %>
+                  <p class="text-red-500 mt-1">Username is required</p>
+              <% } %>
             </div>
           </div>
 
