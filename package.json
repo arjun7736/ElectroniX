@@ -19,6 +19,7 @@
     "dotenv": "^16.3.1",
     "easyinvoice": "^3.0.32",
     "ejs": "^3.1.9",
+    "express": "^4.19.2",
     "express-fileupload": "^1.4.3",
     "express-flash": "^0.0.2",
     "express-session": "^1.17.3",
